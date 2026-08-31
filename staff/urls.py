@@ -206,6 +206,24 @@ urlpatterns = [
         views.support_ticket_priority,
         name="support_ticket_priority",
     ),
+    # ========================================================
+    # CUSTOMERS
+    # ========================================================
+
+    path(
+        "customers/",
+        views.customers,
+        name="customers",
+    ),
+    # ========================================================
+    # SCREENS OVERVIEW
+    # ========================================================
+
+    path(
+        "screens/",
+        views.screens_overview,
+        name="screens_overview",
+    ),
 ]
 
 

@@ -1,7 +1,8 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
-from django.db.models import ProtectedError, Q
+from django.db.models import ProtectedError, Q, Prefetch, Count
 from support.forms import SupportReplyForm
+from django.contrib.auth.models import User
 
 from .decorators import staff_required
 
@@ -2600,4 +2601,217 @@ def support_ticket_priority(
 
     return redirect(
         "staff:support"
+    )
+
+# ============================================================
+# CUSTOMERS
+# ============================================================
+
+@staff_required
+def customers(request):
+
+    # ========================================================
+    # SEARCH
+    # ========================================================
+
+    search = request.GET.get(
+        "search",
+        "",
+    ).strip()
+
+    # ========================================================
+    # STATUS
+    # ========================================================
+
+    status = request.GET.get(
+        "status",
+        "",
+    ).strip()
+
+    # ========================================================
+    # CUSTOMER QUERYSET
+    # ========================================================
+
+    customers = (
+        User.objects
+        .filter(
+            is_staff=False,
+            is_superuser=False,
+        )
+        .prefetch_related(
+            Prefetch(
+                "bookings",
+                queryset=(
+                    Booking.objects
+                    .select_related(
+                        "showtime",
+                        "showtime__movie",
+                        "showtime__screen",
+                        "showtime__screen__cinema",
+                    )
+                    .order_by(
+                        "-created_at",
+                    )
+                ),
+                to_attr="staff_bookings",
+            ),
+            Prefetch(
+                "support_tickets",
+                queryset=(
+                    SupportTicket.objects
+                    .order_by(
+                        "-updated_at",
+                    )
+                ),
+                to_attr="staff_support_tickets",
+            ),
+        )
+        .annotate(
+            booking_count=Count(
+                "bookings",
+                distinct=True,
+            ),
+            support_count=Count(
+                "support_tickets",
+                distinct=True,
+            ),
+        )
+        .order_by(
+            "-date_joined",
+        )
+    )
+
+    # ========================================================
+    # SEARCH FILTER
+    # ========================================================
+
+    if search:
+
+        customers = customers.filter(
+            Q(
+                username__icontains=search
+            )
+            |
+            Q(
+                first_name__icontains=search
+            )
+            |
+            Q(
+                last_name__icontains=search
+            )
+            |
+            Q(
+                email__icontains=search
+            )
+        )
+
+    # ========================================================
+    # STATUS FILTER
+    # ========================================================
+
+    if status == "active":
+
+        customers = customers.filter(
+            is_active=True,
+        )
+
+    elif status == "inactive":
+
+        customers = customers.filter(
+            is_active=False,
+        )
+
+    # ========================================================
+    # STATISTICS
+    # ========================================================
+
+    customer_queryset = User.objects.filter(
+        is_staff=False,
+        is_superuser=False,
+    )
+
+    total_customers = customer_queryset.count()
+
+    active_customers = customer_queryset.filter(
+        is_active=True,
+    ).count()
+
+    inactive_customers = customer_queryset.filter(
+        is_active=False,
+    ).count()
+
+    customer_booking_count = (
+        Booking.objects
+        .values("user")
+        .distinct()
+        .count()
+    )
+
+    customer_support_count = (
+        SupportTicket.objects
+        .values("customer")
+        .distinct()
+        .count()
+    )
+
+    # ========================================================
+    # CONTEXT
+    # ========================================================
+
+    context = {
+
+        "customers": customers,
+
+        "total_customers": total_customers,
+
+        "active_customers": active_customers,
+
+        "inactive_customers": inactive_customers,
+
+        "customer_booking_count": (
+            customer_booking_count
+        ),
+
+        "customer_support_count": (
+            customer_support_count
+        ),
+
+        "search": search,
+
+        "status": status,
+
+    }
+
+    return render(
+        request,
+        "staff/customers.html",
+        context,
+    )
+
+# ============================================================
+# SCREENS OVERVIEW
+# ============================================================
+
+@staff_required
+def screens_overview(request):
+
+    cinemas = (
+        Cinema.objects
+        .filter(
+            is_active=True,
+        )
+        .prefetch_related(
+            "screens",
+        )
+        .order_by(
+            "name",
+        )
+    )
+
+    return render(
+        request,
+        "staff/screens_overview.html",
+        {
+            "cinemas": cinemas,
+        },
     )

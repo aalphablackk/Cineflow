@@ -12,6 +12,7 @@
 
     <div class="staff-container">
 
+
         <!-- =====================================================
              HEADER
         ====================================================== -->
@@ -43,6 +44,9 @@
 
         <div class="staff-stat-grid">
 
+
+            <!-- MOVIES -->
+
             <div class="staff-stat-card">
 
                 <div class="staff-stat-icon">
@@ -63,6 +67,8 @@
 
             </div>
 
+
+            <!-- CINEMAS -->
 
             <div class="staff-stat-card">
 
@@ -85,6 +91,8 @@
             </div>
 
 
+            <!-- BOOKINGS -->
+
             <div class="staff-stat-card">
 
                 <div class="staff-stat-icon">
@@ -106,6 +114,8 @@
             </div>
 
 
+            <!-- OPEN SUPPORT -->
+
             <div class="staff-stat-card">
 
                 <div class="staff-stat-icon">
@@ -119,7 +129,7 @@
                     </span>
 
                     <strong>
-                         {{ open_support_count }}
+                        {{ open_support_count }}
                     </strong>
 
                 </div>
@@ -134,6 +144,9 @@
         ====================================================== -->
 
         <div class="staff-section">
+
+
+            <!-- SECTION HEADER -->
 
             <div class="staff-section-header">
 
@@ -152,18 +165,26 @@
             </div>
 
 
+            <!-- =================================================
+                 MANAGEMENT CARDS
+            ================================================== -->
+
             <div class="staff-management-grid">
 
 
-                <!-- MOVIES -->
+                <!-- =================================================
+                     MOVIES
+                ================================================== -->
 
                 <a
-                    href="{% url "staff:movies" %}"
+                    href="{% url 'staff:movies' %}"
                     class="staff-management-card"
                 >
 
                     <div class="staff-management-icon">
+
                         <i class="bi bi-film"></i>
+
                     </div>
 
                     <div>
@@ -183,15 +204,19 @@
                 </a>
 
 
-                <!-- CINEMAS -->
+                <!-- =================================================
+                     CINEMAS
+                ================================================== -->
 
                 <a
-                    href="{% url "staff:cinemas" %}"
+                    href="{% url 'staff:cinemas' %}"
                     class="staff-management-card"
                 >
 
                     <div class="staff-management-icon">
+
                         <i class="bi bi-building"></i>
+
                     </div>
 
                     <div>
@@ -211,15 +236,19 @@
                 </a>
 
 
-                <!-- SCREENS -->
+                <!-- =================================================
+                     SCREENS
+                ================================================== -->
 
                 <a
-                    href="#"
+                    href="{% url 'staff:screens_overview' %}"
                     class="staff-management-card"
                 >
 
                     <div class="staff-management-icon">
+
                         <i class="bi bi-display"></i>
+
                     </div>
 
                     <div>
@@ -239,15 +268,19 @@
                 </a>
 
 
-                <!-- SHOWTIMES -->
+                <!-- =================================================
+                     SHOWTIMES
+                ================================================== -->
 
                 <a
-                    href="#"
+                    href="{% url 'staff:showtimes' %}"
                     class="staff-management-card"
                 >
 
                     <div class="staff-management-icon">
+
                         <i class="bi bi-calendar3"></i>
+
                     </div>
 
                     <div>
@@ -267,15 +300,19 @@
                 </a>
 
 
-                <!-- BOOKINGS -->
+                <!-- =================================================
+                     BOOKINGS
+                ================================================== -->
 
                 <a
-                    href="#"
+                    href="{% url 'staff:bookings' %}"
                     class="staff-management-card"
                 >
 
                     <div class="staff-management-icon">
+
                         <i class="bi bi-ticket-perforated"></i>
+
                     </div>
 
                     <div>
@@ -295,15 +332,19 @@
                 </a>
 
 
-                <!-- CUSTOMERS -->
+                <!-- =================================================
+                     CUSTOMERS
+                ================================================== -->
 
                 <a
-                    href="#"
+                    href="{% url 'staff:customers' %}"
                     class="staff-management-card"
                 >
 
                     <div class="staff-management-icon">
+
                         <i class="bi bi-people"></i>
+
                     </div>
 
                     <div>
@@ -323,15 +364,19 @@
                 </a>
 
 
-                <!-- SUPPORT -->
+                <!-- =================================================
+                     SUPPORT
+                ================================================== -->
 
                 <a
-                    href="{% url "staff:support" %}"
+                    href="{% url 'staff:support' %}"
                     class="staff-management-card"
                 >
 
                     <div class="staff-management-icon">
+
                         <i class="bi bi-headset"></i>
+
                     </div>
 
                     <div>
@@ -349,6 +394,7 @@
                     <i class="bi bi-arrow-right"></i>
 
                 </a>
+
 
             </div>
 

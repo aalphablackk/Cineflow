@@ -1,0 +1,138 @@
+{% extends "staff/base.html" %}
+
+
+{% block staff_title %}
+    Screens | CineFlow
+{% endblock %}
+
+
+{% block staff_content %}
+
+<section class="staff-screens-overview">
+
+    <div class="staff-container">
+
+
+        <!-- =====================================================
+             HEADER
+        ====================================================== -->
+
+        <div class="staff-page-header">
+
+            <div>
+
+                <span class="section-label">
+                    SCREEN MANAGEMENT
+                </span>
+
+                <h1>
+                    Screens
+                </h1>
+
+                <p>
+                    Select a cinema to manage its screens and seating.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             CINEMAS
+        ====================================================== -->
+
+        <div class="staff-section">
+
+            <div class="staff-section-header">
+
+                <div>
+
+                    <span class="section-label">
+                        CINEMAS
+                    </span>
+
+                    <h2>
+                        Select a Cinema
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            {% if cinemas %}
+
+                <div class="staff-management-grid">
+
+                    {% for cinema in cinemas %}
+
+                        <a
+                            href="{% url 'staff:screens' cinema.id %}"
+                            class="staff-management-card"
+                        >
+
+                            <div class="staff-management-icon">
+
+                                <i class="bi bi-building"></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <h3>
+                                    {{ cinema.name }}
+                                </h3>
+
+                                <p>
+
+                                    {{ cinema.screens.all|length }}
+                                    screen{{ cinema.screens.all|length|pluralize }}
+
+                                </p>
+
+                            </div>
+
+
+                            <i class="bi bi-arrow-right"></i>
+
+                        </a>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="staff-empty-state">
+
+                    <div class="staff-empty-icon">
+
+                        <i class="bi bi-display"></i>
+
+                    </div>
+
+                    <span class="section-label">
+                        SCREENS
+                    </span>
+
+                    <h2>
+                        No cinemas available
+                    </h2>
+
+                    <p>
+                        Create an active cinema before managing screens.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

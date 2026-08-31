@@ -115,9 +115,9 @@
 
                 </a>
 
-{% comment %} 
+
                 <a
-                    href="#"
+                    href="{% url "staff:screens_overview" %}"
                     class="staff-nav-link"
                 >
 
@@ -130,7 +130,7 @@
                 </a>
 
 
-                <a
+                {% comment %} <a
                     href="#"
                     class="staff-nav-link"
                     >
@@ -141,9 +141,9 @@
                         Seats
                     </span>
 
-                    </a> {% endcomment %}
+                    </a>
                     
-                </div>
+                </div> {% endcomment %}
                     
                     
                                 <div class="staff-nav-section">
@@ -193,7 +193,7 @@
 
 
                 <a
-                    href="#"
+                    href="{% url "staff:customers" %}"
                     class="staff-nav-link"
                 >
 
@@ -207,7 +207,7 @@
 
 
                 <a
-                    href="#"
+                    href="{% url "staff:support" %}"
                     class="staff-nav-link"
                 >
 

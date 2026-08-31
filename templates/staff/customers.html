@@ -1,0 +1,1053 @@
+{% extends "staff/base.html" %}
+
+
+{% block staff_title %}
+    Customers | CineFlow
+{% endblock %}
+
+
+{% block staff_content %}
+
+<section class="staff-customers-page">
+
+    <div class="staff-container">
+
+
+        <!-- =====================================================
+             PAGE HEADER
+        ====================================================== -->
+
+        <div class="staff-page-header">
+
+            <div>
+
+                <span class="section-label">
+                    CUSTOMER MANAGEMENT
+                </span>
+
+                <h1>
+                    Customers
+                </h1>
+
+                <p>
+                    View CineFlow customers and their booking
+                    and support activity.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             STATISTICS
+        ====================================================== -->
+
+        <div class="staff-stat-grid">
+
+
+            <!-- TOTAL CUSTOMERS -->
+
+            <div class="staff-stat-card">
+
+                <div class="staff-stat-icon">
+                    <i class="bi bi-people"></i>
+                </div>
+
+                <div>
+
+                    <span>
+                        Customers
+                    </span>
+
+                    <strong>
+                        {{ total_customers }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- ACTIVE CUSTOMERS -->
+
+            <div class="staff-stat-card">
+
+                <div class="staff-stat-icon">
+                    <i class="bi bi-person-check"></i>
+                </div>
+
+                <div>
+
+                    <span>
+                        Active
+                    </span>
+
+                    <strong>
+                        {{ active_customers }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- CUSTOMERS WITH BOOKINGS -->
+
+            <div class="staff-stat-card">
+
+                <div class="staff-stat-icon">
+                    <i class="bi bi-ticket-perforated"></i>
+                </div>
+
+                <div>
+
+                    <span>
+                        With Bookings
+                    </span>
+
+                    <strong>
+                        {{ customer_booking_count }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- CUSTOMERS WITH SUPPORT -->
+
+            <div class="staff-stat-card">
+
+                <div class="staff-stat-icon">
+                    <i class="bi bi-headset"></i>
+                </div>
+
+                <div>
+
+                    <span>
+                        With Support
+                    </span>
+
+                    <strong>
+                        {{ customer_support_count }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             CUSTOMER DIRECTORY
+        ====================================================== -->
+
+        <div class="staff-section">
+
+
+            <!-- =================================================
+                 SECTION HEADER
+            ================================================== -->
+
+            <div class="staff-section-header">
+
+                <div>
+
+                    <span class="section-label">
+                        CUSTOMER DIRECTORY
+                    </span>
+
+                    <h2>
+                        CineFlow Customers
+                    </h2>
+
+                </div>
+
+                <div class="staff-section-count">
+
+                    {{ customers|length }}
+                    customer{{ customers|length|pluralize }}
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 FILTERS
+            ================================================== -->
+
+            <div class="staff-filter-card">
+
+                <form
+                    method="get"
+                    class="staff-filter-form staff-customers-filter-form"
+                >
+
+
+                    <!-- SEARCH -->
+
+                    <div class="staff-filter-search">
+
+                        <label for="customerSearch">
+                            Search
+                        </label>
+
+                        <div class="staff-search-input">
+
+                            <i class="bi bi-search"></i>
+
+                            <input
+                                type="search"
+                                id="customerSearch"
+                                name="search"
+                                value="{{ search }}"
+                                placeholder="Search name, username or email..."
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- STATUS -->
+
+                    <div class="staff-filter-group">
+
+                        <label for="customerStatus">
+                            Status
+                        </label>
+
+                        <select
+                            id="customerStatus"
+                            name="status"
+                        >
+
+                            <option value="">
+                                All customers
+                            </option>
+
+                            <option
+                                value="active"
+                                {% if status == "active" %}
+                                    selected
+                                {% endif %}
+                            >
+                                Active
+                            </option>
+
+                            <option
+                                value="inactive"
+                                {% if status == "inactive" %}
+                                    selected
+                                {% endif %}
+                            >
+                                Inactive
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- ACTIONS -->
+
+                    <div class="staff-filter-actions">
+
+                        <button
+                            type="submit"
+                            class="btn staff-primary-btn"
+                        >
+
+                            <i class="bi bi-funnel"></i>
+
+                            Apply
+
+                        </button>
+
+
+                        {% if search or status %}
+
+                            <a
+                                href="{% url 'staff:customers' %}"
+                                class="btn staff-outline-btn"
+                            >
+
+                                <i class="bi bi-x-lg"></i>
+
+                                Clear
+
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+                </form>
+
+            </div>
+
+
+            <!-- =================================================
+                 CUSTOMER LIST
+            ================================================== -->
+
+            {% if customers %}
+
+                <div class="staff-management-card staff-customers-table-card">
+
+                    <div class="staff-table-wrapper">
+
+                        <table class="table staff-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Customer
+                                    </th>
+
+                                    <th>
+                                        Email
+                                    </th>
+
+                                    <th>
+                                        Joined
+                                    </th>
+
+                                    <th>
+                                        Bookings
+                                    </th>
+
+                                    <th>
+                                        Support
+                                    </th>
+
+                                    <th>
+                                        Status
+                                    </th>
+
+                                    <th class="text-end">
+                                        Action
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                {% for customer in customers %}
+
+
+                                    <!-- =================================================
+                                         CUSTOMER ROW
+                                    ================================================== -->
+
+                                    <tr>
+
+
+                                        <!-- CUSTOMER -->
+
+                                        <td>
+
+                                            <div class="staff-customer-identity">
+
+
+                                                <!-- AVATAR -->
+
+                                                <div class="staff-customer-avatar">
+
+                                                    {% if customer.first_name %}
+
+                                                        {{ customer.first_name|first|upper }}
+
+                                                    {% else %}
+
+                                                        {{ customer.username|first|upper }}
+
+                                                    {% endif %}
+
+                                                </div>
+
+
+                                                <!-- NAME -->
+
+                                                <div class="staff-customer-name">
+
+                                                    <strong>
+
+                                                        {% if customer.get_full_name %}
+
+                                                            {{ customer.get_full_name }}
+
+                                                        {% else %}
+
+                                                            {{ customer.username }}
+
+                                                        {% endif %}
+
+                                                    </strong>
+
+                                                    <small>
+                                                        @{{ customer.username }}
+                                                    </small>
+
+                                                </div>
+
+                                            </div>
+
+                                        </td>
+
+
+                                        <!-- EMAIL -->
+
+                                        <td>
+
+                                            <span class="staff-customer-email">
+
+                                                {% if customer.email %}
+
+                                                    {{ customer.email }}
+
+                                                {% else %}
+
+                                                    No email
+
+                                                {% endif %}
+
+                                            </span>
+
+                                        </td>
+
+
+                                        <!-- JOINED -->
+
+                                        <td>
+
+                                            <span class="staff-customer-date">
+
+                                                {{ customer.date_joined|date:"M j, Y" }}
+
+                                            </span>
+
+                                        </td>
+
+
+                                        <!-- BOOKINGS -->
+
+                                        <td>
+
+                                            <span class="staff-customer-count">
+
+                                                {{ customer.booking_count }}
+
+                                            </span>
+
+                                        </td>
+
+
+                                        <!-- SUPPORT -->
+
+                                        <td>
+
+                                            <span class="staff-customer-count">
+
+                                                {{ customer.support_count }}
+
+                                            </span>
+
+                                        </td>
+
+
+                                        <!-- STATUS -->
+
+                                        <td>
+
+                                            {% if customer.is_active %}
+
+                                                <span class="staff-customer-status active">
+
+                                                    <i class="bi bi-check-circle-fill"></i>
+
+                                                    Active
+
+                                                </span>
+
+                                            {% else %}
+
+                                                <span class="staff-customer-status inactive">
+
+                                                    <i class="bi bi-x-circle-fill"></i>
+
+                                                    Inactive
+
+                                                </span>
+
+                                            {% endif %}
+
+                                        </td>
+
+
+                                        <!-- ACTION -->
+
+                                        <td class="text-end">
+
+                                            <a
+                                                class="btn staff-outline-btn staff-customer-view-btn"
+                                                data-bs-toggle="collapse"
+                                                href="#customer-{{ customer.id }}"
+                                                role="button"
+                                                aria-expanded="false"
+                                                aria-controls="customer-{{ customer.id }}"
+                                            >
+
+                                                <i class="bi bi-eye"></i>
+
+                                                View
+
+                                            </a>
+
+                                        </td>
+
+                                    </tr>
+
+
+                                    <!-- =================================================
+                                         CUSTOMER DETAILS
+                                    ================================================== -->
+
+                                    <tr>
+
+                                        <td
+                                            colspan="7"
+                                            class="staff-customer-collapse-cell"
+                                        >
+
+                                            <div
+                                                class="collapse"
+                                                id="customer-{{ customer.id }}"
+                                            >
+
+                                                <div class="staff-customer-panel">
+
+
+                                                    <!-- =================================
+                                                         CUSTOMER HEADER
+                                                    ================================== -->
+
+                                                    <div class="staff-customer-panel-header">
+
+
+                                                        <div class="staff-customer-profile">
+
+
+                                                            <!-- AVATAR -->
+
+                                                            <div class="staff-customer-avatar large">
+
+                                                                {% if customer.first_name %}
+
+                                                                    {{ customer.first_name|first|upper }}
+
+                                                                {% else %}
+
+                                                                    {{ customer.username|first|upper }}
+
+                                                                {% endif %}
+
+                                                            </div>
+
+
+                                                            <!-- CUSTOMER NAME -->
+
+                                                            <div>
+
+                                                                <span class="section-label">
+                                                                    CUSTOMER
+                                                                </span>
+
+                                                                <h3>
+
+                                                                    {% if customer.get_full_name %}
+
+                                                                        {{ customer.get_full_name }}
+
+                                                                    {% else %}
+
+                                                                        {{ customer.username }}
+
+                                                                    {% endif %}
+
+                                                                </h3>
+
+                                                                <p>
+
+                                                                    {% if customer.email %}
+
+                                                                        {{ customer.email }}
+
+                                                                    {% else %}
+
+                                                                        No email address
+
+                                                                    {% endif %}
+
+                                                                </p>
+
+                                                            </div>
+
+                                                        </div>
+
+
+                                                        <!-- CLOSE -->
+
+                                                        <a
+                                                            class="btn staff-outline-btn"
+                                                            data-bs-toggle="collapse"
+                                                            href="#customer-{{ customer.id }}"
+                                                            role="button"
+                                                            aria-controls="customer-{{ customer.id }}"
+                                                        >
+
+                                                            <i class="bi bi-chevron-up"></i>
+
+                                                            Close
+
+                                                        </a>
+
+                                                    </div>
+
+
+                                                    <!-- =================================
+                                                         CUSTOMER SUMMARY
+                                                    ================================== -->
+
+                                                    <div class="staff-customer-summary">
+
+
+                                                        <!-- USERNAME -->
+
+                                                        <div>
+
+                                                            <span>
+                                                                Username
+                                                            </span>
+
+                                                            <strong>
+                                                                @{{ customer.username }}
+                                                            </strong>
+
+                                                        </div>
+
+
+                                                        <!-- JOINED -->
+
+                                                        <div>
+
+                                                            <span>
+                                                                Joined
+                                                            </span>
+
+                                                            <strong>
+                                                                {{ customer.date_joined|date:"M j, Y" }}
+                                                            </strong>
+
+                                                        </div>
+
+
+                                                        <!-- BOOKINGS -->
+
+                                                        <div>
+
+                                                            <span>
+                                                                Bookings
+                                                            </span>
+
+                                                            <strong>
+                                                                {{ customer.booking_count }}
+                                                            </strong>
+
+                                                        </div>
+
+
+                                                        <!-- SUPPORT -->
+
+                                                        <div>
+
+                                                            <span>
+                                                                Support Tickets
+                                                            </span>
+
+                                                            <strong>
+                                                                {{ customer.support_count }}
+                                                            </strong>
+
+                                                        </div>
+
+
+                                                        <!-- STATUS -->
+
+                                                        <div>
+
+                                                            <span>
+                                                                Account Status
+                                                            </span>
+
+                                                            <strong>
+
+                                                                {% if customer.is_active %}
+
+                                                                    Active
+
+                                                                {% else %}
+
+                                                                    Inactive
+
+                                                                {% endif %}
+
+                                                            </strong>
+
+                                                        </div>
+
+                                                    </div>
+
+
+                                                    <hr>
+
+
+                                                    <!-- =================================
+                                                         BOOKING HISTORY
+                                                    ================================== -->
+
+                                                    <div class="staff-customer-history">
+
+
+                                                        <div class="staff-customer-history-header">
+
+                                                            <div>
+
+                                                                <span class="section-label">
+                                                                    BOOKINGS
+                                                                </span>
+
+                                                                <h4>
+                                                                    Booking History
+                                                                </h4>
+
+                                                            </div>
+
+                                                        </div>
+
+
+                                                        <!--
+                                                            IMPORTANT:
+                                                            Uses prefetched staff_bookings.
+                                                        -->
+
+                                                        {% if customer.staff_bookings %}
+
+
+                                                            <div class="staff-customer-history-list">
+
+
+                                                                {% for booking in customer.staff_bookings|slice:":10" %}
+
+
+                                                                    <div class="staff-customer-history-item">
+
+
+                                                                        <!-- BOOKING -->
+
+                                                                        <div>
+
+                                                                            <strong>
+                                                                                {{ booking.booking_reference }}
+                                                                            </strong>
+
+                                                                            <span>
+
+                                                                                {% if booking.showtime.movie %}
+
+                                                                                    {{ booking.showtime.movie.title }}
+
+                                                                                {% else %}
+
+                                                                                    Movie unavailable
+
+                                                                                {% endif %}
+
+                                                                            </span>
+
+                                                                        </div>
+
+
+                                                                        <!-- DATE / AMOUNT -->
+
+                                                                        <div>
+
+                                                                            <span>
+                                                                                {{ booking.created_at|date:"M j, Y" }}
+                                                                            </span>
+
+                                                                            <strong>
+                                                                                ₦{{ booking.total_amount }}
+                                                                            </strong>
+
+                                                                        </div>
+
+
+                                                                        <!-- STATUS -->
+
+                                                                        <div>
+
+                                                                            <span class="staff-customer-history-status">
+
+                                                                                {{ booking.get_status_display }}
+
+                                                                            </span>
+
+                                                                        </div>
+
+                                                                    </div>
+
+
+                                                                {% endfor %}
+
+
+                                                            </div>
+
+
+                                                        {% else %}
+
+
+                                                            <div class="staff-customer-no-history">
+
+                                                                <i class="bi bi-ticket"></i>
+
+                                                                <p>
+                                                                    This customer has no bookings yet.
+                                                                </p>
+
+                                                            </div>
+
+
+                                                        {% endif %}
+
+                                                    </div>
+
+
+                                                    <hr>
+
+
+                                                    <!-- =================================
+                                                         SUPPORT HISTORY
+                                                    ================================== -->
+
+                                                    <div class="staff-customer-history">
+
+
+                                                        <div class="staff-customer-history-header">
+
+                                                            <div>
+
+                                                                <span class="section-label">
+                                                                    SUPPORT
+                                                                </span>
+
+                                                                <h4>
+                                                                    Support History
+                                                                </h4>
+
+                                                            </div>
+
+                                                        </div>
+
+
+                                                        <!--
+                                                            IMPORTANT:
+                                                            Uses prefetched
+                                                            staff_support_tickets.
+                                                        -->
+
+                                                        {% if customer.staff_support_tickets %}
+
+
+                                                            <div class="staff-customer-history-list">
+
+
+                                                                {% for ticket in customer.staff_support_tickets|slice:":10" %}
+
+
+                                                                    <div class="staff-customer-history-item">
+
+
+                                                                        <!-- TICKET -->
+
+                                                                        <div>
+
+                                                                            <strong>
+                                                                                #{{ ticket.id }}
+                                                                            </strong>
+
+                                                                            <span>
+                                                                                {{ ticket.subject }}
+                                                                            </span>
+
+                                                                        </div>
+
+
+                                                                        <!-- DATE -->
+
+                                                                        <div>
+
+                                                                            <span>
+                                                                                {{ ticket.updated_at|date:"M j, Y" }}
+                                                                            </span>
+
+                                                                        </div>
+
+
+                                                                        <!-- STATUS -->
+
+                                                                        <div>
+
+                                                                            <span
+                                                                                class="
+                                                                                    staff-customer-ticket-status
+                                                                                    staff-customer-ticket-status-{{ ticket.status }}
+                                                                                "
+                                                                            >
+
+                                                                                {{ ticket.get_status_display }}
+
+                                                                            </span>
+
+                                                                        </div>
+
+
+                                                                    </div>
+
+
+                                                                {% endfor %}
+
+
+                                                            </div>
+
+
+                                                        {% else %}
+
+
+                                                            <div class="staff-customer-no-history">
+
+                                                                <i class="bi bi-headset"></i>
+
+                                                                <p>
+                                                                    This customer has no support tickets.
+                                                                </p>
+
+                                                            </div>
+
+
+                                                        {% endif %}
+
+                                                    </div>
+
+
+                                                </div>
+
+                                            </div>
+
+                                        </td>
+
+                                    </tr>
+
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+
+            {% else %}
+
+
+                <!-- =================================================
+                     EMPTY STATE
+                ================================================== -->
+
+                <div class="staff-empty-state staff-customers-empty-state">
+
+
+                    <div class="staff-empty-icon">
+
+                        <i class="bi bi-people"></i>
+
+                    </div>
+
+
+                    <span class="section-label">
+                        CUSTOMERS
+                    </span>
+
+
+                    <h2>
+                        No customers found
+                    </h2>
+
+
+                    {% if search or status %}
+
+
+                        <p>
+                            No customers match your current
+                            search and filter criteria.
+                        </p>
+
+
+                        <a
+                            href="{% url 'staff:customers' %}"
+                            class="btn staff-outline-btn"
+                        >
+
+                            <i class="bi bi-arrow-counterclockwise"></i>
+
+                            Clear Filters
+
+                        </a>
+
+
+                    {% else %}
+
+
+                        <p>
+                            Registered CineFlow customers will
+                            appear here.
+                        </p>
+
+
+                    {% endif %}
+
+
+                </div>
+
+
+            {% endif %}
+
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
