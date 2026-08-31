@@ -1,0 +1,1573 @@
+{% extends "staff/base.html" %}
+
+
+{% block staff_title %}
+    Movies | CineFlow
+{% endblock %}
+
+
+{% block staff_content %}
+
+<section class="staff-movies-page">
+
+    <div class="staff-container">
+
+
+        <!-- ==================================================
+             PAGE HEADER
+        ================================================== -->
+
+        <div class="staff-page-header movies-header">
+
+            <div>
+
+                <span class="section-label">
+                    MOVIE MANAGEMENT
+                </span>
+
+                <h1>
+                    Movies
+                </h1>
+
+                <p>
+                    Add, edit and manage the CineFlow movie catalogue.
+                </p>
+
+            </div>
+
+
+            <div class="staff-page-header-action">
+
+                <button
+                    type="button"
+                    class="btn staff-primary-btn"
+                    data-bs-toggle="modal"
+                    data-bs-target="#addMovieModal"
+                >
+
+                    <i class="bi bi-plus-lg"></i>
+
+                    Add Movie
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==================================================
+             MOVIE TOOLBAR
+        ================================================== -->
+
+        <div class="staff-list-toolbar">
+
+            <div class="staff-search">
+
+                <i class="bi bi-search"></i>
+
+                <input
+                    type="search"
+                    id="movieSearch"
+                    class="form-control"
+                    placeholder="Search movies..."
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+            <div class="staff-filter">
+
+                <select
+                    id="movieStatusFilter"
+                    class="form-select"
+                >
+
+                    <option value="">
+                        All Statuses
+                    </option>
+
+                    <option value="coming_soon">
+                        Coming Soon
+                    </option>
+
+                    <option value="now_showing">
+                        Now Showing
+                    </option>
+
+                    <option value="ended">
+                        Ended
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==================================================
+             MOVIE TABLE
+        ================================================== -->
+
+        <div class="staff-table-card">
+
+            <div class="staff-table-wrapper">
+
+                <table
+                    class="staff-data-table"
+                    id="moviesTable"
+                >
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Movie
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Release Date
+                            </th>
+
+                            <th>
+                                Duration
+                            </th>
+
+                            <th>
+                                Rating
+                            </th>
+
+                            <th class="text-end">
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for movie in movies %}
+
+                        <tr
+                            class="movie-row"
+                            data-title="{{ movie.title|lower }}"
+                            data-status="{{ movie.status }}"
+                        >
+
+
+                            <!-- MOVIE -->
+
+                            <td>
+
+                                <div class="staff-movie-cell">
+
+                                    <div class="staff-movie-poster">
+
+                                        {% if movie.poster_source %}
+
+                                            <img
+                                                src="{{ movie.poster_source }}"
+                                                alt="{{ movie.title }}"
+                                            >
+
+                                        {% else %}
+
+                                            <div class="staff-movie-poster-placeholder">
+
+                                                <i class="bi bi-film"></i>
+
+                                            </div>
+
+                                        {% endif %}
+
+                                    </div>
+
+
+                                    <div class="staff-movie-info">
+
+                                        <strong>
+                                            {{ movie.title }}
+                                        </strong>
+
+                                        <span>
+                                            {{ movie.slug }}
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+
+                            <!-- STATUS -->
+
+                            <td>
+
+                                <span
+                                    class="staff-status-badge {{ movie.status }}"
+                                >
+
+                                    {{ movie.get_status_display }}
+
+                                </span>
+
+                            </td>
+
+
+                            <!-- RELEASE DATE -->
+
+                            <td>
+
+                                <span class="staff-table-secondary">
+
+                                    {{ movie.release_date|date:"M j, Y" }}
+
+                                </span>
+
+                            </td>
+
+
+                            <!-- DURATION -->
+
+                            <td>
+
+                                <span class="staff-table-secondary">
+
+                                    {{ movie.duration }} mins
+
+                                </span>
+
+                            </td>
+
+
+                            <!-- AGE RATING -->
+
+                            <td>
+
+                                <span class="staff-rating">
+
+                                    {{ movie.age_rating }}
+
+                                </span>
+
+                            </td>
+
+
+                            <!-- ACTIONS -->
+
+                            <td>
+
+                                <div class="staff-table-actions">
+
+                                    <button
+                                        type="button"
+                                        class="staff-icon-btn"
+                                        title="Edit movie"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#editMovieModal"
+
+                                        data-id="{{ movie.id }}"
+                                        data-title="{{ movie.title }}"
+                                        data-slug="{{ movie.slug }}"
+                                        data-description="{{ movie.description }}"
+                                        data-poster-url="{{ movie.poster_url }}"
+                                        data-trailer-url="{{ movie.trailer_url }}"
+                                        data-duration="{{ movie.duration }}"
+                                        data-release-date="{{ movie.release_date|date:'Y-m-d' }}"
+                                        data-age-rating="{{ movie.age_rating }}"
+                                        data-status="{{ movie.status }}"
+                                    >
+
+                                        <i class="bi bi-pencil"></i>
+
+                                    </button>
+
+
+                                    <button
+                                        type="button"
+                                        class="staff-icon-btn staff-icon-danger"
+                                        title="Delete movie"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#deleteMovieModal"
+
+                                        data-id="{{ movie.id }}"
+                                        data-title="{{ movie.title }}"
+                                    >
+
+                                        <i class="bi bi-trash3"></i>
+
+                                    </button>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td
+                                colspan="6"
+                                class="staff-empty-cell"
+                            >
+
+                                <div class="staff-empty-state">
+
+                                    <div class="staff-empty-icon">
+
+                                        <i class="bi bi-film"></i>
+
+                                    </div>
+
+                                    <h3>
+                                        No movies yet
+                                    </h3>
+
+                                    <p>
+                                        Add your first movie to the CineFlow catalogue.
+                                    </p>
+
+                                    <button
+                                        type="button"
+                                        class="btn staff-primary-btn"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#addMovieModal"
+                                    >
+
+                                        <i class="bi bi-plus-lg"></i>
+
+                                        Add Movie
+
+                                    </button>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ==========================================================
+     ADD MOVIE MODAL
+========================================================== -->
+
+<div
+    class="modal fade"
+    id="addMovieModal"
+    tabindex="-1"
+    aria-labelledby="addMovieModalLabel"
+    aria-hidden="true"
+>
+
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+
+        <div class="modal-content staff-modal">
+
+
+            <!-- HEADER -->
+
+            <div class="modal-header">
+
+                <div>
+
+                    <span class="section-label">
+                        MOVIE MANAGEMENT
+                    </span>
+
+                    <h2
+                        class="modal-title"
+                        id="addMovieModalLabel"
+                    >
+                        Add Movie
+                    </h2>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+
+            </div>
+
+
+            <!-- FORM -->
+
+            <form
+                method="post"
+                action="{% url 'staff:movie_create' %}"
+                enctype="multipart/form-data"
+            >
+
+                {% csrf_token %}
+
+
+                <div class="modal-body">
+
+                    {% if add_movie_open and form.non_field_errors %}
+
+                        <div class="staff-form-error">
+
+                            {{ form.non_field_errors }}
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <div class="staff-form-grid">
+
+
+                        <!-- TITLE -->
+
+                        <div class="staff-form-group">
+
+                            <label
+                                for="id_title"
+                                class="form-label"
+                            >
+                                Movie Title
+                            </label>
+
+                            {{ form.title }}
+
+                            {% if add_movie_open and form.title.errors %}
+
+                                <div class="staff-field-error">
+                                    {{ form.title.errors }}
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- SLUG -->
+
+                        <div class="staff-form-group">
+
+                            <label
+                                for="id_slug"
+                                class="form-label"
+                            >
+                                Slug
+                            </label>
+
+                            {{ form.slug }}
+
+                            {% if add_movie_open and form.slug.errors %}
+
+                                <div class="staff-field-error">
+                                    {{ form.slug.errors }}
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- DESCRIPTION -->
+
+                        <div class="staff-form-group staff-form-full">
+
+                            <label
+                                for="id_description"
+                                class="form-label"
+                            >
+                                Description
+                            </label>
+
+                            {{ form.description }}
+
+                            {% if add_movie_open and form.description.errors %}
+
+                                <div class="staff-field-error">
+                                    {{ form.description.errors }}
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- POSTER -->
+
+                        <div class="staff-form-group">
+
+                            <label
+                                for="id_poster"
+                                class="form-label"
+                            >
+                                Poster
+                            </label>
+
+                            {{ form.poster }}
+
+                            <small class="staff-form-help">
+                                Upload a poster image.
+                            </small>
+
+                            {% if add_movie_open and form.poster.errors %}
+
+                                <div class="staff-field-error">
+                                    {{ form.poster.errors }}
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- POSTER URL -->
+
+                        <div class="staff-form-group">
+
+                            <label
+                                for="id_poster_url"
+                                class="form-label"
+                            >
+                                Poster URL
+                            </label>
+
+                            {{ form.poster_url }}
+
+                            <small class="staff-form-help">
+                                Optional. Used when no uploaded poster exists.
+                            </small>
+
+                            {% if add_movie_open and form.poster_url.errors %}
+
+                                <div class="staff-field-error">
+                                    {{ form.poster_url.errors }}
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- TRAILER -->
+
+                        <div class="staff-form-group staff-form-full">
+
+                            <label
+                                for="id_trailer_url"
+                                class="form-label"
+                            >
+                                Trailer URL
+                            </label>
+
+                            {{ form.trailer_url }}
+
+                            {% if add_movie_open and form.trailer_url.errors %}
+
+                                <div class="staff-field-error">
+                                    {{ form.trailer_url.errors }}
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- DURATION -->
+
+                        <div class="staff-form-group">
+
+                            <label
+                                for="id_duration"
+                                class="form-label"
+                            >
+                                Duration
+                            </label>
+
+                            {{ form.duration }}
+
+                            {% if add_movie_open and form.duration.errors %}
+
+                                <div class="staff-field-error">
+                                    {{ form.duration.errors }}
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- RELEASE DATE -->
+
+                        <div class="staff-form-group">
+
+                            <label
+                                for="id_release_date"
+                                class="form-label"
+                            >
+                                Release Date
+                            </label>
+
+                            {{ form.release_date }}
+
+                            {% if add_movie_open and form.release_date.errors %}
+
+                                <div class="staff-field-error">
+                                    {{ form.release_date.errors }}
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- AGE RATING -->
+
+                        <div class="staff-form-group">
+
+                            <label
+                                for="id_age_rating"
+                                class="form-label"
+                            >
+                                Age Rating
+                            </label>
+
+                            {{ form.age_rating }}
+
+                            {% if add_movie_open and form.age_rating.errors %}
+
+                                <div class="staff-field-error">
+                                    {{ form.age_rating.errors }}
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- STATUS -->
+
+                        <div class="staff-form-group">
+
+                            <label
+                                for="id_status"
+                                class="form-label"
+                            >
+                                Status
+                            </label>
+
+                            {{ form.status }}
+
+                            {% if add_movie_open and form.status.errors %}
+
+                                <div class="staff-field-error">
+                                    {{ form.status.errors }}
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="modal-footer">
+
+                    <button
+                        type="button"
+                        class="btn staff-outline-btn"
+                        data-bs-dismiss="modal"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn staff-primary-btn"
+                    >
+
+                        <i class="bi bi-plus-lg"></i>
+
+                        Add Movie
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ==========================================================
+     EDIT MOVIE MODAL
+========================================================== -->
+
+<div
+    class="modal fade"
+    id="editMovieModal"
+    tabindex="-1"
+    aria-labelledby="editMovieModalLabel"
+    aria-hidden="true"
+>
+
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+
+        <div class="modal-content staff-modal">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <span class="section-label">
+                        MOVIE MANAGEMENT
+                    </span>
+
+                    <h2
+                        class="modal-title"
+                        id="editMovieModalLabel"
+                    >
+                        Edit Movie
+                    </h2>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+
+            </div>
+
+
+            <form
+                id="editMovieForm"
+                method="post"
+                enctype="multipart/form-data"
+            >
+
+                {% csrf_token %}
+
+
+                <div class="modal-body">
+
+                    {% if edit_movie_open and edit_form.non_field_errors %}
+
+                        <div class="staff-form-error">
+
+                            {{ edit_form.non_field_errors }}
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <div class="staff-form-grid">
+
+
+                        <div class="staff-form-group">
+
+                            <label class="form-label">
+                                Movie Title
+                            </label>
+
+                            {% if edit_movie_open %}
+
+                                {{ edit_form.title }}
+
+                            {% else %}
+
+                                <input
+                                    type="text"
+                                    name="title"
+                                    id="edit_title"
+                                    class="form-control"
+                                >
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="staff-form-group">
+
+                            <label class="form-label">
+                                Slug
+                            </label>
+
+                            {% if edit_movie_open %}
+
+                                {{ edit_form.slug }}
+
+                            {% else %}
+
+                                <input
+                                    type="text"
+                                    name="slug"
+                                    id="edit_slug"
+                                    class="form-control"
+                                >
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="staff-form-group staff-form-full">
+
+                            <label class="form-label">
+                                Description
+                            </label>
+
+                            {% if edit_movie_open %}
+
+                                {{ edit_form.description }}
+
+                            {% else %}
+
+                                <textarea
+                                    name="description"
+                                    id="edit_description"
+                                    class="form-control"
+                                    rows="5"
+                                ></textarea>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="staff-form-group">
+
+                            <label class="form-label">
+                                Replace Poster
+                            </label>
+
+                            {% if edit_movie_open %}
+
+                                {{ edit_form.poster }}
+
+                            {% else %}
+
+                                <input
+                                    type="file"
+                                    name="poster"
+                                    id="edit_poster"
+                                    class="form-control"
+                                >
+
+                            {% endif %}
+
+                            <small class="staff-form-help">
+                                Leave empty to keep the current poster.
+                            </small>
+
+                        </div>
+
+
+                        <div class="staff-form-group">
+
+                            <label class="form-label">
+                                Poster URL
+                            </label>
+
+                            {% if edit_movie_open %}
+
+                                {{ edit_form.poster_url }}
+
+                            {% else %}
+
+                                <input
+                                    type="url"
+                                    name="poster_url"
+                                    id="edit_poster_url"
+                                    class="form-control"
+                                >
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="staff-form-group staff-form-full">
+
+                            <label class="form-label">
+                                Trailer URL
+                            </label>
+
+                            {% if edit_movie_open %}
+
+                                {{ edit_form.trailer_url }}
+
+                            {% else %}
+
+                                <input
+                                    type="url"
+                                    name="trailer_url"
+                                    id="edit_trailer_url"
+                                    class="form-control"
+                                >
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="staff-form-group">
+
+                            <label class="form-label">
+                                Duration
+                            </label>
+
+                            {% if edit_movie_open %}
+
+                                {{ edit_form.duration }}
+
+                            {% else %}
+
+                                <input
+                                    type="number"
+                                    name="duration"
+                                    id="edit_duration"
+                                    class="form-control"
+                                    min="1"
+                                >
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="staff-form-group">
+
+                            <label class="form-label">
+                                Release Date
+                            </label>
+
+                            {% if edit_movie_open %}
+
+                                {{ edit_form.release_date }}
+
+                            {% else %}
+
+                                <input
+                                    type="date"
+                                    name="release_date"
+                                    id="edit_release_date"
+                                    class="form-control"
+                                >
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="staff-form-group">
+
+                            <label class="form-label">
+                                Age Rating
+                            </label>
+
+                            {% if edit_movie_open %}
+
+                                {{ edit_form.age_rating }}
+
+                            {% else %}
+
+                                <input
+                                    type="text"
+                                    name="age_rating"
+                                    id="edit_age_rating"
+                                    class="form-control"
+                                >
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="staff-form-group">
+
+                            <label class="form-label">
+                                Status
+                            </label>
+
+                            {% if edit_movie_open %}
+
+                                {{ edit_form.status }}
+
+                            {% else %}
+
+                                <select
+                                    name="status"
+                                    id="edit_status"
+                                    class="form-select"
+                                >
+
+                                    {% for value, label in form.fields.status.choices %}
+
+                                        <option value="{{ value }}">
+                                            {{ label }}
+                                        </option>
+
+                                    {% endfor %}
+
+                                </select>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="modal-footer">
+
+                    <button
+                        type="button"
+                        class="btn staff-outline-btn"
+                        data-bs-dismiss="modal"
+                    >
+                        Cancel
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="btn staff-primary-btn"
+                    >
+
+                        <i class="bi bi-check-lg"></i>
+
+                        Save Changes
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ==========================================================
+     DELETE MOVIE MODAL
+========================================================== -->
+
+<div
+    class="modal fade"
+    id="deleteMovieModal"
+    tabindex="-1"
+    aria-labelledby="deleteMovieModalLabel"
+    aria-hidden="true"
+>
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content staff-modal staff-delete-modal">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <span class="section-label">
+                        DANGER ZONE
+                    </span>
+
+                    <h2
+                        class="modal-title"
+                        id="deleteMovieModalLabel"
+                    >
+                        Delete Movie
+                    </h2>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+
+            </div>
+
+
+            <form
+                id="deleteMovieForm"
+                method="post"
+            >
+
+                {% csrf_token %}
+
+
+                <div class="modal-body">
+
+                    <div class="staff-delete-icon">
+
+                        <i class="bi bi-trash3"></i>
+
+                    </div>
+
+
+                    <h3>
+                        Delete <span id="deleteMovieTitle"></span>?
+                    </h3>
+
+
+                    <p>
+                        This action cannot be undone. The movie
+                        will be permanently removed from CineFlow.
+                    </p>
+
+                </div>
+
+
+                <div class="modal-footer">
+
+                    <button
+                        type="button"
+                        class="btn staff-outline-btn"
+                        data-bs-dismiss="modal"
+                    >
+                        Cancel
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="btn staff-danger-btn"
+                    >
+
+                        <i class="bi bi-trash3"></i>
+
+                        Delete Movie
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+{% endblock %}
+
+
+
+{% block extra_js %}
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+
+        /* ====================================================
+           SEARCH
+        ==================================================== */
+
+        const searchInput =
+            document.getElementById("movieSearch");
+
+        const statusFilter =
+            document.getElementById("movieStatusFilter");
+
+        const movieRows =
+            document.querySelectorAll(".movie-row");
+
+
+        function filterMovies() {
+
+            const search =
+                searchInput.value
+                    .toLowerCase()
+                    .trim();
+
+            const status =
+                statusFilter.value;
+
+
+            movieRows.forEach(
+                function (row) {
+
+                    const title =
+                        row.dataset.title || "";
+
+                    const rowStatus =
+                        row.dataset.status || "";
+
+
+                    const matchesSearch =
+                        !search ||
+                        title.includes(search);
+
+
+                    const matchesStatus =
+                        !status ||
+                        rowStatus === status;
+
+
+                    row.style.display =
+                        matchesSearch && matchesStatus
+                            ? ""
+                            : "none";
+
+                }
+            );
+
+        }
+
+
+        searchInput.addEventListener(
+            "input",
+            filterMovies
+        );
+
+
+        statusFilter.addEventListener(
+            "change",
+            filterMovies
+        );
+
+
+        /* ====================================================
+           EDIT MOVIE MODAL
+        ==================================================== */
+
+        const editModal =
+            document.getElementById(
+                "editMovieModal"
+            );
+
+
+        const editForm =
+            document.getElementById(
+                "editMovieForm"
+            );
+
+
+        if (editModal) {
+
+            editModal.addEventListener(
+                "show.bs.modal",
+                function (event) {
+
+                    const button =
+                        event.relatedTarget;
+
+
+                    if (!button) {
+                        return;
+                    }
+
+
+                    const id =
+                        button.dataset.id;
+
+
+                    editForm.action =
+                        "{% url 'staff:movie_edit' 0 %}"
+                            .replace(
+                                "/0/edit/",
+                                "/" + id + "/edit/"
+                            );
+
+
+                    const fields = {
+
+                        title:
+                            document.getElementById(
+                                "edit_title"
+                            ),
+
+                        slug:
+                            document.getElementById(
+                                "edit_slug"
+                            ),
+
+                        description:
+                            document.getElementById(
+                                "edit_description"
+                            ),
+
+                        poster_url:
+                            document.getElementById(
+                                "edit_poster_url"
+                            ),
+
+                        trailer_url:
+                            document.getElementById(
+                                "edit_trailer_url"
+                            ),
+
+                        duration:
+                            document.getElementById(
+                                "edit_duration"
+                            ),
+
+                        release_date:
+                            document.getElementById(
+                                "edit_release_date"
+                            ),
+
+                        age_rating:
+                            document.getElementById(
+                                "edit_age_rating"
+                            ),
+
+                        status:
+                            document.getElementById(
+                                "edit_status"
+                            ),
+
+                    };
+
+
+                    if (
+                        fields.title
+                    ) {
+                        fields.title.value =
+                            button.dataset.title || "";
+                    }
+
+
+                    if (
+                        fields.slug
+                    ) {
+                        fields.slug.value =
+                            button.dataset.slug || "";
+                    }
+
+
+                    if (
+                        fields.description
+                    ) {
+                        fields.description.value =
+                            button.dataset.description || "";
+                    }
+
+
+                    if (
+                        fields.poster_url
+                    ) {
+                        fields.poster_url.value =
+                            button.dataset.posterUrl || "";
+                    }
+
+
+                    if (
+                        fields.trailer_url
+                    ) {
+                        fields.trailer_url.value =
+                            button.dataset.trailerUrl || "";
+                    }
+
+
+                    if (
+                        fields.duration
+                    ) {
+                        fields.duration.value =
+                            button.dataset.duration || "";
+                    }
+
+
+                    if (
+                        fields.release_date
+                    ) {
+                        fields.release_date.value =
+                            button.dataset.releaseDate || "";
+                    }
+
+
+                    if (
+                        fields.age_rating
+                    ) {
+                        fields.age_rating.value =
+                            button.dataset.ageRating || "";
+                    }
+
+
+                    if (
+                        fields.status
+                    ) {
+                        fields.status.value =
+                            button.dataset.status || "";
+                    }
+
+                }
+            );
+
+        }
+
+
+        /* ====================================================
+           DELETE MOVIE MODAL
+        ==================================================== */
+
+        const deleteModal =
+            document.getElementById(
+                "deleteMovieModal"
+            );
+
+
+        const deleteForm =
+            document.getElementById(
+                "deleteMovieForm"
+            );
+
+
+        const deleteTitle =
+            document.getElementById(
+                "deleteMovieTitle"
+            );
+
+
+        if (deleteModal) {
+
+            deleteModal.addEventListener(
+                "show.bs.modal",
+                function (event) {
+
+                    const button =
+                        event.relatedTarget;
+
+
+                    if (!button) {
+                        return;
+                    }
+
+
+                    const id =
+                        button.dataset.id;
+
+
+                    const title =
+                        button.dataset.title;
+
+
+                    deleteTitle.textContent =
+                        title;
+
+
+                    deleteForm.action =
+                        "{% url 'staff:movie_delete' 0 %}"
+                            .replace(
+                                "/0/delete/",
+                                "/" + id + "/delete/"
+                            );
+
+                }
+            );
+
+        }
+
+
+        /* ====================================================
+           REOPEN ADD MODAL AFTER VALIDATION ERROR
+        ==================================================== */
+
+        {% if add_movie_open %}
+
+        const addModal =
+            document.getElementById(
+                "addMovieModal"
+            );
+
+
+        if (addModal) {
+
+            const modal =
+                new bootstrap.Modal(
+                    addModal
+                );
+
+            modal.show();
+
+        }
+
+        {% endif %}
+
+
+        /* ====================================================
+           REOPEN EDIT MODAL AFTER VALIDATION ERROR
+        ==================================================== */
+
+        {% if edit_movie_open %}
+
+        const editModalElement =
+            document.getElementById(
+                "editMovieModal"
+            );
+
+
+        if (editModalElement) {
+
+            const modal =
+                new bootstrap.Modal(
+                    editModalElement
+                );
+
+            modal.show();
+
+        }
+
+        {% endif %}
+
+    }
+);
+
+</script>
+
+{% endblock %}

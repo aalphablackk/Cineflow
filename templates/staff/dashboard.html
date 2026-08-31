@@ -1,0 +1,361 @@
+{% extends "staff/base.html" %}
+
+
+{% block staff_title %}
+    Staff Dashboard | CineFlow
+{% endblock %}
+
+
+{% block staff_content %}
+
+<section class="staff-dashboard">
+
+    <div class="staff-container">
+
+        <!-- =====================================================
+             HEADER
+        ====================================================== -->
+
+        <div class="staff-page-header">
+
+            <div>
+
+                <span class="section-label">
+                    CINEFLOW MANAGEMENT
+                </span>
+
+                <h1>
+                    Dashboard
+                </h1>
+
+                <p>
+                    Manage CineFlow operations from one place.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             STATISTICS
+        ====================================================== -->
+
+        <div class="staff-stat-grid">
+
+            <div class="staff-stat-card">
+
+                <div class="staff-stat-icon">
+                    <i class="bi bi-film"></i>
+                </div>
+
+                <div>
+
+                    <span>
+                        Movies
+                    </span>
+
+                    <strong>
+                        {{ movie_count }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="staff-stat-card">
+
+                <div class="staff-stat-icon">
+                    <i class="bi bi-building"></i>
+                </div>
+
+                <div>
+
+                    <span>
+                        Cinemas
+                    </span>
+
+                    <strong>
+                        {{ cinema_count }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="staff-stat-card">
+
+                <div class="staff-stat-icon">
+                    <i class="bi bi-ticket-perforated"></i>
+                </div>
+
+                <div>
+
+                    <span>
+                        Bookings
+                    </span>
+
+                    <strong>
+                        {{ booking_count }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="staff-stat-card">
+
+                <div class="staff-stat-icon">
+                    <i class="bi bi-headset"></i>
+                </div>
+
+                <div>
+
+                    <span>
+                        Open Support
+                    </span>
+
+                    <strong>
+                         {{ open_support_count }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             MANAGEMENT
+        ====================================================== -->
+
+        <div class="staff-section">
+
+            <div class="staff-section-header">
+
+                <div>
+
+                    <span class="section-label">
+                        MANAGEMENT
+                    </span>
+
+                    <h2>
+                        CineFlow Operations
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="staff-management-grid">
+
+
+                <!-- MOVIES -->
+
+                <a
+                    href="{% url "staff:movies" %}"
+                    class="staff-management-card"
+                >
+
+                    <div class="staff-management-icon">
+                        <i class="bi bi-film"></i>
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Movies
+                        </h3>
+
+                        <p>
+                            Add, edit and manage movies.
+                        </p>
+
+                    </div>
+
+                    <i class="bi bi-arrow-right"></i>
+
+                </a>
+
+
+                <!-- CINEMAS -->
+
+                <a
+                    href="{% url "staff:cinemas" %}"
+                    class="staff-management-card"
+                >
+
+                    <div class="staff-management-icon">
+                        <i class="bi bi-building"></i>
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Cinemas
+                        </h3>
+
+                        <p>
+                            Manage cinema locations.
+                        </p>
+
+                    </div>
+
+                    <i class="bi bi-arrow-right"></i>
+
+                </a>
+
+
+                <!-- SCREENS -->
+
+                <a
+                    href="#"
+                    class="staff-management-card"
+                >
+
+                    <div class="staff-management-icon">
+                        <i class="bi bi-display"></i>
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Screens
+                        </h3>
+
+                        <p>
+                            Manage screens and seating.
+                        </p>
+
+                    </div>
+
+                    <i class="bi bi-arrow-right"></i>
+
+                </a>
+
+
+                <!-- SHOWTIMES -->
+
+                <a
+                    href="#"
+                    class="staff-management-card"
+                >
+
+                    <div class="staff-management-icon">
+                        <i class="bi bi-calendar3"></i>
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Showtimes
+                        </h3>
+
+                        <p>
+                            Schedule and manage showtimes.
+                        </p>
+
+                    </div>
+
+                    <i class="bi bi-arrow-right"></i>
+
+                </a>
+
+
+                <!-- BOOKINGS -->
+
+                <a
+                    href="#"
+                    class="staff-management-card"
+                >
+
+                    <div class="staff-management-icon">
+                        <i class="bi bi-ticket-perforated"></i>
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Bookings
+                        </h3>
+
+                        <p>
+                            View and manage customer bookings.
+                        </p>
+
+                    </div>
+
+                    <i class="bi bi-arrow-right"></i>
+
+                </a>
+
+
+                <!-- CUSTOMERS -->
+
+                <a
+                    href="#"
+                    class="staff-management-card"
+                >
+
+                    <div class="staff-management-icon">
+                        <i class="bi bi-people"></i>
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Customers
+                        </h3>
+
+                        <p>
+                            View CineFlow customers.
+                        </p>
+
+                    </div>
+
+                    <i class="bi bi-arrow-right"></i>
+
+                </a>
+
+
+                <!-- SUPPORT -->
+
+                <a
+                    href="#"
+                    class="staff-management-card"
+                >
+
+                    <div class="staff-management-icon">
+                        <i class="bi bi-headset"></i>
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Support
+                        </h3>
+
+                        <p>
+                            Respond to customer requests.
+                        </p>
+
+                    </div>
+
+                    <i class="bi bi-arrow-right"></i>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

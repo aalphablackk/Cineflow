@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    Cinemas | CineFlow
+{% endblock %}
+
+
+{% block content %}
+
+<section class="cinemas-page">
+
+    <div class="container">
+
+        <!-- =====================================================
+             PAGE HEADER
+        ====================================================== -->
+
+        <div class="cinemas-page-header">
+
+            <div>
+
+                <span class="section-label">
+                    CINEFLOW CINEMAS
+                </span>
+
+                <h1>
+                    Find a cinema near you.
+                </h1>
+
+                <p>
+                    Explore our cinemas, discover available
+                    screens and find the perfect place for
+                    your next movie.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             CINEMA GRID
+        ====================================================== -->
+
+        <div class="row g-4">
+
+            {% for cinema in cinemas %}
+
+                <div class="col-12 col-md-6 col-lg-4">
+
+                    <article class="cinema-card">
+
+                        <!-- =================================================
+                             CARD ICON
+                        ================================================== -->
+
+                        <div class="cinema-card-top">
+
+                            <div class="cinema-card-icon">
+
+                                <i class="bi bi-building"></i>
+
+                            </div>
+
+
+                            {% if cinema.is_active %}
+
+                                <span class="cinema-status active">
+
+                                    <i class="bi bi-check-circle-fill"></i>
+
+                                    Open
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="cinema-status inactive">
+
+                                    <i class="bi bi-x-circle-fill"></i>
+
+                                    Closed
+
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- =================================================
+                             CINEMA INFORMATION
+                        ================================================== -->
+
+                        <div class="cinema-card-body">
+
+                            <span class="cinema-card-location">
+
+                                <i class="bi bi-geo-alt"></i>
+
+                                {{ cinema.city }}, {{ cinema.state }}
+
+                            </span>
+
+
+                            <h2 class="cinema-card-title">
+
+                                {{ cinema.name }}
+
+                            </h2>
+
+
+                            {% if cinema.address %}
+
+                                <p class="cinema-card-address">
+
+                                    {{ cinema.address }}
+
+                                </p>
+
+                            {% endif %}
+
+
+                            <!-- =================================================
+                                 CINEMA META
+                            ================================================== -->
+
+                            <div class="cinema-card-meta">
+
+                                <span>
+
+                                    <i class="bi bi-display"></i>
+
+                                    {{ cinema.screens_count }}
+                                    {% if cinema.screens_count == 1 %}
+                                        Screen
+                                    {% else %}
+                                        Screens
+                                    {% endif %}
+
+                                </span>
+
+
+                                {% if cinema.phone %}
+
+                                    <span>
+
+                                        <i class="bi bi-telephone"></i>
+
+                                        {{ cinema.phone }}
+
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =================================================
+                             CARD FOOTER
+                        ================================================== -->
+
+                        <div class="cinema-card-footer">
+
+                            <a
+                                href="{% url 'cinemas:cinema_detail' cinema.slug %}"
+                                class="cinema-card-link"
+                            >
+
+                                Explore Cinema
+
+                                <i class="bi bi-arrow-right"></i>
+
+                            </a>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+
+            {% empty %}
+
+                <!-- =====================================================
+                     EMPTY STATE
+                ====================================================== -->
+
+                <div class="col-12">
+
+                    <div class="empty-state">
+
+                        <div class="empty-state-icon">
+
+                            <i class="bi bi-building-x"></i>
+
+                        </div>
+
+                        <h2>
+                            No cinemas available.
+                        </h2>
+
+                        <p>
+                            There are currently no active cinemas
+                            available. Please check back soon.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

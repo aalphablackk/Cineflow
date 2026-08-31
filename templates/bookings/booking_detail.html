@@ -1,0 +1,472 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    {{ booking.booking_reference }} | CineFlow
+{% endblock %}
+
+
+{% block content %}
+
+<section class="booking-detail-page">
+
+    <div class="container">
+
+        <!-- =====================================================
+             BACK
+        ====================================================== -->
+
+        <div class="booking-detail-back">
+
+            <a href="{% url 'bookings:my_bookings' %}">
+                <i class="bi bi-arrow-left"></i>
+                My Bookings
+            </a>
+
+        </div>
+
+
+        <!-- =====================================================
+             HEADER
+        ====================================================== -->
+
+        <div class="booking-detail-header">
+
+            <div>
+
+                <span class="section-label">
+                    BOOKING DETAILS
+                </span>
+
+                <h1>
+                    {{ booking.showtime.movie.title }}
+                </h1>
+
+                <p>
+                    Booking reference:
+                    <strong>
+                        {{ booking.booking_reference }}
+                    </strong>
+                </p>
+
+            </div>
+
+
+            <div class="booking-detail-status">
+
+                {% if booking.status == "held" %}
+
+                    <span class="booking-status held">
+                        <i class="bi bi-clock"></i>
+                        Payment Pending
+                    </span>
+
+                {% elif booking.status == "confirmed" %}
+
+                    <span class="booking-status confirmed">
+                        <i class="bi bi-check-circle-fill"></i>
+                        Confirmed
+                    </span>
+
+                {% elif booking.status == "cancelled" %}
+
+                    <span class="booking-status cancelled">
+                        <i class="bi bi-x-circle-fill"></i>
+                        Cancelled
+                    </span>
+
+                {% elif booking.status == "expired" %}
+
+                    <span class="booking-status expired">
+                        <i class="bi bi-clock-history"></i>
+                        Expired
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             MAIN CONTENT
+        ====================================================== -->
+
+        <div class="row g-4">
+
+
+            <!-- =================================================
+                 LEFT
+            ================================================== -->
+
+            <div class="col-lg-8">
+
+                <div class="booking-detail-card">
+
+
+                    <!-- MOVIE -->
+
+                    <div class="booking-detail-movie">
+
+                        <div class="booking-detail-poster">
+
+                            {% if booking.showtime.movie.poster_source %}
+
+                                <img
+                                    src="{{ booking.showtime.movie.poster_source }}"
+                                    alt="{{ booking.showtime.movie.title }}"
+                                >
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div>
+
+                            <span class="section-label">
+                                MOVIE
+                            </span>
+
+                            <h2>
+                                {{ booking.showtime.movie.title }}
+                            </h2>
+
+                            <p>
+                                {{ booking.showtime.movie.age_rating }}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <hr>
+
+
+                    <!-- SHOWTIME -->
+
+                    <div class="booking-detail-section">
+
+                        <span class="section-label">
+                            SHOWTIME
+                        </span>
+
+                        <div class="booking-detail-grid">
+
+                            <div>
+
+                                <span>
+                                    Cinema
+                                </span>
+
+                                <strong>
+                                    {{ booking.showtime.screen.cinema.name }}
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Screen
+                                </span>
+
+                                <strong>
+                                    {{ booking.showtime.screen.name }}
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Date
+                                </span>
+
+                                <strong>
+                                    {{ booking.showtime.show_date|date:"l, F j, Y" }}
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Time
+                                </span>
+
+                                <strong>
+                                    {{ booking.showtime.start_time|time:"g:i A" }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <hr>
+
+
+                    <!-- TICKETS -->
+
+                    <div class="booking-detail-section">
+
+                        <span class="section-label">
+                            TICKETS
+                        </span>
+
+
+                        <div class="booking-ticket-summary">
+
+                            <div>
+
+                                <span>
+                                    Number of Tickets
+                                </span>
+
+                                <strong>
+                                    {{ booking.ticket_quantity }}
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Ticket Price
+                                </span>
+
+                                <strong>
+                                    ₦{{ booking.showtime.ticket_price }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        {% if booking_seats %}
+
+                            <div class="booking-seats">
+
+                                <h3>
+                                    Selected Seats
+                                </h3>
+
+
+                                <div class="booking-seat-list">
+
+                                    {% for booking_seat in booking_seats %}
+
+                                        <div class="booking-seat">
+
+                                            <i class="bi bi-grid-3x3-gap"></i>
+
+                                            <strong>
+                                                {{ booking_seat.seat.label }}
+                                            </strong>
+
+                                        </div>
+
+                                    {% endfor %}
+
+                                </div>
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <hr>
+
+
+                    <!-- TOTAL -->
+
+                    <div class="booking-detail-total">
+
+                        <span>
+                            Total Amount
+                        </span>
+
+                        <strong>
+                            ₦{{ booking.total_amount }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 RIGHT
+            ================================================== -->
+
+            <div class="col-lg-4">
+
+                <aside class="booking-detail-sidebar">
+
+
+                    <!-- BOOKING REFERENCE -->
+
+                    <div class="booking-reference-card">
+
+                        <span class="section-label">
+                            BOOKING REFERENCE
+                        </span>
+
+                        <strong>
+                            {{ booking.booking_reference }}
+                        </strong>
+
+                    </div>
+
+
+                    <!-- HOLD -->
+
+                    {% if booking.status == "held" %}
+
+                        <div class="booking-hold-card">
+
+                            <i class="bi bi-clock"></i>
+
+                            <div>
+
+                                <strong>
+                                    Your booking is being held
+                                </strong>
+
+                                <p>
+                                    Complete payment before your
+                                    hold expires.
+                                </p>
+
+                                {% if booking.hold_expires_at %}
+
+                                    <small>
+                                        Hold expires:
+                                        {{ booking.hold_expires_at|date:"M j, Y g:i A" }}
+                                    </small>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- CONFIRMED -->
+
+                    {% if booking.status == "confirmed" %}
+
+                        <div class="booking-confirmed-card">
+
+                            <i class="bi bi-check-circle-fill"></i>
+
+                            <div>
+
+                                <strong>
+                                    Booking Confirmed
+                                </strong>
+
+                                <p>
+                                    Your tickets have been successfully
+                                    confirmed.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- EXPIRED -->
+
+                    {% if booking.status == "expired" %}
+
+                        <div class="booking-expired-card">
+
+                            <i class="bi bi-clock-history"></i>
+
+                            <div>
+
+                                <strong>
+                                    Booking Expired
+                                </strong>
+
+                                <p>
+                                    The reservation hold has expired.
+                                    These seats are available again.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- ACTIONS -->
+
+                    <div class="booking-detail-actions">
+
+                        {% if booking.status == "held" %}
+
+                            <a
+                                href="{% url 'bookings:checkout' booking.id %}"
+                                class="btn cine-btn-primary w-100"
+                            >
+                                Continue to Checkout
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+
+                        {% endif %}
+
+
+                        <!-- CUSTOMER SUPPORT -->
+
+                        <a
+                            href="{% url 'support:create_booking_ticket' booking.booking_reference %}"
+                            class="btn cine-btn-outline booking-support-btn"
+                        >
+                            <i class="bi bi-headset"></i>
+                            Need Help With This Booking?
+                        </a>
+
+
+                        <!-- VIEW MOVIE -->
+
+                        <a
+                            href="{% url 'movies:movie_detail' booking.showtime.movie.slug %}"
+                            class="btn cine-btn-outline w-100"
+                        >
+                            View Movie
+                        </a>
+
+                    </div>
+
+                </aside>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

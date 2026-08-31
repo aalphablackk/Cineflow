@@ -1,0 +1,1218 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+
+{% block title %}
+    Book {{ showtime.movie.title }} | CineFlow
+{% endblock %}
+
+
+{% block content %}
+
+
+<section class="booking-page">
+
+    <div class="container">
+
+
+        <!-- =================================================
+             PAGE HEADER
+        ================================================== -->
+
+        <div class="booking-header">
+
+            <a
+                href="{% url 'movies:movie_detail' showtime.movie.slug %}"
+                class="booking-back"
+            >
+
+                <i class="bi bi-arrow-left"></i>
+
+                Back to Movie
+
+            </a>
+
+
+            <span class="section-label">
+                BOOK YOUR EXPERIENCE
+            </span>
+
+
+            <h1>
+                {{ showtime.movie.title }}
+            </h1>
+
+
+            <div class="booking-showtime-meta">
+
+                <span>
+
+                    <i class="bi bi-calendar3"></i>
+
+                    {{ showtime.show_date|date:"l, F j, Y" }}
+
+                </span>
+
+
+                <span>
+
+                    <i class="bi bi-clock"></i>
+
+                    {{ showtime.start_time|time:"g:i A" }}
+
+                </span>
+
+
+                <span>
+
+                    <i class="bi bi-building"></i>
+
+                    {{ showtime.screen.cinema.name }}
+
+                </span>
+
+
+                <span>
+                    {{ showtime.screen.name }}
+                </span>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             BOOKING CONTENT
+        ================================================== -->
+
+        <div class="row g-4">
+
+
+            <!-- =============================================
+                 BOOKING FORM
+            ============================================== -->
+
+            <div class="col-lg-8">
+
+
+                <form
+                    method="post"
+                    id="booking-form"
+                    class="booking-panel"
+                >
+
+                    {% csrf_token %}
+
+
+                    <!--
+                        Used by JavaScript for visual price
+                        calculations only.
+
+                        The backend remains responsible for
+                        calculating the real booking amount.
+                    -->
+
+                    <input
+                        type="hidden"
+                        id="ticket-price"
+                        value="{{ showtime.ticket_price }}"
+                    >
+
+
+                    {% if form.non_field_errors %}
+
+                        <div class="alert alert-danger">
+
+                            {{ form.non_field_errors }}
+
+                        </div>
+
+                    {% endif %}
+
+
+
+                    <!-- =====================================
+                         ASSIGNED SEATING
+                    ====================================== -->
+
+                    {% if showtime.booking_mode == "assigned" %}
+
+
+                        <div class="booking-panel-header">
+
+                            <div>
+
+                                <span class="section-label">
+                                    SEAT SELECTION
+                                </span>
+
+                                <h2>
+                                    Choose your seats
+                                </h2>
+
+                                <p>
+                                    Select the seats you'd like
+                                    to reserve.
+                                </p>
+
+                            </div>
+
+
+                            <span class="booking-mode-badge">
+
+                                <i class="bi bi-grid-3x3-gap"></i>
+
+                                Assigned Seating
+
+                            </span>
+
+                        </div>
+
+
+
+                        <!-- =================================
+                             SEAT AVAILABILITY
+                        ================================== -->
+
+                        <div class="availability-display">
+
+                            <i class="bi bi-check-circle"></i>
+
+                            <div>
+
+                                <strong>
+
+                                    {% if available_seat_count > 0 %}
+
+                                        {{ available_seat_count }}
+                                        seats available
+
+                                    {% else %}
+
+                                        No seats available
+
+                                    {% endif %}
+
+                                </strong>
+
+                                <span>
+                                    Select your preferred seats.
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- =================================
+                             SCREEN
+                        ================================== -->
+
+                        <div class="cinema-screen">
+
+                            <div class="screen-line"></div>
+
+                            <span>
+                                SCREEN
+                            </span>
+
+                        </div>
+
+
+
+                        <!-- =================================
+                             SEAT MAP
+                        ================================== -->
+
+                        <div class="seat-selection">
+
+                            <div class="seat-map">
+
+
+                                {% regroup seat_map by seat.row as row_groups %}
+
+
+                                {% for row_group in row_groups %}
+
+
+                                    <div class="seat-row">
+
+
+                                        <span class="seat-row-label">
+                                            {{ row_group.grouper }}
+                                        </span>
+
+
+                                        <div class="seat-row-seats">
+
+
+                                            {% for item in row_group.list %}
+
+
+                                                {% if item.is_available %}
+
+
+                                                    <label
+                                                        class="cinema-seat available"
+                                                        title="Seat {{ item.seat.label }}"
+                                                    >
+
+                                                        <input
+                                                            type="checkbox"
+                                                            name="seat_ids"
+                                                            value="{{ item.seat.id }}"
+                                                            hidden
+                                                        >
+
+                                                        <span>
+                                                            {{ item.seat.label }}
+                                                        </span>
+
+                                                    </label>
+
+
+                                                {% else %}
+
+
+                                                    <div
+                                                        class="cinema-seat occupied"
+                                                        title="Seat {{ item.seat.label }} is unavailable"
+                                                    >
+
+                                                        <span>
+                                                            {{ item.seat.label }}
+                                                        </span>
+
+                                                    </div>
+
+
+                                                {% endif %}
+
+
+                                            {% endfor %}
+
+
+                                        </div>
+
+                                    </div>
+
+
+                                {% empty %}
+
+
+                                    <div class="empty-state">
+
+                                        <i class="bi bi-x-circle"></i>
+
+                                        <h3>
+                                            No seats available
+                                        </h3>
+
+                                        <p>
+                                            All seats for this showtime
+                                            are currently unavailable.
+                                        </p>
+
+                                    </div>
+
+
+                                {% endfor %}
+
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- =================================
+                             SEAT LEGEND
+                        ================================== -->
+
+                        <div class="seat-legend">
+
+
+                            <div class="seat-legend-item">
+
+                                <span class="legend-seat available"></span>
+
+                                <span>
+                                    Available
+                                </span>
+
+                            </div>
+
+
+                            <div class="seat-legend-item">
+
+                                <span class="legend-seat selected"></span>
+
+                                <span>
+                                    Selected
+                                </span>
+
+                            </div>
+
+
+                            <div class="seat-legend-item">
+
+                                <span class="legend-seat occupied"></span>
+
+                                <span>
+                                    Occupied
+                                </span>
+
+                            </div>
+
+
+                        </div>
+
+
+
+                        <!-- =================================
+                             SELECTION SUMMARY
+                        ================================== -->
+
+                        <div class="seat-selection-summary">
+
+                            <div>
+
+                                <span class="summary-label">
+                                    Selected Seats
+                                </span>
+
+                                <strong id="selected-seat-count">
+                                    0 seats
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span class="summary-label">
+                                    Total
+                                </span>
+
+                                <strong id="seat-selection-total">
+                                    ₦0.00
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        {% if form.seat_ids.errors %}
+
+                            <div class="text-danger mt-2">
+
+                                {{ form.seat_ids.errors }}
+
+                            </div>
+
+                        {% endif %}
+
+
+
+                    <!-- =====================================
+                         GENERAL ADMISSION
+                    ====================================== -->
+
+                    {% else %}
+
+
+                        <div class="booking-panel-header">
+
+                            <div>
+
+                                <span class="section-label">
+                                    TICKET QUANTITY
+                                </span>
+
+                                <h2>
+                                    How many tickets?
+                                </h2>
+
+                                <p>
+                                    Choose the number of tickets
+                                    you'd like to purchase.
+                                </p>
+
+                            </div>
+
+
+                            <span class="booking-mode-badge">
+
+                                <i class="bi bi-people"></i>
+
+                                General Admission
+
+                            </span>
+
+                        </div>
+
+
+
+                        <!-- =================================
+                             TICKET AVAILABILITY
+                        ================================== -->
+
+                        <div class="availability-display">
+
+                            {% if available_capacity > 0 %}
+
+                                <i class="bi bi-check-circle"></i>
+
+                            {% else %}
+
+                                <i class="bi bi-x-circle"></i>
+
+                            {% endif %}
+
+
+                            <div>
+
+                                <strong>
+
+                                    {% if available_capacity > 0 %}
+
+                                        {{ available_capacity }}
+                                        tickets available
+
+                                    {% else %}
+
+                                        Sold out
+
+                                    {% endif %}
+
+                                </strong>
+
+
+                                <span>
+                                    {% if available_capacity > 0 %}
+                                        Limited availability.
+                                    {% else %}
+                                        This showtime is currently full.
+                                    {% endif %}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- =================================
+                             GENERAL ADMISSION INFORMATION
+                        ================================== -->
+
+                        <div class="general-admission-info">
+
+                            <div class="capacity-icon">
+
+                                <i class="bi bi-ticket-perforated"></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <strong>
+                                    General Admission
+                                </strong>
+
+                                <p>
+                                    Seats are not individually
+                                    assigned. Your group will
+                                    be accommodated together
+                                    where possible.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <div class="ticket-selector">
+
+                            <div class="ticket-selector-header">
+
+                                <div>
+
+                                    <span class="summary-label">
+                                        Tickets
+                                    </span>
+
+                                    <strong>
+                                        Choose quantity
+                                    </strong>
+
+                                </div>
+
+                                <span class="ticket-available">
+
+                                    {{ available_capacity }}
+                                    available
+
+                                </span>
+
+                            </div>
+
+
+                            <div class="ticket-counter">
+
+                                <button
+                                    type="button"
+                                    class="ticket-counter-btn"
+                                    id="decrease-ticket"
+                                    aria-label="Decrease ticket quantity"
+                                >
+                                    <i class="bi bi-dash"></i>
+                                </button>
+
+
+                                <div class="ticket-counter-value">
+
+                                    <input
+                                        type="number"
+                                        name="ticket_quantity"
+                                        id="id_ticket_quantity"
+                                        value="{% if available_capacity > 0 %}1{% else %}0{% endif %}"
+                                        min="1"
+                                        max="{{ available_capacity }}"
+                                        readonly
+                                    >
+
+                                    <span>
+                                        tickets
+                                    </span>
+
+                                </div>
+
+
+                                <button
+                                    type="button"
+                                    class="ticket-counter-btn"
+                                    id="increase-ticket"
+                                    aria-label="Increase ticket quantity"
+                                >
+                                    <i class="bi bi-plus"></i>
+                                </button>
+
+                            </div>
+
+
+                            {% if form.ticket_quantity.errors %}
+
+                                <div class="text-danger mt-2">
+
+                                    {{ form.ticket_quantity.errors }}
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+
+
+                    {% endif %}
+
+
+
+                    <!-- =====================================
+                         SUBMIT
+                    ====================================== -->
+
+                    <button
+                        type="submit"
+                        class="btn cine-btn-primary booking-submit"
+                        id="booking-submit"
+                    >
+                        Continue
+                        <i class="bi bi-arrow-right"></i>
+                    </button>
+
+
+                </form>
+
+            </div>
+
+
+
+            <!-- =============================================
+                 BOOKING SUMMARY
+            ============================================== -->
+
+            <div class="col-lg-4">
+
+                <aside class="booking-summary">
+
+
+                    <span class="section-label">
+                        YOUR BOOKING
+                    </span>
+
+
+                    <h2>
+                        Booking Summary
+                    </h2>
+
+
+
+                    <!-- =================================
+                         MOVIE
+                    ================================== -->
+
+                    <div class="summary-movie">
+
+                        <div class="summary-poster">
+
+
+                            {% if showtime.movie.poster_source %}
+
+                                <img
+                                    src="{{ showtime.movie.poster_source }}"
+                                    alt="{{ showtime.movie.title }}"
+                                >
+
+                            {% endif %}
+
+
+                        </div>
+
+
+                        <div>
+
+                            <h3>
+                                {{ showtime.movie.title }}
+                            </h3>
+
+
+                            <span>
+                                {{ showtime.movie.age_rating }}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <hr>
+
+
+
+                    <!-- =================================
+                         CINEMA
+                    ================================== -->
+
+                    <div class="summary-row">
+
+                        <span>
+                            Cinema
+                        </span>
+
+                        <strong>
+                            {{ showtime.screen.cinema.name }}
+                        </strong>
+
+                    </div>
+
+
+
+                    <!-- =================================
+                         SCREEN
+                    ================================== -->
+
+                    <div class="summary-row">
+
+                        <span>
+                            Screen
+                        </span>
+
+                        <strong>
+                            {{ showtime.screen.name }}
+                        </strong>
+
+                    </div>
+
+
+
+                    <!-- =================================
+                         DATE
+                    ================================== -->
+
+                    <div class="summary-row">
+
+                        <span>
+                            Date
+                        </span>
+
+                        <strong>
+                            {{ showtime.show_date|date:"M j, Y" }}
+                        </strong>
+
+                    </div>
+
+
+
+                    <!-- =================================
+                         TIME
+                    ================================== -->
+
+                    <div class="summary-row">
+
+                        <span>
+                            Time
+                        </span>
+
+                        <strong>
+                            {{ showtime.start_time|time:"g:i A" }}
+                        </strong>
+
+                    </div>
+
+
+
+                    <!-- =================================
+                         PRICE
+                    ================================== -->
+
+                    <div class="summary-row">
+
+                        <span>
+                            Ticket Price
+                        </span>
+
+                        <strong>
+                            ₦{{ showtime.ticket_price }}
+                        </strong>
+
+                    </div>
+
+
+
+                    <hr>
+
+
+
+                    <!-- =================================
+                         TOTAL
+                    ================================== -->
+
+                    <div class="summary-total">
+
+                        <span>
+                            Total
+                        </span>
+
+                        <strong id="booking-total">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                </aside>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+
+{% endblock %}
+
+
+
+{% block extra_js %}
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    console.log("CineFlow booking JavaScript loaded");
+
+
+    /* ========================================================
+       COMMON ELEMENTS
+    ======================================================== */
+
+    const ticketPriceElement =
+        document.getElementById("ticket-price");
+
+    const bookingSubmit =
+    document.getElementById("booking-submit");
+
+    const bookingTotal =
+        document.getElementById("booking-total");
+
+
+    if (!ticketPriceElement) {
+
+        console.error(
+            "CineFlow: ticket-price element not found."
+        );
+
+        return;
+    }
+
+
+    const ticketPrice =
+        parseFloat(
+            ticketPriceElement.value
+        );
+
+
+    if (Number.isNaN(ticketPrice)) {
+
+        console.error(
+            "CineFlow: invalid ticket price."
+        );
+
+        return;
+    }
+
+
+
+    /* ========================================================
+       CURRENCY FORMATTER
+    ======================================================== */
+
+    function formatCurrency(amount) {
+
+        return new Intl.NumberFormat(
+            "en-NG",
+            {
+                style: "currency",
+                currency: "NGN",
+                minimumFractionDigits: 2,
+            }
+        ).format(amount);
+
+    }
+
+
+
+    /* ========================================================
+       ASSIGNED SEATING
+    ======================================================== */
+
+    const seatInputs =
+        document.querySelectorAll(
+            'input[name="seat_ids"]'
+        );
+
+
+    const selectedSeatCount =
+        document.getElementById(
+            "selected-seat-count"
+        );
+
+
+    const seatSelectionTotal =
+        document.getElementById(
+            "seat-selection-total"
+        );
+
+
+    const availableSeatCount =
+        Number(
+            "{{ available_seat_count|default:0 }}"
+        );
+
+
+    function updateSeatSummary() {
+
+        const selectedSeats =
+            document.querySelectorAll(
+                'input[name="seat_ids"]:checked'
+            );
+
+
+        const count =
+            selectedSeats.length;
+
+
+        const total =
+            count * ticketPrice;
+
+
+        if (selectedSeatCount) {
+
+            selectedSeatCount.textContent =
+                count === 1
+                    ? "1 seat"
+                    : `${count} seats`;
+
+        }
+
+
+        if (seatSelectionTotal) {
+
+            seatSelectionTotal.textContent =
+                formatCurrency(total);
+
+        }
+
+
+        if (bookingTotal) {
+
+            bookingTotal.textContent =
+                count > 0
+                    ? formatCurrency(total)
+                    : "—";
+
+        }
+        if (bookingSubmit) {
+
+            bookingSubmit.disabled =
+                count === 0;
+
+        }
+
+    }
+
+
+    if (seatInputs.length > 0) {
+
+        console.log(
+            "Assigned seating detected:",
+            seatInputs.length,
+            "seat inputs"
+        );
+
+
+        seatInputs.forEach(function (seatInput) {
+
+            seatInput.addEventListener(
+                "change",
+                function () {
+
+                    updateSeatSummary();
+
+                }
+            );
+
+        });
+
+
+        updateSeatSummary();
+
+    }
+
+
+
+    /* ========================================================
+       GENERAL ADMISSION
+    ======================================================== */
+
+    const ticketQuantity =
+        document.getElementById(
+            "id_ticket_quantity"
+        );
+
+
+    const decreaseTicket =
+        document.getElementById(
+            "decrease-ticket"
+        );
+
+
+    const increaseTicket =
+        document.getElementById(
+            "increase-ticket"
+        );
+
+
+    function updateTicketSelector() {
+
+        if (
+            !ticketQuantity ||
+            !decreaseTicket ||
+            !increaseTicket
+        ) {
+            return;
+        }
+
+
+        const availableCapacity =
+            parseInt(
+                ticketQuantity.max,
+                10
+            ) || 0;
+
+
+        if (availableCapacity <= 0) {
+
+            ticketQuantity.value = 0;
+
+            decreaseTicket.disabled = true;
+            increaseTicket.disabled = true;
+
+            if (bookingTotal) {
+
+                bookingTotal.textContent = "—";
+
+            }
+
+            if (bookingSubmit) {
+
+                bookingSubmit.disabled = true;
+
+            }
+
+            return;
+        }
+
+
+        let quantity =
+            parseInt(
+                ticketQuantity.value,
+                10
+            ) || 1;
+
+
+        if (quantity < 1) {
+
+            quantity = 1;
+
+        }
+
+
+        if (quantity > availableCapacity) {
+
+            quantity =
+                availableCapacity;
+
+        }
+
+
+        ticketQuantity.value =
+            quantity;
+
+
+        decreaseTicket.disabled =
+            quantity <= 1;
+
+
+        increaseTicket.disabled =
+            quantity >= availableCapacity;
+
+
+        const total =
+            quantity * ticketPrice;
+
+
+        if (bookingTotal) {
+
+            bookingTotal.textContent =
+                formatCurrency(total);
+
+        }
+        if (bookingSubmit) {
+
+            bookingSubmit.disabled =
+                quantity < 1;
+
+        }
+
+    }
+
+
+    if (
+        ticketQuantity &&
+        decreaseTicket &&
+        increaseTicket
+    ) {
+
+        console.log(
+            "General admission ticket selector detected"
+        );
+
+
+        decreaseTicket.addEventListener(
+            "click",
+            function () {
+
+                let quantity =
+                    parseInt(
+                        ticketQuantity.value,
+                        10
+                    ) || 1;
+
+
+                if (quantity > 1) {
+
+                    quantity -= 1;
+
+                }
+
+
+                ticketQuantity.value =
+                    quantity;
+
+
+                updateTicketSelector();
+
+            }
+        );
+
+
+        increaseTicket.addEventListener(
+            "click",
+            function () {
+
+                const availableCapacity =
+                    parseInt(
+                        ticketQuantity.max,
+                        10
+                    ) || 0;
+
+
+                let quantity =
+                    parseInt(
+                        ticketQuantity.value,
+                        10
+                    ) || 1;
+
+
+                if (
+                    quantity < availableCapacity
+                ) {
+
+                    quantity += 1;
+
+                }
+
+
+                ticketQuantity.value =
+                    quantity;
+
+
+                updateTicketSelector();
+
+            }
+        );
+
+
+        updateTicketSelector();
+
+    }
+
+});
+
+</script>
+
+{% endblock %}

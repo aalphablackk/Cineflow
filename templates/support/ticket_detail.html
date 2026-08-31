@@ -1,0 +1,350 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    Support #{{ ticket.id }} | CineFlow
+{% endblock %}
+
+
+{% block content %}
+
+<section class="support-page">
+
+    <div class="container">
+
+        <!-- =====================================================
+             HEADER
+        ====================================================== -->
+
+        <div class="page-header">
+
+            <a
+                href="{% url 'support:my_tickets' %}"
+                class="booking-back"
+            >
+
+                <i class="bi bi-arrow-left"></i>
+
+                Back to Support
+
+            </a>
+
+
+            <span class="section-label">
+                SUPPORT REQUEST #{{ ticket.id }}
+            </span>
+
+            <h1>
+                {{ ticket.subject }}
+            </h1>
+
+            <p>
+                CineFlow Support
+            </p>
+
+        </div>
+
+
+        <div class="support-conversation-layout">
+
+            <!-- =================================================
+                 CONVERSATION
+            ================================================== -->
+
+            <div class="support-conversation-card">
+
+                <div class="support-conversation-header">
+
+                    <div>
+
+                        <span class="section-label">
+                            CONVERSATION
+                        </span>
+
+                        <h2>
+                            Support Messages
+                        </h2>
+
+                    </div>
+
+
+                    <span
+                        class="support-status {{ ticket.status }}"
+                    >
+                        {{ ticket.get_status_display }}
+                    </span>
+
+                </div>
+
+
+                <div class="support-messages">
+
+                    {% for message in ticket.messages.all %}
+
+                        <div
+                            class="support-message
+                            {% if message.sender == request.user %}
+                                customer
+                            {% else %}
+                                staff
+                            {% endif %}"
+                        >
+
+                            <div class="support-message-header">
+
+                                <strong>
+
+                                    {% if message.sender == request.user %}
+
+                                        You
+
+                                    {% else %}
+
+                                        CineFlow Support
+
+                                    {% endif %}
+
+                                </strong>
+
+
+                                <span>
+                                    {{ message.created_at|date:"M j, Y g:i A" }}
+                                </span>
+
+                            </div>
+
+
+                            <div class="support-message-body">
+
+                                {{ message.message|linebreaks }}
+
+                            </div>
+
+                        </div>
+
+                    {% empty %}
+
+                        <div class="empty-state">
+
+                            <i class="bi bi-chat-left-text"></i>
+
+                            <h3>
+                                No messages yet
+                            </h3>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+                {% if can_reply %}
+
+                    <div class="support-reply">
+
+                        <div class="support-reply-header">
+
+                            <span class="section-label">
+                                REPLY TO SUPPORT
+                            </span>
+
+                            <h3>
+                                Continue the conversation
+                            </h3>
+
+                        </div>
+
+
+                        <form method="post">
+
+                            {% csrf_token %}
+
+
+                            {% if form.non_field_errors %}
+
+                                <div class="alert alert-danger">
+
+                                    {{ form.non_field_errors }}
+
+                                </div>
+
+                            {% endif %}
+
+
+                            <div class="support-form-group">
+
+                                <label
+                                    for="{{ form.message.id_for_label }}"
+                                >
+                                    Message
+                                </label>
+
+                                {{ form.message }}
+
+
+                                {% if form.message.errors %}
+
+                                    <div class="form-error">
+
+                                        {{ form.message.errors }}
+
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <div class="support-reply-actions">
+
+                                <button
+                                    type="submit"
+                                    class="btn cine-btn-primary"
+                                >
+
+                                    Send Reply
+
+                                    <i class="bi bi-send"></i>
+
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                {% else %}
+
+                    <div class="support-closed-message">
+
+                        <i class="bi bi-lock"></i>
+
+                        <div>
+
+                            <strong>
+                                This support request is closed.
+                            </strong>
+
+                            <p>
+                                If you need further assistance,
+                                please create a new support request.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- =================================================
+                 TICKET INFORMATION
+            ================================================== -->
+
+            <aside class="support-ticket-sidebar">
+
+                <span class="section-label">
+                    REQUEST DETAILS
+                </span>
+
+
+                <div class="support-detail-row">
+
+                    <span>
+                        Status
+                    </span>
+
+                    <strong
+                        class="support-status {{ ticket.status }}"
+                    >
+                        {{ ticket.get_status_display }}
+                    </strong>
+
+                </div>
+
+
+                <div class="support-detail-row">
+
+                    <span>
+                        Priority
+                    </span>
+
+                    <strong
+                        class="support-priority {{ ticket.priority }}"
+                    >
+                        {{ ticket.get_priority_display }}
+                    </strong>
+
+                </div>
+
+
+                {% if ticket.booking %}
+
+                    <hr>
+
+
+                    <span class="section-label">
+                        RELATED BOOKING
+                    </span>
+
+
+                    <div class="support-booking-card">
+
+                        <strong>
+                            {{ ticket.booking.booking_reference }}
+                        </strong>
+
+                        <span>
+                            {{ ticket.booking.showtime.movie.title }}
+                        </span>
+
+                        <span>
+                            {{ ticket.booking.showtime.show_date|date:"M j, Y" }}
+                            ·
+                            {{ ticket.booking.showtime.start_time|time:"g:i A" }}
+                        </span>
+
+
+                        <a
+                            href="{% url 'bookings:booking_detail' ticket.booking.booking_reference %}"
+                            class="btn cine-btn-outline"
+                        >
+
+                            View Booking
+
+                            <i class="bi bi-arrow-right"></i>
+
+                        </a>
+
+                    </div>
+
+                {% endif %}
+
+
+                <hr>
+
+
+                <div class="support-ticket-created">
+
+                    <span>
+                        Created
+                    </span>
+
+                    <strong>
+                        {{ ticket.created_at|date:"M j, Y g:i A" }}
+                    </strong>
+
+                </div>
+
+            </aside>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

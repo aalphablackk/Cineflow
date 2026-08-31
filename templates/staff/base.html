@@ -1,0 +1,393 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    {% block staff_title %}Staff | CineFlow{% endblock %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="staff-layout">
+
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
+
+    <aside class="staff-sidebar" id="staffSidebar">
+
+        <!-- BRAND -->
+
+        <div class="staff-sidebar-brand">
+
+            <a href="{% url 'staff:dashboard' %}">
+
+                <span class="staff-brand-mark">
+                    CF
+                </span>
+
+                <div>
+                    <strong>
+                        CineFlow
+                    </strong>
+
+                    <span>
+                        Staff
+                    </span>
+                </div>
+
+            </a>
+
+        </div>
+
+
+        <!-- NAVIGATION -->
+
+        <nav class="staff-navigation">
+
+            <!-- OVERVIEW -->
+
+            <div class="staff-nav-section">
+
+                <span class="staff-nav-label">
+                    OVERVIEW
+                </span>
+
+                <a
+                    href="{% url 'staff:dashboard' %}"
+                    class="staff-nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+                >
+
+                    <i class="bi bi-grid-1x2"></i>
+
+                    <span>
+                        Dashboard
+                    </span>
+
+                </a>
+
+            </div>
+
+
+            <!-- MOVIE MANAGEMENT -->
+
+            <div class="staff-nav-section">
+
+                <span class="staff-nav-label">
+                    MOVIE MANAGEMENT
+                </span>
+
+                <a
+                    href="{% url "staff:movies" %}"
+                    class="staff-nav-link"
+                >
+
+                    <i class="bi bi-film"></i>
+
+                    <span>
+                        Movies
+                    </span>
+
+                </a>
+
+            </div>
+
+
+            <!-- CINEMA MANAGEMENT -->
+
+            <div class="staff-nav-section">
+
+                <span class="staff-nav-label">
+                    CINEMA MANAGEMENT
+                </span>
+
+
+                <a
+                    href="{% url "staff:cinemas" %}"
+                    class="staff-nav-link"
+                >
+
+                    <i class="bi bi-building"></i>
+
+                    <span>
+                        Cinemas
+                    </span>
+
+                </a>
+
+
+                <a
+                    href="#"
+                    class="staff-nav-link"
+                >
+
+                    <i class="bi bi-display"></i>
+
+                    <span>
+                        Screens
+                    </span>
+
+                </a>
+
+
+                <a
+                    href="#"
+                    class="staff-nav-link"
+                >
+
+                    <i class="bi bi-grid-3x3-gap"></i>
+
+                    <span>
+                        Seats
+                    </span>
+
+                </a>
+
+
+                <a
+                    href="#"
+                    class="staff-nav-link"
+                >
+
+                    <i class="bi bi-calendar3"></i>
+
+                    <span>
+                        Showtimes
+                    </span>
+
+                </a>
+
+            </div>
+
+
+            <!-- OPERATIONS -->
+
+            <div class="staff-nav-section">
+
+                <span class="staff-nav-label">
+                    OPERATIONS
+                </span>
+
+
+                <a
+                    href="#"
+                    class="staff-nav-link"
+                >
+
+                    <i class="bi bi-ticket-perforated"></i>
+
+                    <span>
+                        Bookings
+                    </span>
+
+                </a>
+
+
+                <a
+                    href="#"
+                    class="staff-nav-link"
+                >
+
+                    <i class="bi bi-people"></i>
+
+                    <span>
+                        Customers
+                    </span>
+
+                </a>
+
+
+                <a
+                    href="#"
+                    class="staff-nav-link"
+                >
+
+                    <i class="bi bi-headset"></i>
+
+                    <span>
+                        Support
+                    </span>
+
+                </a>
+
+            </div>
+
+        </nav>
+
+
+        <!-- SIDEBAR FOOTER -->
+
+        <div class="staff-sidebar-footer">
+
+            <a
+                href="{% url 'movies:home' %}"
+                class="staff-back-link"
+            >
+
+                <i class="bi bi-arrow-left"></i>
+
+                <span>
+                    Back to CineFlow
+                </span>
+
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =====================================================
+         MAIN AREA
+    ====================================================== -->
+
+    <div class="staff-main">
+        {% if messages %}
+
+            <div class="staff-messages">
+
+                {% for message in messages %}
+
+                    <div
+                        class="staff-alert staff-alert-{{ message.tags }}"
+                        role="alert"
+                    >
+
+                        <i class="bi bi-exclamation-circle"></i>
+
+                        <span>
+                            {{ message }}
+                        </span>
+
+                        <button
+                            type="button"
+                            class="staff-alert-close"
+                            onclick="this.parentElement.remove()"
+                            aria-label="Close"
+                        >
+                            <i class="bi bi-x"></i>
+                        </button>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+        <!-- TOP BAR -->
+
+        <header class="staff-topbar">
+
+            <button
+                type="button"
+                class="staff-menu-toggle"
+                id="staffMenuToggle"
+                aria-label="Toggle staff navigation"
+            >
+
+                <i class="bi bi-list"></i>
+
+            </button>
+
+
+            <div class="staff-topbar-title">
+
+                <span>
+                    STAFF PORTAL
+                </span>
+
+                <strong>
+                    CineFlow Management
+                </strong>
+
+            </div>
+
+
+            <!-- USER -->
+
+            {% comment %} <div class="staff-user">
+
+                <div class="staff-user-avatar">
+
+                    {{ request.user.first_name|first|upper|default:request.user.username|first|upper }}
+
+                </div>
+
+
+                <div class="staff-user-info">
+
+                    <strong>
+                        {{ request.user.get_full_name|default:request.user.username }}
+                    </strong>
+
+                    <span>
+                        Staff
+                    </span>
+
+                </div>
+
+            </div> {% endcomment %}
+
+        </header>
+
+
+        <!-- PAGE CONTENT -->
+
+        <main class="staff-content">
+
+            {% block staff_content %}
+
+            {% endblock %}
+
+        </main>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const sidebar =
+            document.getElementById(
+                "staffSidebar"
+            );
+
+        const toggle =
+            document.getElementById(
+                "staffMenuToggle"
+            );
+
+
+        if (!sidebar || !toggle) {
+            return;
+        }
+
+
+        toggle.addEventListener(
+            "click",
+            function () {
+
+                sidebar.classList.toggle(
+                    "open"
+                );
+
+            }
+        );
+
+    }
+);
+
+</script>
+
+{% endblock %}

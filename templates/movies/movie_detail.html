@@ -1,0 +1,372 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    {{ movie.title }} | CineFlow
+{% endblock %}
+
+
+{% block content %}
+
+
+<!-- =========================================================
+     MOVIE HERO
+========================================================= -->
+
+<section class="movie-detail-hero">
+
+    <div class="container">
+
+        <div class="row align-items-center g-5">
+
+
+            <!-- =================================================
+                 POSTER
+            ================================================== -->
+
+            <div class="col-md-4 col-lg-3">
+
+                <div class="movie-detail-poster">
+
+                    {% if movie.poster_source %}
+
+                        <img
+                            src="{{ movie.poster_source }}"
+                            alt="{{ movie.title }}"
+                        >
+
+                    {% else %}
+
+                        <div class="poster-placeholder">
+
+                            <i class="bi bi-film"></i>
+
+                            <span>
+                                No poster
+                            </span>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 MOVIE INFORMATION
+            ================================================== -->
+
+            <div class="col-md-8 col-lg-9">
+
+                <span class="section-label">
+                    MOVIE
+                </span>
+
+
+                <h1 class="movie-detail-title">
+                    {{ movie.title }}
+                </h1>
+
+
+                <div class="movie-detail-meta">
+
+                    <span>
+                        {{ movie.age_rating }}
+                    </span>
+
+                    <span>•</span>
+
+                    <span>
+                        {{ movie.duration }} min
+                    </span>
+
+                    <span>•</span>
+
+                    <span>
+                        {{ movie.release_date|date:"Y" }}
+                    </span>
+
+                </div>
+
+
+                <p class="movie-detail-description">
+                    {{ movie.description }}
+                </p>
+
+
+                {% if movie.trailer_url %}
+
+                    <a
+                        href="{{ movie.trailer_url }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="btn cine-btn-primary"
+                    >
+
+                        <i class="bi bi-play-fill"></i>
+
+                        Watch Trailer
+
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     SHOWTIMES
+========================================================= -->
+
+<section class="movie-showtimes-section">
+
+    <div class="container">
+
+
+        <!-- =================================================
+             SECTION HEADER
+        ================================================== -->
+
+        <div class="section-header">
+
+            <div>
+
+                <span class="section-label">
+                    SHOWTIMES
+                </span>
+
+                <h2>
+                    Choose your showtime.
+                </h2>
+
+                <p>
+                    Select a cinema and time that works
+                    for you.
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             GROUP SHOWTIMES BY DATE
+        ================================================== -->
+
+        {% regroup showtimes by show_date as date_groups %}
+
+
+        {% for date_group in date_groups %}
+
+
+            <div class="showtime-date-group">
+
+
+                <!-- =================================================
+                     DATE
+                ================================================== -->
+
+                <h3 class="showtime-date">
+
+                    {{ date_group.grouper|date:"l, F j, Y" }}
+
+                </h3>
+
+
+
+                <!-- =================================================
+                     SHOWTIME CARDS
+                ================================================== -->
+
+                <div class="row g-3">
+
+
+                    {% for showtime in date_group.list %}
+
+
+                        <div class="col-12 col-md-6 col-lg-4">
+
+                            <div class="showtime-card">
+
+
+                                <!-- =================================
+                                     SHOWTIME HEADER
+                                ================================== -->
+
+                                <div class="showtime-card-header">
+
+                                    <div>
+
+                                        <h4>
+                                            {{ showtime.screen.cinema.name }}
+                                        </h4>
+
+                                        <span>
+                                            {{ showtime.screen.name }}
+                                        </span>
+
+                                    </div>
+
+
+                                    <span class="screen-type">
+
+                                        {{ showtime.screen.get_screen_type_display }}
+
+                                    </span>
+
+                                </div>
+
+
+
+                                <!-- =================================
+                                     SHOWTIME BODY
+                                ================================== -->
+
+                                <div class="showtime-card-body">
+
+
+                                    <!-- =================================
+                                         TIME
+                                    ================================== -->
+
+                                    <div class="showtime-time">
+
+                                        {{ showtime.start_time|time:"g:i A" }}
+
+                                    </div>
+
+
+
+                                    <!-- =================================
+                                         PRICE + BOOKING MODE
+                                    ================================== -->
+
+                                    <div class="showtime-info">
+
+                                        <span>
+                                            ₦{{ showtime.ticket_price }}
+                                        </span>
+
+                                        <span>
+                                            {{ showtime.get_booking_mode_display }}
+                                        </span>
+
+                                    </div>
+
+
+
+                                    <!-- =================================
+                                         AVAILABILITY
+                                    ================================== -->
+
+                                    <div class="showtime-availability">
+
+                                        {% if showtime.available_count > 0 %}
+
+                                            <i class="bi bi-check-circle"></i>
+
+                                            {{ showtime.available_count }}
+                                            {{ showtime.availability_label }}
+                                            available
+
+                                        {% else %}
+
+                                            <i class="bi bi-x-circle"></i>
+
+                                            Sold out
+
+                                        {% endif %}
+
+                                    </div>
+
+
+
+                                    <!-- =================================
+                                         BOOKING BUTTON
+                                    ================================== -->
+
+                                    {% if showtime.available_count > 0 %}
+
+                                        <a
+                                            href="{% url 'bookings:create_booking' showtime.id %}"
+                                            class="btn cine-btn-primary w-100"
+                                        >
+
+                                            Select Showtime
+
+                                            <i class="bi bi-arrow-right"></i>
+
+                                        </a>
+
+                                    {% else %}
+
+                                        <button
+                                            type="button"
+                                            class="btn btn-secondary w-100"
+                                            disabled
+                                        >
+
+                                            Sold Out
+
+                                        </button>
+
+                                    {% endif %}
+
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                    {% endfor %}
+
+
+                </div>
+
+            </div>
+
+
+        {% empty %}
+
+
+            <!-- =================================================
+                 NO SHOWTIMES
+            ================================================== -->
+
+            <div class="empty-state">
+
+                <i class="bi bi-calendar-x"></i>
+
+                <h3>
+                    No showtimes available.
+                </h3>
+
+                <p>
+                    There are currently no scheduled
+                    showtimes for this movie.
+                </p>
+
+            </div>
+
+
+        {% endfor %}
+
+
+    </div>
+
+</section>
+
+
+{% endblock %}

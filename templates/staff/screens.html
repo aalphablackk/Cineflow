@@ -1,0 +1,1382 @@
+{% extends "staff/base.html" %}
+
+
+{% block staff_title %}
+    {{ cinema.name }} Screens | CineFlow
+{% endblock %}
+
+
+{% block staff_content %}
+
+<section class="staff-page">
+
+    <div class="staff-container">
+
+
+        <!-- =====================================================
+             PAGE HEADER
+        ====================================================== -->
+
+        <div class="staff-page-header">
+
+            <div>
+
+                <a
+                    href="{% url 'staff:cinemas' %}"
+                    class="staff-back-link"
+                >
+
+                    <i class="bi bi-arrow-left"></i>
+
+                    Back to Cinemas
+
+                </a>
+
+
+                <span class="section-label">
+                    CINEMA MANAGEMENT
+                </span>
+
+
+                <h1>
+                    {{ cinema.name }}
+                </h1>
+
+
+                <p>
+                    Manage screens and seating for this cinema.
+                </p>
+
+            </div>
+
+
+            <!-- ADD SCREEN -->
+
+            <div>
+
+                <button
+                    type="button"
+                    class="btn staff-primary-btn"
+                    data-bs-toggle="modal"
+                    data-bs-target="#addScreenModal"
+                >
+
+                    <i class="bi bi-plus-lg"></i>
+
+                    Add Screen
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             CINEMA SUMMARY
+        ====================================================== -->
+
+        <div class="staff-summary-card">
+
+
+            <div class="staff-summary-icon">
+
+                <i class="bi bi-building"></i>
+
+            </div>
+
+
+            <div class="staff-summary-content">
+
+                <span class="section-label">
+                    CINEMA
+                </span>
+
+
+                <h2>
+                    {{ cinema.name }}
+                </h2>
+
+
+                <p>
+                    {{ cinema.address }}
+                </p>
+
+            </div>
+
+
+            <div class="staff-summary-meta">
+
+
+                <div>
+
+                    <span>
+                        City
+                    </span>
+
+                    <strong>
+                        {{ cinema.city }}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        State
+                    </span>
+
+                    <strong>
+                        {{ cinema.state }}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Screens
+                    </span>
+
+                    <strong>
+                        {{ screens|length }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             SCREENS SECTION
+        ====================================================== -->
+
+        <div class="staff-section">
+
+
+            <div class="staff-section-header">
+
+                <div>
+
+                    <span class="section-label">
+                        SCREEN MANAGEMENT
+                    </span>
+
+
+                    <h2>
+                        Screens
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+
+            {% if screens %}
+
+
+                <div class="staff-management-grid">
+
+
+                    {% for screen in screens %}
+
+
+                        <article class="staff-management-card">
+
+
+                            <!-- =================================================
+                                 SCREEN ICON
+                            ================================================== -->
+
+                            <div class="staff-management-icon">
+
+
+                                {% if screen.screen_type == "imax" %}
+
+                                    <i class="bi bi-badge-4k"></i>
+
+
+                                {% elif screen.screen_type == "vip" %}
+
+                                    <i class="bi bi-star"></i>
+
+
+                                {% else %}
+
+                                    <i class="bi bi-display"></i>
+
+                                {% endif %}
+
+
+                            </div>
+
+
+
+                            <!-- =================================================
+                                 SCREEN INFORMATION
+                            ================================================== -->
+
+                            <div class="staff-management-content">
+
+
+                                <h3>
+                                    {{ screen.name }}
+                                </h3>
+
+
+                                <p>
+                                    {{ screen.get_screen_type_display }}
+                                </p>
+
+
+
+                                <div class="staff-screen-meta">
+
+
+                                    <span>
+
+                                        <i class="bi bi-grid-3x3-gap"></i>
+
+                                        {{ screen.capacity }} seats
+
+                                    </span>
+
+
+                                    <span>
+
+                                        <i class="bi bi-ticket-perforated"></i>
+
+                                        {{ screen.seats.count }} configured
+
+                                    </span>
+
+
+                                </div>
+
+
+
+                                <!-- STATUS -->
+
+                                {% if screen.is_active %}
+
+                                    <span class="staff-status active">
+
+                                        Active
+
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="staff-status inactive">
+
+                                        Inactive
+
+                                    </span>
+
+                                {% endif %}
+
+                                <a
+                                    href="{% url 'staff:seats' screen.id %}"
+                                    class="staff-management-link"
+                                >
+                                    Manage Seats
+                                    <i class="bi bi-arrow-right"></i>
+                                </a>
+
+
+                            </div>
+
+
+
+                            <!-- =================================================
+                                 ACTIONS
+                            ================================================== -->
+
+                            <div class="staff-management-actions">
+
+
+                                <!-- EDIT -->
+
+                                <button
+                                    type="button"
+                                    class="staff-icon-btn"
+                                    title="Edit screen"
+
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editScreenModal"
+
+                                    data-id="{{ screen.id }}"
+                                    data-name="{{ screen.name }}"
+                                    data-screen-type="{{ screen.screen_type }}"
+                                    data-capacity="{{ screen.capacity }}"
+                                    data-active="{{ screen.is_active|yesno:'true,false' }}"
+                                >
+
+                                    <i class="bi bi-pencil"></i>
+
+                                </button>
+
+
+
+                                <!-- DELETE -->
+
+                                <button
+                                    type="button"
+                                    class="staff-icon-btn staff-danger-icon"
+                                    title="Delete screen"
+
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#deleteScreenModal"
+
+                                    data-id="{{ screen.id }}"
+                                    data-name="{{ screen.name }}"
+                                >
+
+                                    <i class="bi bi-trash"></i>
+
+                                </button>
+
+
+                            </div>
+
+
+                        </article>
+
+
+                    {% endfor %}
+
+
+                </div>
+
+
+            {% else %}
+
+
+                <!-- =================================================
+                     EMPTY STATE
+                ================================================== -->
+
+                <div class="staff-empty-state">
+
+
+                    <div class="staff-empty-icon">
+
+                        <i class="bi bi-display"></i>
+
+                    </div>
+
+
+                    <span class="section-label">
+                        NO SCREENS
+                    </span>
+
+
+                    <h2>
+                        No screens yet
+                    </h2>
+
+
+                    <p>
+                        Add the first screen for
+                        {{ cinema.name }}
+                        to start configuring seating.
+                    </p>
+
+
+                    <button
+                        type="button"
+                        class="btn staff-primary-btn"
+                        data-bs-toggle="modal"
+                        data-bs-target="#addScreenModal"
+                    >
+
+                        <i class="bi bi-plus-lg"></i>
+
+                        Add First Screen
+
+                    </button>
+
+
+                </div>
+
+
+            {% endif %}
+
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- ==========================================================
+     ADD SCREEN MODAL
+========================================================== -->
+
+<div
+    class="modal fade"
+    id="addScreenModal"
+    tabindex="-1"
+    aria-labelledby="addScreenModalLabel"
+    aria-hidden="true"
+>
+
+
+    <div class="modal-dialog modal-dialog-centered">
+
+
+        <div class="modal-content staff-modal">
+
+
+            <!-- =================================================
+                 HEADER
+            ================================================== -->
+
+            <div class="modal-header">
+
+
+                <div>
+
+                    <span class="section-label">
+                        SCREEN MANAGEMENT
+                    </span>
+
+
+                    <h2
+                        class="modal-title"
+                        id="addScreenModalLabel"
+                    >
+                        Add Screen
+                    </h2>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 FORM
+            ================================================== -->
+
+            <form
+                method="post"
+                action="{% url 'staff:screen_create' cinema.id %}"
+            >
+
+                {% csrf_token %}
+
+
+                <div class="modal-body">
+
+
+                    <!-- FORM ERRORS -->
+
+                    {% if add_screen_open and form.non_field_errors %}
+
+                        <div class="staff-form-error">
+
+                            {{ form.non_field_errors }}
+
+                        </div>
+
+                    {% endif %}
+
+
+
+                    <!-- =================================================
+                         CINEMA
+                    ================================================== -->
+
+                    <div class="staff-form-group">
+
+
+                        <label class="form-label">
+
+                            Cinema
+
+                        </label>
+
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            value="{{ cinema.name }}"
+                            readonly
+                        >
+
+
+                    </div>
+
+
+
+                    <!-- =================================================
+                         SCREEN NAME
+                    ================================================== -->
+
+                    <div class="staff-form-group">
+
+
+                        <label
+                            for="{{ form.name.id_for_label }}"
+                            class="form-label"
+                        >
+
+                            Screen Name
+
+                        </label>
+
+
+                        {{ form.name }}
+
+
+                        {% if add_screen_open and form.name.errors %}
+
+                            <div class="staff-field-error">
+
+                                {{ form.name.errors }}
+
+                            </div>
+
+                        {% endif %}
+
+
+                    </div>
+
+
+
+                    <!-- =================================================
+                         SCREEN TYPE
+                    ================================================== -->
+
+                    <div class="staff-form-group">
+
+
+                        <label
+                            for="{{ form.screen_type.id_for_label }}"
+                            class="form-label"
+                        >
+
+                            Screen Type
+
+                        </label>
+
+
+                        {{ form.screen_type }}
+
+
+                        {% if add_screen_open and form.screen_type.errors %}
+
+                            <div class="staff-field-error">
+
+                                {{ form.screen_type.errors }}
+
+                            </div>
+
+                        {% endif %}
+
+
+                    </div>
+
+
+
+                    <!-- =================================================
+                         CAPACITY
+                    ================================================== -->
+
+                    <div class="staff-form-group">
+
+
+                        <label
+                            for="{{ form.capacity.id_for_label }}"
+                            class="form-label"
+                        >
+
+                            Capacity
+
+                        </label>
+
+
+                        {{ form.capacity }}
+
+
+                        {% if add_screen_open and form.capacity.errors %}
+
+                            <div class="staff-field-error">
+
+                                {{ form.capacity.errors }}
+
+                            </div>
+
+                        {% endif %}
+
+
+                    </div>
+
+
+
+                    <!-- =================================================
+                         ACTIVE
+                    ================================================== -->
+
+                    <div class="staff-form-group">
+
+
+                        <div class="form-check">
+
+                            {{ form.is_active }}
+
+
+                            <label
+                                for="{{ form.is_active.id_for_label }}"
+                                class="form-check-label"
+                            >
+
+                                Active Screen
+
+                            </label>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- =================================================
+                     FOOTER
+                ================================================== -->
+
+                <div class="modal-footer">
+
+
+                    <button
+                        type="button"
+                        class="btn staff-outline-btn"
+                        data-bs-dismiss="modal"
+                    >
+
+                        Cancel
+
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="btn staff-primary-btn"
+                    >
+
+                        <i class="bi bi-plus-lg"></i>
+
+                        Add Screen
+
+                    </button>
+
+
+                </div>
+
+
+            </form>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ==========================================================
+     EDIT SCREEN MODAL
+========================================================== -->
+
+<div
+    class="modal fade"
+    id="editScreenModal"
+    tabindex="-1"
+    aria-labelledby="editScreenModalLabel"
+    aria-hidden="true"
+>
+
+
+    <div class="modal-dialog modal-dialog-centered">
+
+
+        <div class="modal-content staff-modal">
+
+
+            <!-- =================================================
+                 HEADER
+            ================================================== -->
+
+            <div class="modal-header">
+
+
+                <div>
+
+                    <span class="section-label">
+                        SCREEN MANAGEMENT
+                    </span>
+
+
+                    <h2
+                        class="modal-title"
+                        id="editScreenModalLabel"
+                    >
+
+                        Edit Screen
+
+                    </h2>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 FORM
+            ================================================== -->
+
+            <form
+                method="post"
+                id="editScreenForm"
+            >
+
+                {% csrf_token %}
+
+
+                <div class="modal-body">
+
+
+                    <!-- FORM ERRORS -->
+
+                    {% if edit_screen_open and edit_form.non_field_errors %}
+
+                        <div class="staff-form-error">
+
+                            {{ edit_form.non_field_errors }}
+
+                        </div>
+
+                    {% endif %}
+
+
+
+                    <!-- =================================================
+                         SCREEN NAME
+                    ================================================== -->
+
+                    <div class="staff-form-group">
+
+
+                        <label
+                            for="{{ edit_form.name.id_for_label }}"
+                            class="form-label"
+                        >
+
+                            Screen Name
+
+                        </label>
+
+
+                        {{ edit_form.name }}
+
+
+                        {% if edit_screen_open and edit_form.name.errors %}
+
+                            <div class="staff-field-error">
+
+                                {{ edit_form.name.errors }}
+
+                            </div>
+
+                        {% endif %}
+
+
+                    </div>
+
+
+
+                    <!-- =================================================
+                         SCREEN TYPE
+                    ================================================== -->
+
+                    <div class="staff-form-group">
+
+
+                        <label
+                            for="{{ edit_form.screen_type.id_for_label }}"
+                            class="form-label"
+                        >
+
+                            Screen Type
+
+                        </label>
+
+
+                        {{ edit_form.screen_type }}
+
+
+                        {% if edit_screen_open and edit_form.screen_type.errors %}
+
+                            <div class="staff-field-error">
+
+                                {{ edit_form.screen_type.errors }}
+
+                            </div>
+
+                        {% endif %}
+
+
+                    </div>
+
+
+
+                    <!-- =================================================
+                         CAPACITY
+                    ================================================== -->
+
+                    <div class="staff-form-group">
+
+
+                        <label
+                            for="{{ edit_form.capacity.id_for_label }}"
+                            class="form-label"
+                        >
+
+                            Capacity
+
+                        </label>
+
+
+                        {{ edit_form.capacity }}
+
+
+                        {% if edit_screen_open and edit_form.capacity.errors %}
+
+                            <div class="staff-field-error">
+
+                                {{ edit_form.capacity.errors }}
+
+                            </div>
+
+                        {% endif %}
+
+
+                    </div>
+
+
+
+                    <!-- =================================================
+                         ACTIVE
+                    ================================================== -->
+
+                    <div class="staff-form-group">
+
+
+                        <div class="form-check">
+
+                            {{ edit_form.is_active }}
+
+
+                            <label
+                                for="{{ edit_form.is_active.id_for_label }}"
+                                class="form-check-label"
+                            >
+
+                                Active Screen
+
+                            </label>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- =================================================
+                     FOOTER
+                ================================================== -->
+
+                <div class="modal-footer">
+
+
+                    <button
+                        type="button"
+                        class="btn staff-outline-btn"
+                        data-bs-dismiss="modal"
+                    >
+
+                        Cancel
+
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="btn staff-primary-btn"
+                    >
+
+                        <i class="bi bi-check-lg"></i>
+
+                        Save Changes
+
+                    </button>
+
+
+                </div>
+
+
+            </form>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ==========================================================
+     DELETE SCREEN MODAL
+========================================================== -->
+
+<div
+    class="modal fade"
+    id="deleteScreenModal"
+    tabindex="-1"
+    aria-labelledby="deleteScreenModalLabel"
+    aria-hidden="true"
+>
+
+
+    <div class="modal-dialog modal-dialog-centered">
+
+
+        <div class="modal-content staff-modal">
+
+
+            <!-- =================================================
+                 HEADER
+            ================================================== -->
+
+            <div class="modal-header">
+
+
+                <div>
+
+                    <span class="section-label">
+                        SCREEN MANAGEMENT
+                    </span>
+
+
+                    <h2
+                        class="modal-title"
+                        id="deleteScreenModalLabel"
+                    >
+
+                        Delete Screen
+
+                    </h2>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 FORM
+            ================================================== -->
+
+            <form
+                method="post"
+                id="deleteScreenForm"
+            >
+
+                {% csrf_token %}
+
+
+                <div class="modal-body">
+
+
+                    <div class="staff-delete-icon">
+
+                        <i class="bi bi-trash"></i>
+
+                    </div>
+
+
+                    <h3>
+
+                        Delete
+                        <span id="deleteScreenName"></span>?
+
+                    </h3>
+
+
+                    <p>
+
+                        This action cannot be undone.
+
+                        Screens with seats or showtimes
+                        cannot be deleted.
+
+                    </p>
+
+
+                </div>
+
+
+
+                <!-- =================================================
+                     FOOTER
+                ================================================== -->
+
+                <div class="modal-footer">
+
+
+                    <button
+                        type="button"
+                        class="btn staff-outline-btn"
+                        data-bs-dismiss="modal"
+                    >
+
+                        Cancel
+
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="btn staff-danger-btn"
+                    >
+
+                        <i class="bi bi-trash"></i>
+
+                        Delete Screen
+
+                    </button>
+
+
+                </div>
+
+
+            </form>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+{% endblock %}
+
+
+
+{% block extra_js %}
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+
+        /* =====================================================
+           EDIT SCREEN MODAL
+        ===================================================== */
+
+        const editModal =
+            document.getElementById(
+                "editScreenModal"
+            );
+
+
+        if (editModal) {
+
+            editModal.addEventListener(
+                "show.bs.modal",
+                function (event) {
+
+
+                    const button =
+                        event.relatedTarget;
+
+
+                    if (!button) {
+
+                        return;
+
+                    }
+
+
+                    /* =============================================
+                       SCREEN DATA
+                    ============================================= */
+
+                    const id =
+                        button.dataset.id;
+
+
+                    const name =
+                        button.dataset.name;
+
+
+                    const screenType =
+                        button.dataset.screenType;
+
+
+                    const capacity =
+                        button.dataset.capacity;
+
+
+                    const active =
+                        button.dataset.active;
+
+
+
+                    /* =============================================
+                       FORM
+                    ============================================= */
+
+                    const form =
+                        document.getElementById(
+                            "editScreenForm"
+                        );
+
+
+                    if (!form) {
+
+                        return;
+
+                    }
+
+
+
+                    /* =============================================
+                       FORM ACTION
+                    ============================================= */
+
+                    form.action =
+                        "{% url 'staff:screen_edit' 0 %}"
+                        .replace(
+                            "/0/",
+                            "/" + id + "/"
+                        );
+
+
+
+                    /* =============================================
+                       FORM FIELDS
+                    ============================================= */
+
+                    const nameInput =
+                        form.querySelector(
+                            '[name="name"]'
+                        );
+
+
+                    const typeInput =
+                        form.querySelector(
+                            '[name="screen_type"]'
+                        );
+
+
+                    const capacityInput =
+                        form.querySelector(
+                            '[name="capacity"]'
+                        );
+
+
+                    const activeInput =
+                        form.querySelector(
+                            '[name="is_active"]'
+                        );
+
+
+
+                    /* =============================================
+                       POPULATE VALUES
+                    ============================================= */
+
+                    if (nameInput) {
+
+                        nameInput.value =
+                            name;
+
+                    }
+
+
+                    if (typeInput) {
+
+                        typeInput.value =
+                            screenType;
+
+                    }
+
+
+                    if (capacityInput) {
+
+                        capacityInput.value =
+                            capacity;
+
+                    }
+
+
+                    if (activeInput) {
+
+                        activeInput.checked =
+                            active === "true";
+
+                    }
+
+                }
+            );
+
+        }
+
+
+
+        /* =====================================================
+           DELETE SCREEN MODAL
+        ===================================================== */
+
+        const deleteModal =
+            document.getElementById(
+                "deleteScreenModal"
+            );
+
+
+        if (deleteModal) {
+
+            deleteModal.addEventListener(
+                "show.bs.modal",
+                function (event) {
+
+
+                    const button =
+                        event.relatedTarget;
+
+
+                    if (!button) {
+
+                        return;
+
+                    }
+
+
+                    /* =============================================
+                       SCREEN DATA
+                    ============================================= */
+
+                    const id =
+                        button.dataset.id;
+
+
+                    const name =
+                        button.dataset.name;
+
+
+
+                    /* =============================================
+                       FORM
+                    ============================================= */
+
+                    const form =
+                        document.getElementById(
+                            "deleteScreenForm"
+                        );
+
+
+                    if (form) {
+
+                        form.action =
+                            "{% url 'staff:screen_delete' 0 %}"
+                            .replace(
+                                "/0/",
+                                "/" + id + "/"
+                            );
+
+                    }
+
+
+
+                    /* =============================================
+                       SCREEN NAME
+                    ============================================= */
+
+                    const nameElement =
+                        document.getElementById(
+                            "deleteScreenName"
+                        );
+
+
+                    if (nameElement) {
+
+                        nameElement.textContent =
+                            name;
+
+                    }
+
+                }
+            );
+
+        }
+
+    }
+);
+
+</script>
+
+{% endblock %}

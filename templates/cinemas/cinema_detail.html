@@ -1,0 +1,424 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    {{ cinema.name }} | CineFlow
+{% endblock %}
+
+
+{% block content %}
+
+
+<!-- =========================================================
+     CINEMA DETAIL PAGE
+========================================================= -->
+
+<section class="cinema-detail-page">
+
+    <div class="container">
+
+
+        <!-- =====================================================
+             BACK LINK
+        ====================================================== -->
+
+        <div class="cinema-detail-back">
+
+            <a href="{% url 'cinemas:cinema_list' %}">
+
+                <i class="bi bi-arrow-left"></i>
+
+                All Cinemas
+
+            </a>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             CINEMA HEADER
+        ====================================================== -->
+
+        <div class="cinema-detail-header">
+
+            <div class="cinema-detail-header-content">
+
+                <span class="section-label">
+                    CINEFLOW CINEMA
+                </span>
+
+
+                <h1>
+                    {{ cinema.name }}
+                </h1>
+
+
+                <p class="cinema-detail-location">
+
+                    <i class="bi bi-geo-alt"></i>
+
+                    {{ cinema.city }}, {{ cinema.state }}
+
+                </p>
+
+
+                {% if cinema.address %}
+
+                    <p class="cinema-detail-address">
+                        {{ cinema.address }}
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- Cinema Status -->
+
+            {% if cinema.is_active %}
+
+                <span class="cinema-status active">
+
+                    <i class="bi bi-check-circle-fill"></i>
+
+                    Open
+
+                </span>
+
+            {% else %}
+
+                <span class="cinema-status inactive">
+
+                    <i class="bi bi-x-circle-fill"></i>
+
+                    Closed
+
+                </span>
+
+            {% endif %}
+
+        </div>
+
+
+
+        <!-- =====================================================
+             CINEMA INFORMATION
+        ====================================================== -->
+
+        <div class="cinema-info-grid">
+
+
+            <!-- Screens -->
+
+            <div class="cinema-info-card">
+
+                <div class="cinema-info-icon">
+
+                    <i class="bi bi-display"></i>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Screens
+                    </span>
+
+                    <strong>
+                        {{ active_screen_count }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- Phone -->
+
+            {% if cinema.phone %}
+
+                <div class="cinema-info-card">
+
+                    <div class="cinema-info-icon">
+
+                        <i class="bi bi-telephone"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Phone
+                        </span>
+
+                        <strong>
+                            {{ cinema.phone }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+
+
+            <!-- Email -->
+
+            {% if cinema.email %}
+
+                <div class="cinema-info-card">
+
+                    <div class="cinema-info-icon">
+
+                        <i class="bi bi-envelope"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Email
+                        </span>
+
+                        <strong>
+                            {{ cinema.email }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+
+        <!-- =====================================================
+             SCREENS
+        ====================================================== -->
+
+        <section class="cinema-screens-section">
+
+
+            <!-- Section Header -->
+
+            <div class="section-header">
+
+                <div>
+
+                    <span class="section-label">
+                        OUR SCREENS
+                    </span>
+
+
+                    <h2>
+                        Find your perfect screen.
+                    </h2>
+
+
+                    <p>
+                        Explore the screens available at
+                        {{ cinema.name }}.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- Screen Cards -->
+
+            <div class="row g-4">
+
+
+                {% for screen in screens %}
+
+                    <div class="col-md-6 col-lg-4">
+
+                        <article class="screen-card">
+
+
+                            <!-- Screen Icon -->
+
+                            <div class="screen-card-icon">
+
+                                {% if screen.screen_type == "imax" %}
+
+                                    <i class="bi bi-badge-hd"></i>
+
+                                {% elif screen.screen_type == "vip" %}
+
+                                    <i class="bi bi-star"></i>
+
+                                {% else %}
+
+                                    <i class="bi bi-display"></i>
+
+                                {% endif %}
+
+                            </div>
+
+
+
+                            <!-- Screen Information -->
+
+                            <div class="screen-card-content">
+
+
+                                <span class="screen-type-label">
+
+                                    {{ screen.get_screen_type_display }}
+
+                                </span>
+
+
+                                <h3>
+                                    {{ screen.name }}
+                                </h3>
+
+
+                                <div class="screen-card-meta">
+
+                                    <span>
+
+                                        <i class="bi bi-people"></i>
+
+                                        {{ screen.capacity }}
+
+                                        seats
+
+                                    </span>
+
+                                </div>
+
+
+                            </div>
+
+                        </article>
+
+                    </div>
+
+
+                {% empty %}
+
+
+                    <div class="col-12">
+
+                        <div class="empty-state">
+
+                            <i class="bi bi-display"></i>
+
+
+                            <h3>
+                                No screens available
+                            </h3>
+
+
+                            <p>
+                                There are currently no active
+                                screens at this cinema.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             CONTACT
+        ====================================================== -->
+
+        {% if cinema.phone or cinema.email %}
+
+            <section class="cinema-contact-section">
+
+                <div class="cinema-contact-card">
+
+
+                    <div>
+
+                        <span class="section-label">
+                            NEED HELP?
+                        </span>
+
+
+                        <h2>
+                            Contact {{ cinema.name }}
+                        </h2>
+
+
+                        <p>
+                            Get in touch with the cinema
+                            for more information.
+                        </p>
+
+                    </div>
+
+
+
+                    <div class="cinema-contact-actions">
+
+
+                        {% if cinema.phone %}
+
+                            <a
+                                href="tel:{{ cinema.phone }}"
+                                class="btn cine-btn-outline"
+                            >
+
+                                <i class="bi bi-telephone"></i>
+
+                                Call Cinema
+
+                            </a>
+
+                        {% endif %}
+
+
+
+                        {% if cinema.email %}
+
+                            <a
+                                href="mailto:{{ cinema.email }}"
+                                class="btn cine-btn-primary"
+                            >
+
+                                <i class="bi bi-envelope"></i>
+
+                                Email Cinema
+
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        {% endif %}
+
+
+    </div>
+
+</section>
+
+
+{% endblock %}

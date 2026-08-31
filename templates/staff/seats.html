@@ -1,0 +1,1673 @@
+{% extends "staff/base.html" %}
+
+
+{% block staff_title %}
+    {{ screen.name }} Seats | CineFlow
+{% endblock %}
+
+
+{% block staff_content %}
+
+<section class="staff-page">
+
+    <div class="staff-container">
+
+
+        <!-- =====================================================
+             PAGE HEADER
+        ====================================================== -->
+
+        <div class="staff-page-header">
+
+            <div>
+
+                <a
+                    href="{% url 'staff:screens' cinema.id %}"
+                    class="staff-back-link"
+                >
+
+                    <i class="bi bi-arrow-left"></i>
+
+                    Back to Screens
+
+                </a>
+
+
+                <span class="section-label">
+                    SEAT MANAGEMENT
+                </span>
+
+
+                <h1>
+                    {{ screen.name }}
+                </h1>
+
+
+                <p>
+                    Configure and manage seats for
+                    {{ cinema.name }}.
+                </p>
+
+            </div>
+
+
+            <!-- ACTIONS -->
+
+            <div class="staff-page-header-actions">
+
+                <!-- GENERATE SEATS -->
+
+                <button
+                    type="button"
+                    class="btn staff-outline-btn"
+                    data-bs-toggle="modal"
+                    data-bs-target="#generateSeatsModal"
+                >
+
+                    <i class="bi bi-grid-3x3-gap"></i>
+
+                    Generate Seats
+
+                </button>
+
+
+                <!-- ADD SEAT -->
+
+                <button
+                    type="button"
+                    class="btn staff-primary-btn"
+                    data-bs-toggle="modal"
+                    data-bs-target="#addSeatModal"
+                >
+
+                    <i class="bi bi-plus-lg"></i>
+
+                    Add Seat
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             SCREEN SUMMARY
+        ====================================================== -->
+
+        <div class="staff-summary-card">
+
+
+            <div class="staff-summary-icon">
+
+                <i class="bi bi-display"></i>
+
+            </div>
+
+
+            <div class="staff-summary-content">
+
+                <span class="section-label">
+                    SCREEN
+                </span>
+
+
+                <h2>
+                    {{ screen.name }}
+                </h2>
+
+
+                <p>
+                    {{ screen.get_screen_type_display }}
+                    ·
+                    {{ cinema.name }}
+                </p>
+
+            </div>
+
+
+            <div class="staff-summary-meta">
+
+
+                <div>
+
+                    <span>
+                        Capacity
+                    </span>
+
+                    <strong>
+                        {{ screen.capacity }}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Configured
+                    </span>
+
+                    <strong>
+                        {{ seats|length }}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Available
+                    </span>
+
+                    <strong>
+                        {{ available_capacity }}
+                    </strong>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             SEAT SECTION
+        ====================================================== -->
+
+        <div class="staff-section">
+
+
+            <!-- SECTION HEADER -->
+
+            <div class="staff-section-header">
+
+
+                <div>
+
+                    <span class="section-label">
+                        SEATING LAYOUT
+                    </span>
+
+
+                    <h2>
+                        Seats
+                    </h2>
+
+                </div>
+
+
+                {% if seats %}
+
+                    <div class="staff-seat-legend">
+
+
+                        <span>
+
+                            <i class="bi bi-circle-fill"></i>
+
+                            Active
+
+                        </span>
+
+
+                        <span>
+
+                            <i class="bi bi-circle"></i>
+
+                            Inactive
+
+                        </span>
+
+
+                    </div>
+
+                {% endif %}
+
+
+            </div>
+
+
+
+            {% if seats %}
+
+
+                <!-- =================================================
+                     CINEMA SEATING LAYOUT
+                ================================================== -->
+
+                <div class="staff-seat-layout">
+
+
+                    <!-- SCREEN -->
+
+                    <div class="staff-cinema-screen">
+
+                        <span>
+                            SCREEN
+                        </span>
+
+                    </div>
+
+
+
+                    <!-- SEAT GRID -->
+
+                    <div class="staff-seat-grid">
+
+
+                        {% regroup seats by row as seat_rows %}
+
+
+                        {% for row in seat_rows %}
+
+
+                            <div class="staff-seat-row">
+
+
+                                <!-- ROW LABEL -->
+
+                                <div class="staff-seat-row-label">
+
+                                    {{ row.grouper }}
+
+                                </div>
+
+
+
+                                <!-- ROW SEATS -->
+
+                                <div class="staff-seat-row-items">
+
+
+                                    {% for seat in row.list %}
+
+
+                                        <div
+                                            class="
+                                                staff-seat
+                                                {% if not seat.is_active %}
+                                                    inactive
+                                                {% endif %}
+                                            "
+                                            title="Seat {{ seat.label }}"
+                                        >
+
+
+                                            <!-- SEAT NUMBER -->
+
+                                            <span class="staff-seat-number">
+
+                                                {{ seat.number }}
+
+                                            </span>
+
+
+
+                                            <!-- ACTIONS -->
+
+                                            <div class="staff-seat-actions">
+
+
+                                                <!-- EDIT -->
+
+                                                <button
+                                                    type="button"
+                                                    class="staff-seat-action"
+                                                    title="Edit seat"
+
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#editSeatModal"
+
+                                                    data-id="{{ seat.id }}"
+                                                    data-row="{{ seat.row }}"
+                                                    data-number="{{ seat.number }}"
+                                                    data-active="{{ seat.is_active|yesno:'true,false' }}"
+                                                >
+
+                                                    <i class="bi bi-pencil"></i>
+
+                                                </button>
+
+
+
+                                                <!-- DELETE -->
+
+                                                <button
+                                                    type="button"
+                                                    class="
+                                                        staff-seat-action
+                                                        staff-seat-delete
+                                                    "
+                                                    title="Delete seat"
+
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#deleteSeatModal"
+
+                                                    data-id="{{ seat.id }}"
+                                                    data-label="{{ seat.label }}"
+                                                >
+
+                                                    <i class="bi bi-trash"></i>
+
+                                                </button>
+
+
+                                            </div>
+
+
+                                        </div>
+
+
+                                    {% endfor %}
+
+
+                                </div>
+
+
+                            </div>
+
+
+                        {% endfor %}
+
+
+                    </div>
+
+
+                </div>
+
+
+            {% else %}
+
+
+                <!-- =================================================
+                     EMPTY STATE
+                ================================================== -->
+
+                <div class="staff-empty-state">
+
+
+                    <div class="staff-empty-icon">
+
+                        <i class="bi bi-grid-3x3-gap"></i>
+
+                    </div>
+
+
+                    <span class="section-label">
+                        NO SEATS
+                    </span>
+
+
+                    <h2>
+                        No seats configured
+                    </h2>
+
+
+                    <p>
+                        This screen does not have any seats yet.
+                        You can add seats individually or generate
+                        them in bulk.
+                    </p>
+
+
+
+                    <div class="staff-empty-actions">
+
+
+                        <button
+                            type="button"
+                            class="btn staff-outline-btn"
+                            data-bs-toggle="modal"
+                            data-bs-target="#generateSeatsModal"
+                        >
+
+                            <i class="bi bi-grid-3x3-gap"></i>
+
+                            Generate Seats
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="btn staff-primary-btn"
+                            data-bs-toggle="modal"
+                            data-bs-target="#addSeatModal"
+                        >
+
+                            <i class="bi bi-plus-lg"></i>
+
+                            Add Seat
+
+                        </button>
+
+
+                    </div>
+
+
+                </div>
+
+
+            {% endif %}
+
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- ==========================================================
+     GENERATE SEATS MODAL
+========================================================== -->
+
+<div
+    class="modal fade"
+    id="generateSeatsModal"
+    tabindex="-1"
+    aria-labelledby="generateSeatsModalLabel"
+    aria-hidden="true"
+>
+
+
+    <div class="modal-dialog modal-dialog-centered">
+
+
+        <div class="modal-content staff-modal">
+
+
+            <!-- =================================================
+                 HEADER
+            ================================================== -->
+
+            <div class="modal-header">
+
+
+                <div>
+
+                    <span class="section-label">
+                        SEAT MANAGEMENT
+                    </span>
+
+
+                    <h2
+                        class="modal-title"
+                        id="generateSeatsModalLabel"
+                    >
+
+                        Generate Seats
+
+                    </h2>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 FORM
+            ================================================== -->
+
+            <form
+                method="post"
+                action="{% url 'staff:generate_seats' screen.id %}"
+            >
+
+                {% csrf_token %}
+
+
+                <div class="modal-body">
+
+
+                    {% if generate_seats_open and generation_form.non_field_errors %}
+
+                        <div class="staff-form-error">
+
+                            {{ generation_form.non_field_errors }}
+
+                        </div>
+
+                    {% endif %}
+
+
+
+                    <!-- =================================================
+                         SCREEN
+                    ================================================== -->
+
+                    <div class="staff-form-group">
+
+
+                        <label class="form-label">
+
+                            Screen
+
+                        </label>
+
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            value="{{ screen.name }}"
+                            readonly
+                        >
+
+
+                    </div>
+
+
+
+                    <!-- =================================================
+                         ROW RANGE
+                    ================================================== -->
+
+                    <div class="staff-form-row">
+
+
+                        <!-- START ROW -->
+
+                        <div class="staff-form-group">
+
+
+                            <label
+                                for="{{ generation_form.start_row.id_for_label }}"
+                                class="form-label"
+                            >
+
+                                Starting Row
+
+                            </label>
+
+
+                            {{ generation_form.start_row }}
+
+
+                            {% if generate_seats_open and generation_form.start_row.errors %}
+
+                                <div class="staff-field-error">
+
+                                    {{ generation_form.start_row.errors }}
+
+                                </div>
+
+                            {% endif %}
+
+
+                        </div>
+
+
+
+                        <!-- END ROW -->
+
+                        <div class="staff-form-group">
+
+
+                            <label
+                                for="{{ generation_form.end_row.id_for_label }}"
+                                class="form-label"
+                            >
+
+                                Ending Row
+
+                            </label>
+
+
+                            {{ generation_form.end_row }}
+
+
+                            {% if generate_seats_open and generation_form.end_row.errors %}
+
+                                <div class="staff-field-error">
+
+                                    {{ generation_form.end_row.errors }}
+
+                                </div>
+
+                            {% endif %}
+
+
+                        </div>
+
+
+                    </div>
+
+
+
+                    <!-- =================================================
+                         SEATS PER ROW
+                    ================================================== -->
+
+                    <div class="staff-form-group">
+
+
+                        <label
+                            for="{{ generation_form.seats_per_row.id_for_label }}"
+                            class="form-label"
+                        >
+
+                            Seats Per Row
+
+                        </label>
+
+
+                        {{ generation_form.seats_per_row }}
+
+
+                        {% if generate_seats_open and generation_form.seats_per_row.errors %}
+
+                            <div class="staff-field-error">
+
+                                {{ generation_form.seats_per_row.errors }}
+
+                            </div>
+
+                        {% endif %}
+
+
+                    </div>
+
+
+
+                    <!-- =================================================
+                         INFORMATION
+                    ================================================== -->
+
+                    <div class="staff-form-info">
+
+
+                        <i class="bi bi-info-circle"></i>
+
+
+                        <div>
+
+                            <strong>
+                                How this works
+                            </strong>
+
+
+                            <p>
+                                For example, entering
+                                <strong>A</strong> to
+                                <strong>F</strong> with
+                                <strong>20</strong> seats per row
+                                creates 120 seats.
+                            </p>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- =================================================
+                     FOOTER
+                ================================================== -->
+
+                <div class="modal-footer">
+
+
+                    <button
+                        type="button"
+                        class="btn staff-outline-btn"
+                        data-bs-dismiss="modal"
+                    >
+
+                        Cancel
+
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="btn staff-primary-btn"
+                    >
+
+                        <i class="bi bi-grid-3x3-gap"></i>
+
+                        Generate Seats
+
+                    </button>
+
+
+                </div>
+
+
+            </form>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ==========================================================
+     ADD SEAT MODAL
+========================================================== -->
+
+<div
+    class="modal fade"
+    id="addSeatModal"
+    tabindex="-1"
+    aria-labelledby="addSeatModalLabel"
+    aria-hidden="true"
+>
+
+
+    <div class="modal-dialog modal-dialog-centered">
+
+
+        <div class="modal-content staff-modal">
+
+
+            <!-- HEADER -->
+
+            <div class="modal-header">
+
+
+                <div>
+
+                    <span class="section-label">
+                        SEAT MANAGEMENT
+                    </span>
+
+
+                    <h2
+                        class="modal-title"
+                        id="addSeatModalLabel"
+                    >
+
+                        Add Seat
+
+                    </h2>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+
+
+            </div>
+
+
+
+            <!-- FORM -->
+
+            <form
+                method="post"
+                action="{% url 'staff:seat_create' screen.id %}"
+            >
+
+                {% csrf_token %}
+
+
+                <div class="modal-body">
+
+
+                    {% if add_seat_open and form.non_field_errors %}
+
+                        <div class="staff-form-error">
+
+                            {{ form.non_field_errors }}
+
+                        </div>
+
+                    {% endif %}
+
+
+
+                    <!-- SCREEN -->
+
+                    <div class="staff-form-group">
+
+
+                        <label class="form-label">
+                            Screen
+                        </label>
+
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            value="{{ screen.name }}"
+                            readonly
+                        >
+
+
+                    </div>
+
+
+
+                    <!-- ROW -->
+
+                    <div class="staff-form-group">
+
+
+                        <label
+                            for="{{ form.row.id_for_label }}"
+                            class="form-label"
+                        >
+
+                            Seat Row
+
+                        </label>
+
+
+                        {{ form.row }}
+
+
+                        {% if add_seat_open and form.row.errors %}
+
+                            <div class="staff-field-error">
+
+                                {{ form.row.errors }}
+
+                            </div>
+
+                        {% endif %}
+
+
+                    </div>
+
+
+
+                    <!-- NUMBER -->
+
+                    <div class="staff-form-group">
+
+
+                        <label
+                            for="{{ form.number.id_for_label }}"
+                            class="form-label"
+                        >
+
+                            Seat Number
+
+                        </label>
+
+
+                        {{ form.number }}
+
+
+                        {% if add_seat_open and form.number.errors %}
+
+                            <div class="staff-field-error">
+
+                                {{ form.number.errors }}
+
+                            </div>
+
+                        {% endif %}
+
+
+                    </div>
+
+
+
+                    <!-- ACTIVE -->
+
+                    <div class="staff-form-group">
+
+
+                        <div class="form-check">
+
+                            {{ form.is_active }}
+
+
+                            <label
+                                for="{{ form.is_active.id_for_label }}"
+                                class="form-check-label"
+                            >
+
+                                Active Seat
+
+                            </label>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- FOOTER -->
+
+                <div class="modal-footer">
+
+
+                    <button
+                        type="button"
+                        class="btn staff-outline-btn"
+                        data-bs-dismiss="modal"
+                    >
+
+                        Cancel
+
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="btn staff-primary-btn"
+                    >
+
+                        <i class="bi bi-plus-lg"></i>
+
+                        Add Seat
+
+                    </button>
+
+
+                </div>
+
+
+            </form>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ==========================================================
+     EDIT SEAT MODAL
+========================================================== -->
+
+<div
+    class="modal fade"
+    id="editSeatModal"
+    tabindex="-1"
+    aria-labelledby="editSeatModalLabel"
+    aria-hidden="true"
+>
+
+
+    <div class="modal-dialog modal-dialog-centered">
+
+
+        <div class="modal-content staff-modal">
+
+
+            <!-- HEADER -->
+
+            <div class="modal-header">
+
+
+                <div>
+
+                    <span class="section-label">
+                        SEAT MANAGEMENT
+                    </span>
+
+
+                    <h2
+                        class="modal-title"
+                        id="editSeatModalLabel"
+                    >
+
+                        Edit Seat
+
+                    </h2>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+
+
+            </div>
+
+
+
+            <!-- FORM -->
+
+            <form
+                method="post"
+                id="editSeatForm"
+            >
+
+                {% csrf_token %}
+
+
+                <div class="modal-body">
+
+
+                    {% if edit_seat_open and edit_form.non_field_errors %}
+
+                        <div class="staff-form-error">
+
+                            {{ edit_form.non_field_errors }}
+
+                        </div>
+
+                    {% endif %}
+
+
+
+                    <!-- SCREEN -->
+
+                    <div class="staff-form-group">
+
+
+                        <label class="form-label">
+                            Screen
+                        </label>
+
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            value="{{ screen.name }}"
+                            readonly
+                        >
+
+
+                    </div>
+
+
+
+                    <!-- ROW -->
+
+                    <div class="staff-form-group">
+
+
+                        <label
+                            for="{{ edit_form.row.id_for_label }}"
+                            class="form-label"
+                        >
+
+                            Seat Row
+
+                        </label>
+
+
+                        {{ edit_form.row }}
+
+
+                        {% if edit_seat_open and edit_form.row.errors %}
+
+                            <div class="staff-field-error">
+
+                                {{ edit_form.row.errors }}
+
+                            </div>
+
+                        {% endif %}
+
+
+                    </div>
+
+
+
+                    <!-- NUMBER -->
+
+                    <div class="staff-form-group">
+
+
+                        <label
+                            for="{{ edit_form.number.id_for_label }}"
+                            class="form-label"
+                        >
+
+                            Seat Number
+
+                        </label>
+
+
+                        {{ edit_form.number }}
+
+
+                        {% if edit_seat_open and edit_form.number.errors %}
+
+                            <div class="staff-field-error">
+
+                                {{ edit_form.number.errors }}
+
+                            </div>
+
+                        {% endif %}
+
+
+                    </div>
+
+
+
+                    <!-- ACTIVE -->
+
+                    <div class="staff-form-group">
+
+
+                        <div class="form-check">
+
+                            {{ edit_form.is_active }}
+
+
+                            <label
+                                for="{{ edit_form.is_active.id_for_label }}"
+                                class="form-check-label"
+                            >
+
+                                Active Seat
+
+                            </label>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- FOOTER -->
+
+                <div class="modal-footer">
+
+
+                    <button
+                        type="button"
+                        class="btn staff-outline-btn"
+                        data-bs-dismiss="modal"
+                    >
+
+                        Cancel
+
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="btn staff-primary-btn"
+                    >
+
+                        <i class="bi bi-check-lg"></i>
+
+                        Save Changes
+
+                    </button>
+
+
+                </div>
+
+
+            </form>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ==========================================================
+     DELETE SEAT MODAL
+========================================================== -->
+
+<div
+    class="modal fade"
+    id="deleteSeatModal"
+    tabindex="-1"
+    aria-labelledby="deleteSeatModalLabel"
+    aria-hidden="true"
+>
+
+
+    <div class="modal-dialog modal-dialog-centered">
+
+
+        <div class="modal-content staff-modal">
+
+
+            <!-- HEADER -->
+
+            <div class="modal-header">
+
+
+                <div>
+
+                    <span class="section-label">
+                        SEAT MANAGEMENT
+                    </span>
+
+
+                    <h2
+                        class="modal-title"
+                        id="deleteSeatModalLabel"
+                    >
+
+                        Delete Seat
+
+                    </h2>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+
+
+            </div>
+
+
+
+            <!-- FORM -->
+
+            <form
+                method="post"
+                id="deleteSeatForm"
+            >
+
+                {% csrf_token %}
+
+
+                <div class="modal-body">
+
+
+                    <div class="staff-delete-icon">
+
+                        <i class="bi bi-trash"></i>
+
+                    </div>
+
+
+                    <h3>
+
+                        Delete
+                        <span id="deleteSeatLabel"></span>?
+
+                    </h3>
+
+
+                    <p>
+
+                        This action cannot be undone.
+                        Seats with booking records cannot
+                        be deleted.
+
+                    </p>
+
+
+                </div>
+
+
+
+                <!-- FOOTER -->
+
+                <div class="modal-footer">
+
+
+                    <button
+                        type="button"
+                        class="btn staff-outline-btn"
+                        data-bs-dismiss="modal"
+                    >
+
+                        Cancel
+
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="btn staff-danger-btn"
+                    >
+
+                        <i class="bi bi-trash"></i>
+
+                        Delete Seat
+
+                    </button>
+
+
+                </div>
+
+
+            </form>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+{% endblock %}
+
+
+
+{% block extra_js %}
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+
+        /* =====================================================
+           EDIT SEAT
+        ===================================================== */
+
+        const editModal =
+            document.getElementById(
+                "editSeatModal"
+            );
+
+
+        if (editModal) {
+
+            editModal.addEventListener(
+                "show.bs.modal",
+                function (event) {
+
+
+                    const button =
+                        event.relatedTarget;
+
+
+                    if (!button) {
+                        return;
+                    }
+
+
+                    const id =
+                        button.dataset.id;
+
+                    const row =
+                        button.dataset.row;
+
+                    const number =
+                        button.dataset.number;
+
+                    const active =
+                        button.dataset.active;
+
+
+                    const form =
+                        document.getElementById(
+                            "editSeatForm"
+                        );
+
+
+                    if (!form) {
+                        return;
+                    }
+
+
+                    form.action =
+                        "{% url 'staff:seat_edit' 0 %}"
+                        .replace(
+                            "/0/",
+                            "/" + id + "/"
+                        );
+
+
+                    const rowInput =
+                        form.querySelector(
+                            '[name="row"]'
+                        );
+
+
+                    const numberInput =
+                        form.querySelector(
+                            '[name="number"]'
+                        );
+
+
+                    const activeInput =
+                        form.querySelector(
+                            '[name="is_active"]'
+                        );
+
+
+                    if (rowInput) {
+
+                        rowInput.value =
+                            row;
+
+                    }
+
+
+                    if (numberInput) {
+
+                        numberInput.value =
+                            number;
+
+                    }
+
+
+                    if (activeInput) {
+
+                        activeInput.checked =
+                            active === "true";
+
+                    }
+
+                }
+            );
+
+        }
+
+
+
+        /* =====================================================
+           DELETE SEAT
+        ===================================================== */
+
+        const deleteModal =
+            document.getElementById(
+                "deleteSeatModal"
+            );
+
+
+        if (deleteModal) {
+
+            deleteModal.addEventListener(
+                "show.bs.modal",
+                function (event) {
+
+
+                    const button =
+                        event.relatedTarget;
+
+
+                    if (!button) {
+                        return;
+                    }
+
+
+                    const id =
+                        button.dataset.id;
+
+                    const label =
+                        button.dataset.label;
+
+
+                    const form =
+                        document.getElementById(
+                            "deleteSeatForm"
+                        );
+
+
+                    if (form) {
+
+                        form.action =
+                            "{% url 'staff:seat_delete' 0 %}"
+                            .replace(
+                                "/0/",
+                                "/" + id + "/"
+                            );
+
+                    }
+
+
+                    const labelElement =
+                        document.getElementById(
+                            "deleteSeatLabel"
+                        );
+
+
+                    if (labelElement) {
+
+                        labelElement.textContent =
+                            label;
+
+                    }
+
+                }
+            );
+
+        }
+
+
+
+        /* =====================================================
+           REOPEN ADD MODAL AFTER VALIDATION ERROR
+        ===================================================== */
+
+        {% if add_seat_open %}
+
+            const addModalElement =
+                document.getElementById(
+                    "addSeatModal"
+                );
+
+
+            if (addModalElement) {
+
+                const addModal =
+                    new bootstrap.Modal(
+                        addModalElement
+                    );
+
+                addModal.show();
+
+            }
+
+        {% endif %}
+
+
+
+        /* =====================================================
+           REOPEN EDIT MODAL AFTER VALIDATION ERROR
+        ===================================================== */
+
+        {% if edit_seat_open %}
+
+            const editForm =
+                document.getElementById(
+                    "editSeatForm"
+                );
+
+
+            if (editForm) {
+
+                editForm.action =
+                    "{% url 'staff:seat_edit' edit_seat.id %}";
+
+            }
+
+
+            const editModalElement =
+                document.getElementById(
+                    "editSeatModal"
+                );
+
+
+            if (editModalElement) {
+
+                const editBootstrapModal =
+                    new bootstrap.Modal(
+                        editModalElement
+                    );
+
+                editBootstrapModal.show();
+
+            }
+
+        {% endif %}
+
+
+
+        /* =====================================================
+           REOPEN GENERATE MODAL AFTER VALIDATION ERROR
+        ===================================================== */
+
+        {% if generate_seats_open %}
+
+            const generateModalElement =
+                document.getElementById(
+                    "generateSeatsModal"
+                );
+
+
+            if (generateModalElement) {
+
+                const generateBootstrapModal =
+                    new bootstrap.Modal(
+                        generateModalElement
+                    );
+
+                generateBootstrapModal.show();
+
+            }
+
+        {% endif %}
+
+
+    }
+);
+
+</script>
+
+{% endblock %}

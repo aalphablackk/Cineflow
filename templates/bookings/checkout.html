@@ -1,0 +1,470 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    Checkout | CineFlow
+{% endblock %}
+
+
+{% block content %}
+
+<section class="checkout-page">
+
+    <div class="container">
+
+        <!-- =====================================================
+             PAGE HEADER
+        ====================================================== -->
+
+        <div class="checkout-header">
+
+            <a
+                href="{% url 'bookings:booking_detail' booking.booking_reference %}"
+                class="booking-back"
+            >
+                <i class="bi bi-arrow-left"></i>
+                Booking Details
+            </a>
+
+            <span class="section-label">
+                COMPLETE YOUR BOOKING
+            </span>
+
+            <h1>
+                Checkout
+            </h1>
+
+            <p>
+                Review your booking before proceeding to payment.
+            </p>
+
+        </div>
+
+
+        <!-- =====================================================
+             CHECKOUT CONTENT
+        ====================================================== -->
+
+        <div class="row g-4">
+
+
+            <!-- =================================================
+                 BOOKING INFORMATION
+            ================================================== -->
+
+            <div class="col-lg-8">
+
+                <div class="checkout-panel">
+
+
+                    <!-- =========================================
+                         HOLD COUNTDOWN
+                    ========================================== -->
+
+                    <div class="booking-hold-alert">
+
+                        <div class="booking-hold-icon">
+
+                            <i class="bi bi-clock"></i>
+
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Your seats are temporarily held
+                            </strong>
+
+                            <span>
+                                Complete your payment before your
+                                hold expires.
+                            </span>
+
+                        </div>
+
+                        <strong
+                            id="hold-countdown"
+                            data-expires-at="{{ booking.hold_expires_at|date:'c' }}"
+                        >
+                            --:--
+                        </strong>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         MOVIE
+                    ========================================== -->
+
+                    <div class="checkout-movie">
+
+                        <div class="checkout-poster">
+
+                            {% if booking.showtime.movie.poster_source %}
+
+                                <img
+                                    src="{{ booking.showtime.movie.poster_source }}"
+                                    alt="{{ booking.showtime.movie.title }}"
+                                >
+
+                            {% endif %}
+
+                        </div>
+
+                        <div>
+
+                            <span class="section-label">
+                                MOVIE
+                            </span>
+
+                            <h2>
+                                {{ booking.showtime.movie.title }}
+                            </h2>
+
+                            <p>
+                                {{ booking.showtime.movie.age_rating }}
+                                ·
+                                {{ booking.showtime.movie.duration }} mins
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <hr>
+
+
+                    <!-- =========================================
+                         SHOWTIME
+                    ========================================== -->
+
+                    <div class="checkout-section">
+
+                        <span class="section-label">
+                            SHOWTIME
+                        </span>
+
+                        <div class="checkout-info-grid">
+
+                            <div>
+
+                                <span>
+                                    <i class="bi bi-calendar3"></i>
+                                    Date
+                                </span>
+
+                                <strong>
+                                    {{ booking.showtime.show_date|date:"l, F j, Y" }}
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    <i class="bi bi-clock"></i>
+                                    Time
+                                </span>
+
+                                <strong>
+                                    {{ booking.showtime.start_time|time:"g:i A" }}
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    <i class="bi bi-building"></i>
+                                    Cinema
+                                </span>
+
+                                <strong>
+                                    {{ booking.showtime.screen.cinema.name }}
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    <i class="bi bi-display"></i>
+                                    Screen
+                                </span>
+
+                                <strong>
+                                    {{ booking.showtime.screen.name }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <hr>
+
+
+                    <!-- =========================================
+                         TICKETS / SEATS
+                    ========================================== -->
+
+                    <div class="checkout-section">
+
+                        <span class="section-label">
+                            YOUR TICKETS
+                        </span>
+
+
+                        {% if booking_seats %}
+
+                            <div class="checkout-seats">
+
+                                {% for booking_seat in booking_seats %}
+
+                                    <span class="checkout-seat">
+                                        {{ booking_seat.seat.label }}
+                                    </span>
+
+                                {% endfor %}
+
+                            </div>
+
+                        {% else %}
+
+                            <div class="checkout-ticket-quantity">
+
+                                <i class="bi bi-ticket-perforated"></i>
+
+                                <strong>
+                                    {{ booking.ticket_quantity }}
+                                    ticket{{ booking.ticket_quantity|pluralize }}
+                                </strong>
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 ORDER SUMMARY
+            ================================================== -->
+
+            <div class="col-lg-4">
+
+                <aside class="checkout-summary">
+
+                    <span class="section-label">
+                        ORDER SUMMARY
+                    </span>
+
+                    <h2>
+                        Booking Summary
+                    </h2>
+
+
+                    <div class="summary-row">
+
+                        <span>
+                            Booking Reference
+                        </span>
+
+                        <strong>
+                            {{ booking.booking_reference }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-row">
+
+                        <span>
+                            Tickets
+                        </span>
+
+                        <strong>
+                            {{ booking.ticket_quantity }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-row">
+
+                        <span>
+                            Ticket Price
+                        </span>
+
+                        <strong>
+                            ₦{{ booking.showtime.ticket_price }}
+                        </strong>
+
+                    </div>
+
+
+                    <hr>
+
+
+                    <div class="summary-total">
+
+                        <span>
+                            Total
+                        </span>
+
+                        <strong>
+                            ₦{{ booking.total_amount }}
+                        </strong>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         PAYMENT BUTTON
+                    ========================================== -->
+
+                    <button
+                        type="button"
+                        class="btn cine-btn-primary checkout-pay-button"
+                        id="checkout-pay-button"
+                    >
+
+                        Proceed to Payment
+
+                        <i class="bi bi-arrow-right"></i>
+
+                    </button>
+
+
+                    <p class="checkout-secure">
+
+                        <i class="bi bi-shield-check"></i>
+
+                        Secure payment processing
+
+                    </p>
+
+                </aside>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const countdown =
+        document.getElementById("hold-countdown");
+
+    const paymentButton =
+        document.getElementById("checkout-pay-button");
+
+
+    if (!countdown) {
+        return;
+    }
+
+
+    const expiresAt =
+        new Date(
+            countdown.dataset.expiresAt
+        );
+
+
+    function updateCountdown() {
+
+        const now =
+            new Date();
+
+
+        const remaining =
+            expiresAt.getTime()
+            - now.getTime();
+
+
+        if (remaining <= 0) {
+
+            countdown.textContent =
+                "Expired";
+
+
+            countdown.classList.add(
+                "expired"
+            );
+
+
+            if (paymentButton) {
+
+                paymentButton.disabled =
+                    true;
+
+                paymentButton.textContent =
+                    "Hold Expired";
+
+            }
+
+
+            return;
+
+        }
+
+
+        const totalSeconds =
+            Math.floor(
+                remaining / 1000
+            );
+
+
+        const minutes =
+            Math.floor(
+                totalSeconds / 60
+            );
+
+
+        const seconds =
+            totalSeconds % 60;
+
+
+        countdown.textContent =
+            `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+
+    }
+
+
+    updateCountdown();
+
+
+    const countdownInterval =
+        setInterval(
+            updateCountdown,
+            1000
+        );
+
+
+});
+
+</script>
+
+{% endblock %}

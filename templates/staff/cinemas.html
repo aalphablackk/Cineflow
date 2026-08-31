@@ -1,0 +1,1617 @@
+{% extends "staff/base.html" %}
+
+
+{% block staff_title %}
+    Cinemas | CineFlow
+{% endblock %}
+
+
+{% block staff_content %}
+
+<section class="staff-cinemas-page">
+
+    <div class="staff-container">
+
+
+        <!-- ==================================================
+             HEADER
+        ================================================== -->
+
+        <div class="staff-page-header movies-header">
+
+            <div>
+
+                <span class="section-label">
+                    CINEMA MANAGEMENT
+                </span>
+
+                <h1>
+                    Cinemas
+                </h1>
+
+                <p>
+                    Manage CineFlow cinema locations and operations.
+                </p>
+
+            </div>
+
+
+            <div class="staff-page-header-action">
+
+                <button
+                    type="button"
+                    class="btn staff-primary-btn"
+                    data-bs-toggle="modal"
+                    data-bs-target="#addCinemaModal"
+                >
+
+                    <i class="bi bi-plus-lg"></i>
+
+                    Add Cinema
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==================================================
+             TOOLBAR
+        ================================================== -->
+
+        <div class="staff-list-toolbar">
+
+            <div class="staff-search">
+
+                <i class="bi bi-search"></i>
+
+                <input
+                    type="search"
+                    id="cinemaSearch"
+                    class="form-control"
+                    placeholder="Search cinemas..."
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+            <div class="staff-filter">
+
+                <select
+                    id="cinemaStatusFilter"
+                    class="form-select"
+                >
+
+                    <option value="">
+                        All Statuses
+                    </option>
+
+                    <option value="active">
+                        Active
+                    </option>
+
+                    <option value="inactive">
+                        Inactive
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==================================================
+             CINEMA TABLE
+        ================================================== -->
+
+        <div class="staff-table-card">
+
+            <div class="staff-table-wrapper">
+
+                <table
+                    class="staff-data-table"
+                    id="cinemasTable"
+                >
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Cinema
+                            </th>
+
+                            <th>
+                                Location
+                            </th>
+
+                            <th>
+                                Screens
+                            </th>
+
+                            <th>
+                                Contact
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th class="text-end">
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for cinema in cinemas %}
+
+                        <tr
+                            class="cinema-row"
+                            data-name="{{ cinema.name|lower }}"
+                            data-city="{{ cinema.city|lower }}"
+                            data-state="{{ cinema.state|lower }}"
+                            data-status="{% if cinema.is_active %}active{% else %}inactive{% endif %}"
+                        >
+
+                            <!-- CINEMA -->
+
+                            <td>
+
+                                <div class="staff-movie-cell">
+
+                                    <div class="staff-cinema-icon">
+
+                                        <i class="bi bi-building"></i>
+
+                                    </div>
+
+
+                                    <div class="staff-movie-info">
+
+                                        <strong>
+                                            {{ cinema.name }}
+                                        </strong>
+
+                                        <span>
+                                            {{ cinema.slug }}
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+
+                            <!-- LOCATION -->
+
+                            <td>
+
+                                <div class="staff-location-cell">
+
+                                    <strong>
+                                        {{ cinema.city }}
+                                    </strong>
+
+                                    <span>
+                                        {{ cinema.state }}
+                                    </span>
+
+                                </div>
+
+                            </td>
+
+
+                            <!-- SCREENS -->
+
+                            <td>
+
+                                <span class="staff-count-badge">
+
+                                    {{ cinema.screens.count }}
+
+                                    {% if cinema.screens.count == 1 %}
+                                        Screen
+                                    {% else %}
+                                        Screens
+                                    {% endif %}
+
+                                </span>
+
+                            </td>
+
+
+                            <!-- CONTACT -->
+
+                            <td>
+
+                                <div class="staff-contact-cell">
+
+                                    {% if cinema.phone %}
+
+                                        <span>
+                                            <i class="bi bi-telephone"></i>
+                                            {{ cinema.phone }}
+                                        </span>
+
+                                    {% endif %}
+
+
+                                    {% if cinema.email %}
+
+                                        <span>
+                                            <i class="bi bi-envelope"></i>
+                                            {{ cinema.email }}
+                                        </span>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </td>
+
+
+                            <!-- STATUS -->
+
+                            <td>
+
+                                {% if cinema.is_active %}
+
+                                    <span class="staff-status-badge active">
+                                        Active
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="staff-status-badge inactive">
+                                        Inactive
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- ACTIONS -->
+
+                            <td>
+
+                                <div class="staff-table-actions">
+
+                                    <a
+                                        href="{% url 'staff:screens' cinema.id %}"
+                                        class="staff-icon-btn"
+                                        title="Manage screens"
+                                    >
+                                        <i class="bi bi-display"></i>
+                                    </a>
+
+
+                                    <!-- EDIT -->
+
+                                    <button
+                                        type="button"
+                                        class="staff-icon-btn"
+                                        title="Edit cinema"
+
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#editCinemaModal"
+
+                                        data-id="{{ cinema.id }}"
+                                        data-name="{{ cinema.name }}"
+                                        data-slug="{{ cinema.slug }}"
+                                        data-address="{{ cinema.address }}"
+                                        data-city="{{ cinema.city }}"
+                                        data-state="{{ cinema.state }}"
+                                        data-phone="{{ cinema.phone }}"
+                                        data-email="{{ cinema.email }}"
+                                        data-active="{{ cinema.is_active|yesno:'true,false' }}"
+                                    >
+
+                                        <i class="bi bi-pencil"></i>
+
+                                    </button>
+
+
+                                    <!-- DELETE -->
+
+                                    <button
+                                        type="button"
+                                        class="staff-icon-btn staff-icon-danger"
+
+                                        title="{% if cinema.screens.exists %}Cinema has screens{% else %}Delete cinema{% endif %}"
+
+                                        {% if not cinema.screens.exists %}
+
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteCinemaModal"
+
+                                            data-id="{{ cinema.id }}"
+                                            data-name="{{ cinema.name }}"
+
+                                        {% else %}
+
+                                            disabled
+
+                                        {% endif %}
+                                    >
+
+                                        {% if cinema.screens.exists %}
+
+                                            <i class="bi bi-lock"></i>
+
+                                        {% else %}
+
+                                            <i class="bi bi-trash3"></i>
+
+                                        {% endif %}
+
+                                    </button>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td
+                                colspan="6"
+                                class="staff-empty-cell"
+                            >
+
+                                <div class="staff-empty-state">
+
+                                    <div class="staff-empty-icon">
+
+                                        <i class="bi bi-building"></i>
+
+                                    </div>
+
+                                    <h3>
+                                        No cinemas yet
+                                    </h3>
+
+                                    <p>
+                                        Add your first CineFlow cinema location.
+                                    </p>
+
+                                    <button
+                                        type="button"
+                                        class="btn staff-primary-btn"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#addCinemaModal"
+                                    >
+
+                                        <i class="bi bi-plus-lg"></i>
+
+                                        Add Cinema
+
+                                    </button>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ==========================================================
+     ADD CINEMA MODAL
+========================================================== -->
+
+<div
+    class="modal fade"
+    id="addCinemaModal"
+    tabindex="-1"
+    aria-labelledby="addCinemaModalLabel"
+    aria-hidden="true"
+>
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+        <div class="modal-content staff-modal">
+
+
+            <div class="modal-header">
+
+                <div>
+
+                    <span class="section-label">
+                        CINEMA MANAGEMENT
+                    </span>
+
+                    <h2
+                        class="modal-title"
+                        id="addCinemaModalLabel"
+                    >
+                        Add Cinema
+                    </h2>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+
+            </div>
+
+
+            <form
+                method="post"
+                action="{% url 'staff:cinema_create' %}"
+            >
+
+                {% csrf_token %}
+
+
+                <div class="modal-body">
+
+                    {% if add_cinema_open and form.non_field_errors %}
+
+                        <div class="staff-form-error">
+                            {{ form.non_field_errors }}
+                        </div>
+
+                    {% endif %}
+
+
+                    <div class="staff-form-grid">
+
+
+                        <!-- NAME -->
+
+                        <div class="staff-form-group">
+
+                            <label class="form-label">
+                                Cinema Name
+                            </label>
+
+                            {{ form.name }}
+
+                            {% if add_cinema_open and form.name.errors %}
+
+                                <div class="staff-field-error">
+                                    {{ form.name.errors }}
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- SLUG -->
+
+                        <div class="staff-form-group">
+
+                            <label class="form-label">
+                                Slug
+                            </label>
+
+                            {{ form.slug }}
+
+                            {% if add_cinema_open and form.slug.errors %}
+
+                                <div class="staff-field-error">
+                                    {{ form.slug.errors }}
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- ADDRESS -->
+
+                        <div class="staff-form-group staff-form-full">
+
+                            <label class="form-label">
+                                Address
+                            </label>
+
+                            {{ form.address }}
+
+                            {% if add_cinema_open and form.address.errors %}
+
+                                <div class="staff-field-error">
+                                    {{ form.address.errors }}
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- CITY -->
+
+                        <div class="staff-form-group">
+
+                            <label class="form-label">
+                                City
+                            </label>
+
+                            {{ form.city }}
+
+                            {% if add_cinema_open and form.city.errors %}
+
+                                <div class="staff-field-error">
+                                    {{ form.city.errors }}
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- STATE -->
+
+                        <div class="staff-form-group">
+
+                            <label class="form-label">
+                                State
+                            </label>
+
+                            {{ form.state }}
+
+                            {% if add_cinema_open and form.state.errors %}
+
+                                <div class="staff-field-error">
+                                    {{ form.state.errors }}
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- PHONE -->
+
+                        <div class="staff-form-group">
+
+                            <label class="form-label">
+                                Phone
+                            </label>
+
+                            {{ form.phone }}
+
+                            {% if add_cinema_open and form.phone.errors %}
+
+                                <div class="staff-field-error">
+                                    {{ form.phone.errors }}
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- EMAIL -->
+
+                        <div class="staff-form-group">
+
+                            <label class="form-label">
+                                Email
+                            </label>
+
+                            {{ form.email }}
+
+                            {% if add_cinema_open and form.email.errors %}
+
+                                <div class="staff-field-error">
+                                    {{ form.email.errors }}
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- ACTIVE -->
+
+                        <div class="staff-form-group staff-form-full">
+
+                            <div class="form-check">
+
+                                {{ form.is_active }}
+
+                                <label
+                                    class="form-check-label"
+                                    for="{{ form.is_active.id_for_label }}"
+                                >
+                                    Cinema is active
+                                </label>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="modal-footer">
+
+                    <button
+                        type="button"
+                        class="btn staff-outline-btn"
+                        data-bs-dismiss="modal"
+                    >
+                        Cancel
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="btn staff-primary-btn"
+                    >
+
+                        <i class="bi bi-plus-lg"></i>
+
+                        Add Cinema
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ==========================================================
+     EDIT CINEMA MODAL
+========================================================== -->
+
+<div
+    class="modal fade"
+    id="editCinemaModal"
+    tabindex="-1"
+    aria-labelledby="editCinemaModalLabel"
+    aria-hidden="true"
+>
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+        <div class="modal-content staff-modal">
+
+
+            <!-- ==================================================
+                 MODAL HEADER
+            ================================================== -->
+
+            <div class="modal-header">
+
+                <div>
+
+                    <span class="section-label">
+                        CINEMA MANAGEMENT
+                    </span>
+
+                    <h2
+                        class="modal-title"
+                        id="editCinemaModalLabel"
+                    >
+                        Edit Cinema
+                    </h2>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+
+            </div>
+
+
+            <!-- ==================================================
+                 EDIT FORM
+            ================================================== -->
+
+            <form
+                id="editCinemaForm"
+                method="post"
+            >
+
+                {% csrf_token %}
+
+
+                <div class="modal-body">
+
+
+                    <!-- ==================================================
+                         NON FIELD ERRORS
+                    ================================================== -->
+
+                    {% if edit_cinema_open and edit_form.non_field_errors %}
+
+                        <div class="staff-form-error">
+
+                            {{ edit_form.non_field_errors }}
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <div class="staff-form-grid">
+
+
+                        <!-- ==================================================
+                             CINEMA NAME
+                        ================================================== -->
+
+                        <div class="staff-form-group">
+
+                            <label
+                                for="edit_cinema_name"
+                                class="form-label"
+                            >
+                                Cinema Name
+                            </label>
+
+
+                            {% if edit_cinema_open %}
+
+                                {{ edit_form.name }}
+
+                                {% if edit_form.name.errors %}
+
+                                    <div class="staff-field-error">
+
+                                        {{ edit_form.name.errors }}
+
+                                    </div>
+
+                                {% endif %}
+
+                            {% else %}
+
+                                <input
+                                    type="text"
+                                    id="edit_cinema_name"
+                                    name="name"
+                                    class="form-control"
+                                    autocomplete="off"
+                                >
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- ==================================================
+                             SLUG
+                        ================================================== -->
+
+                        <div class="staff-form-group">
+
+                            <label
+                                for="edit_cinema_slug"
+                                class="form-label"
+                            >
+                                Slug
+                            </label>
+
+
+                            {% if edit_cinema_open %}
+
+                                {{ edit_form.slug }}
+
+                                {% if edit_form.slug.errors %}
+
+                                    <div class="staff-field-error">
+
+                                        {{ edit_form.slug.errors }}
+
+                                    </div>
+
+                                {% endif %}
+
+                            {% else %}
+
+                                <input
+                                    type="text"
+                                    id="edit_cinema_slug"
+                                    name="slug"
+                                    class="form-control"
+                                    autocomplete="off"
+                                >
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- ==================================================
+                             ADDRESS
+                        ================================================== -->
+
+                        <div class="staff-form-group staff-form-full">
+
+                            <label
+                                for="edit_cinema_address"
+                                class="form-label"
+                            >
+                                Address
+                            </label>
+
+
+                            {% if edit_cinema_open %}
+
+                                {{ edit_form.address }}
+
+                                {% if edit_form.address.errors %}
+
+                                    <div class="staff-field-error">
+
+                                        {{ edit_form.address.errors }}
+
+                                    </div>
+
+                                {% endif %}
+
+                            {% else %}
+
+                                <textarea
+                                    id="edit_cinema_address"
+                                    name="address"
+                                    class="form-control"
+                                    rows="3"
+                                ></textarea>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- ==================================================
+                             CITY
+                        ================================================== -->
+
+                        <div class="staff-form-group">
+
+                            <label
+                                for="edit_cinema_city"
+                                class="form-label"
+                            >
+                                City
+                            </label>
+
+
+                            {% if edit_cinema_open %}
+
+                                {{ edit_form.city }}
+
+                                {% if edit_form.city.errors %}
+
+                                    <div class="staff-field-error">
+
+                                        {{ edit_form.city.errors }}
+
+                                    </div>
+
+                                {% endif %}
+
+                            {% else %}
+
+                                <input
+                                    type="text"
+                                    id="edit_cinema_city"
+                                    name="city"
+                                    class="form-control"
+                                    autocomplete="off"
+                                >
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- ==================================================
+                             STATE
+                        ================================================== -->
+
+                        <div class="staff-form-group">
+
+                            <label
+                                for="edit_cinema_state"
+                                class="form-label"
+                            >
+                                State
+                            </label>
+
+
+                            {% if edit_cinema_open %}
+
+                                {{ edit_form.state }}
+
+                                {% if edit_form.state.errors %}
+
+                                    <div class="staff-field-error">
+
+                                        {{ edit_form.state.errors }}
+
+                                    </div>
+
+                                {% endif %}
+
+                            {% else %}
+
+                                <input
+                                    type="text"
+                                    id="edit_cinema_state"
+                                    name="state"
+                                    class="form-control"
+                                    autocomplete="off"
+                                >
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- ==================================================
+                             PHONE
+                        ================================================== -->
+
+                        <div class="staff-form-group">
+
+                            <label
+                                for="edit_cinema_phone"
+                                class="form-label"
+                            >
+                                Phone
+                            </label>
+
+
+                            {% if edit_cinema_open %}
+
+                                {{ edit_form.phone }}
+
+                                {% if edit_form.phone.errors %}
+
+                                    <div class="staff-field-error">
+
+                                        {{ edit_form.phone.errors }}
+
+                                    </div>
+
+                                {% endif %}
+
+                            {% else %}
+
+                                <input
+                                    type="text"
+                                    id="edit_cinema_phone"
+                                    name="phone"
+                                    class="form-control"
+                                    autocomplete="off"
+                                >
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- ==================================================
+                             EMAIL
+                        ================================================== -->
+
+                        <div class="staff-form-group">
+
+                            <label
+                                for="edit_cinema_email"
+                                class="form-label"
+                            >
+                                Email
+                            </label>
+
+
+                            {% if edit_cinema_open %}
+
+                                {{ edit_form.email }}
+
+                                {% if edit_form.email.errors %}
+
+                                    <div class="staff-field-error">
+
+                                        {{ edit_form.email.errors }}
+
+                                    </div>
+
+                                {% endif %}
+
+                            {% else %}
+
+                                <input
+                                    type="email"
+                                    id="edit_cinema_email"
+                                    name="email"
+                                    class="form-control"
+                                    autocomplete="off"
+                                >
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- ==================================================
+                             ACTIVE STATUS
+                        ================================================== -->
+
+                        <div class="staff-form-group staff-form-full">
+
+                            <div class="form-check">
+
+
+                                {% if edit_cinema_open %}
+
+                                    {{ edit_form.is_active }}
+
+                                {% else %}
+
+                                    <input
+                                        type="checkbox"
+                                        name="is_active"
+                                        id="edit_cinema_is_active"
+                                        class="form-check-input"
+                                    >
+
+                                {% endif %}
+
+
+                                <label
+                                    class="form-check-label"
+                                    for="edit_cinema_is_active"
+                                >
+                                    Cinema is active
+                                </label>
+
+                            </div>
+
+
+                            {% if edit_cinema_open and edit_form.is_active.errors %}
+
+                                <div class="staff-field-error">
+
+                                    {{ edit_form.is_active.errors }}
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ==================================================
+                     MODAL FOOTER
+                ================================================== -->
+
+                <div class="modal-footer">
+
+                    <button
+                        type="button"
+                        class="btn staff-outline-btn"
+                        data-bs-dismiss="modal"
+                    >
+                        Cancel
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="btn staff-primary-btn"
+                    >
+
+                        <i class="bi bi-check-lg"></i>
+
+                        Save Changes
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ==========================================================
+     DELETE CINEMA MODAL
+========================================================== -->
+
+<div
+    class="modal fade"
+    id="deleteCinemaModal"
+    tabindex="-1"
+    aria-labelledby="deleteCinemaModalLabel"
+    aria-hidden="true"
+>
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content staff-modal staff-delete-modal">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <span class="section-label">
+                        DANGER ZONE
+                    </span>
+
+                    <h2 class="modal-title">
+                        Delete Cinema
+                    </h2>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+
+            </div>
+
+
+            <form
+                id="deleteCinemaForm"
+                method="post"
+            >
+
+                {% csrf_token %}
+
+
+                <div class="modal-body">
+
+                    <div class="staff-delete-icon">
+
+                        <i class="bi bi-building-x"></i>
+
+                    </div>
+
+
+                    <h3>
+                        Delete
+                        <span id="deleteCinemaName"></span>?
+                    </h3>
+
+
+                    <p>
+                        This action cannot be undone. Only cinemas
+                        without screens can be deleted.
+                    </p>
+
+                </div>
+
+
+                <div class="modal-footer">
+
+                    <button
+                        type="button"
+                        class="btn staff-outline-btn"
+                        data-bs-dismiss="modal"
+                    >
+                        Cancel
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="btn staff-danger-btn"
+                    >
+
+                        <i class="bi bi-trash3"></i>
+
+                        Delete Cinema
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+
+        /* ====================================================
+           SEARCH + FILTER
+        ==================================================== */
+
+        const searchInput =
+            document.getElementById(
+                "cinemaSearch"
+            );
+
+        const statusFilter =
+            document.getElementById(
+                "cinemaStatusFilter"
+            );
+
+        const cinemaRows =
+            document.querySelectorAll(
+                ".cinema-row"
+            );
+
+
+        function filterCinemas() {
+
+            const search =
+                searchInput.value
+                    .toLowerCase()
+                    .trim();
+
+            const status =
+                statusFilter.value;
+
+
+            cinemaRows.forEach(
+                function (row) {
+
+                    const name =
+                        row.dataset.name || "";
+
+                    const city =
+                        row.dataset.city || "";
+
+                    const state =
+                        row.dataset.state || "";
+
+                    const rowStatus =
+                        row.dataset.status || "";
+
+
+                    const matchesSearch =
+                        !search ||
+                        name.includes(search) ||
+                        city.includes(search) ||
+                        state.includes(search);
+
+
+                    const matchesStatus =
+                        !status ||
+                        rowStatus === status;
+
+
+                    row.style.display =
+                        matchesSearch && matchesStatus
+                            ? ""
+                            : "none";
+
+                }
+            );
+
+        }
+
+
+        searchInput.addEventListener(
+            "input",
+            filterCinemas
+        );
+
+
+        statusFilter.addEventListener(
+            "change",
+            filterCinemas
+        );
+
+
+        /* ====================================================
+           EDIT CINEMA
+        ==================================================== */
+
+        const editModal =
+            document.getElementById(
+                "editCinemaModal"
+            );
+
+        const editForm =
+            document.getElementById(
+                "editCinemaForm"
+            );
+
+
+        if (editModal) {
+
+            editModal.addEventListener(
+                "show.bs.modal",
+                function (event) {
+
+                    const button =
+                        event.relatedTarget;
+
+
+                    if (!button) {
+                        return;
+                    }
+
+
+                    const id =
+                        button.dataset.id;
+
+
+                    editForm.action =
+                        "{% url 'staff:cinema_edit' 0 %}"
+                            .replace(
+                                "/0/edit/",
+                                "/" + id + "/edit/"
+                            );
+
+
+                    const fields = {
+
+                        name:
+                            document.getElementById(
+                                "edit_cinema_name"
+                            ),
+
+                        slug:
+                            document.getElementById(
+                                "edit_cinema_slug"
+                            ),
+
+                        address:
+                            document.getElementById(
+                                "edit_cinema_address"
+                            ),
+
+                        city:
+                            document.getElementById(
+                                "edit_cinema_city"
+                            ),
+
+                        state:
+                            document.getElementById(
+                                "edit_cinema_state"
+                            ),
+
+                        phone:
+                            document.getElementById(
+                                "edit_cinema_phone"
+                            ),
+
+                        email:
+                            document.getElementById(
+                                "edit_cinema_email"
+                            ),
+
+                        active:
+                            document.getElementById(
+                                "edit_cinema_is_active"
+                            ),
+
+                    };
+
+
+                    if (fields.name) {
+                        fields.name.value =
+                            button.dataset.name || "";
+                    }
+
+
+                    if (fields.slug) {
+                        fields.slug.value =
+                            button.dataset.slug || "";
+                    }
+
+
+                    if (fields.address) {
+                        fields.address.value =
+                            button.dataset.address || "";
+                    }
+
+
+                    if (fields.city) {
+                        fields.city.value =
+                            button.dataset.city || "";
+                    }
+
+
+                    if (fields.state) {
+                        fields.state.value =
+                            button.dataset.state || "";
+                    }
+
+
+                    if (fields.phone) {
+                        fields.phone.value =
+                            button.dataset.phone || "";
+                    }
+
+
+                    if (fields.email) {
+                        fields.email.value =
+                            button.dataset.email || "";
+                    }
+
+
+                    if (fields.active) {
+
+                        fields.active.checked =
+                            button.dataset.active === "true";
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        /* ====================================================
+           DELETE CINEMA
+        ==================================================== */
+
+        const deleteModal =
+            document.getElementById(
+                "deleteCinemaModal"
+            );
+
+        const deleteForm =
+            document.getElementById(
+                "deleteCinemaForm"
+            );
+
+        const deleteName =
+            document.getElementById(
+                "deleteCinemaName"
+            );
+
+
+        if (deleteModal) {
+
+            deleteModal.addEventListener(
+                "show.bs.modal",
+                function (event) {
+
+                    const button =
+                        event.relatedTarget;
+
+
+                    if (!button) {
+                        return;
+                    }
+
+
+                    const id =
+                        button.dataset.id;
+
+
+                    const name =
+                        button.dataset.name;
+
+
+                    deleteName.textContent =
+                        name;
+
+
+                    deleteForm.action =
+                        "{% url 'staff:cinema_delete' 0 %}"
+                            .replace(
+                                "/0/delete/",
+                                "/" + id + "/delete/"
+                            );
+
+                }
+            );
+
+        }
+
+
+        /* ====================================================
+           REOPEN ADD MODAL
+        ==================================================== */
+
+        {% if add_cinema_open %}
+
+        const addModal =
+            document.getElementById(
+                "addCinemaModal"
+            );
+
+
+        if (addModal) {
+
+            new bootstrap.Modal(
+                addModal
+            ).show();
+
+        }
+
+        {% endif %}
+
+
+        /* ====================================================
+           REOPEN EDIT MODAL
+        ==================================================== */
+
+        {% if edit_cinema_open %}
+
+        const editModalElement =
+            document.getElementById(
+                "editCinemaModal"
+            );
+
+
+        if (editModalElement) {
+
+            new bootstrap.Modal(
+                editModalElement
+            ).show();
+
+        }
+
+        {% endif %}
+
+    }
+);
+
+</script>
+
+{% endblock %}

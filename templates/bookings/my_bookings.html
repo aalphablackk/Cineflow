@@ -1,0 +1,239 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    My Bookings | CineFlow
+{% endblock %}
+
+
+{% block content %}
+
+<section class="my-bookings-page">
+
+    <div class="container">
+
+        <!-- =====================================================
+             PAGE HEADER
+        ====================================================== -->
+
+        <div class="page-header">
+
+            <span class="section-label">
+                CINEFLOW
+            </span>
+
+            <h1>
+                My Bookings
+            </h1>
+
+            <p>
+                View and manage your CineFlow bookings.
+            </p>
+
+        </div>
+
+
+        <!-- =====================================================
+             BOOKINGS
+        ====================================================== -->
+
+        {% if bookings %}
+
+            <div class="bookings-list">
+
+                {% for booking in bookings %}
+
+                    <article class="booking-card">
+
+                        <!-- MOVIE -->
+
+                        <div class="booking-card-movie">
+
+                            <div class="booking-card-poster">
+
+                                {% if booking.showtime.movie.poster_source %}
+
+                                    <img
+                                        src="{{ booking.showtime.movie.poster_source }}"
+                                        alt="{{ booking.showtime.movie.title }}"
+                                    >
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <div>
+
+                                <span class="section-label">
+                                    {{ booking.booking_reference }}
+                                </span>
+
+                                <h2>
+                                    {{ booking.showtime.movie.title }}
+                                </h2>
+
+                                <p>
+                                    {{ booking.showtime.movie.age_rating }}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- SHOWTIME -->
+
+                        <div class="booking-card-details">
+
+                            <div>
+
+                                <span>
+                                    Cinema
+                                </span>
+
+                                <strong>
+                                    {{ booking.showtime.screen.cinema.name }}
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Screen
+                                </span>
+
+                                <strong>
+                                    {{ booking.showtime.screen.name }}
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Date
+                                </span>
+
+                                <strong>
+                                    {{ booking.showtime.show_date|date:"M j, Y" }}
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Time
+                                </span>
+
+                                <strong>
+                                    {{ booking.showtime.start_time|time:"g:i A" }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- BOOKING STATUS -->
+
+                        <div class="booking-card-footer">
+
+                            <div>
+
+                                <span>
+                                    Tickets
+                                </span>
+
+                                <strong>
+                                    {{ booking.ticket_quantity }}
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Total
+                                </span>
+
+                                <strong>
+                                    ₦{{ booking.total_amount }}
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Status
+                                </span>
+
+                                <strong class="booking-status {{ booking.status }}">
+
+                                    {{ booking.get_status_display }}
+
+                                </strong>
+
+                            </div>
+
+
+                            <a
+                                href="{% url 'bookings:booking_detail' booking.booking_reference %}"
+                                class="btn cine-btn-outline"
+                            >
+                                View Booking
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+
+                        </div>
+
+                    </article>
+
+                {% endfor %}
+
+            </div>
+
+
+        {% else %}
+
+            <!-- =================================================
+                 EMPTY STATE
+            ================================================== -->
+
+            <div class="empty-state">
+
+                <i class="bi bi-ticket-perforated"></i>
+
+                <h2>
+                    No bookings yet
+                </h2>
+
+                <p>
+                    You haven't booked any movie tickets yet.
+                </p>
+
+                <a
+                    href="{% url 'movies:home' %}"
+                    class="btn cine-btn-primary"
+                >
+                    Browse Movies
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}

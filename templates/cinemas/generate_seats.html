@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    Generate Seats | {{ screen.name }} | CineFlow
+{% endblock %}
+
+
+{% block content %}
+
+<section class="management-page">
+
+    <div class="container">
+
+        <!-- =====================================================
+             BACK
+        ====================================================== -->
+
+        <div class="management-back">
+
+            <a
+                href="{% url 'cinemas:seat_list' screen.id %}"
+            >
+                <i class="bi bi-arrow-left"></i>
+                Back to Seats
+            </a>
+
+        </div>
+
+
+        <!-- =====================================================
+             HEADER
+        ====================================================== -->
+
+        <div class="management-header">
+
+            <span class="section-label">
+                SEAT MANAGEMENT
+            </span>
+
+            <h1>
+                Generate Seats
+            </h1>
+
+            <p>
+                Automatically create seats for
+                {{ screen.name }}.
+            </p>
+
+        </div>
+
+
+        <!-- =====================================================
+             SCREEN INFORMATION
+        ====================================================== -->
+
+        <div class="management-info-card">
+
+            <div>
+
+                <span>
+                    Cinema
+                </span>
+
+                <strong>
+                    {{ screen.cinema.name }}
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    Screen
+                </span>
+
+                <strong>
+                    {{ screen.name }}
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    Capacity
+                </span>
+
+                <strong>
+                    {{ screen.capacity }}
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    Existing Seats
+                </span>
+
+                <strong>
+                    {{ existing_seat_count }}
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    Remaining Capacity
+                </span>
+
+                <strong>
+                    {{ remaining_capacity }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             FORM
+        ====================================================== -->
+
+        <div class="management-card">
+
+            <form
+                method="post"
+                novalidate
+            >
+
+                {% csrf_token %}
+
+
+                <div class="mb-4">
+
+                    <label
+                        for="rows"
+                        class="form-label"
+                    >
+                        Seat Rows
+                    </label>
+
+                    <input
+                        type="text"
+                        name="rows"
+                        id="rows"
+                        class="form-control"
+                        placeholder="e.g. A, B, C, D, E"
+                        required
+                    >
+
+                    <div class="form-text">
+                        Enter rows separated by commas.
+                    </div>
+
+                </div>
+
+
+                <div class="mb-4">
+
+                    <label
+                        for="seats_per_row"
+                        class="form-label"
+                    >
+                        Seats Per Row
+                    </label>
+
+                    <input
+                        type="number"
+                        name="seats_per_row"
+                        id="seats_per_row"
+                        class="form-control"
+                        min="1"
+                        max="{{ remaining_capacity }}"
+                        placeholder="e.g. 12"
+                        required
+                    >
+
+                    <div class="form-text">
+                        You can add up to
+                        {{ remaining_capacity }}
+                        more seats.
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     PREVIEW
+                ================================================== -->
+
+                <div class="seat-generation-preview">
+
+                    <div>
+
+                        <i class="bi bi-grid-3x3-gap"></i>
+
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Automatic Seat Generation
+                        </strong>
+
+                        <p>
+                            CineFlow will create seats using
+                            your selected rows and seat numbers.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     ACTIONS
+                ================================================== -->
+
+                <div class="management-actions">
+
+                    <a
+                        href="{% url 'cinemas:seat_list' screen.id %}"
+                        class="btn cine-btn-outline"
+                    >
+                        Cancel
+                    </a>
+
+
+                    <button
+                        type="submit"
+                        class="btn cine-btn-primary"
+                    >
+
+                        <i class="bi bi-magic"></i>
+
+                        Generate Seats
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

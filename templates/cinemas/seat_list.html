@@ -1,0 +1,292 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    Seats — {{ screen.name }} | CineFlow
+{% endblock %}
+
+
+{% block content %}
+
+<section class="management-page">
+
+    <div class="container">
+
+        <!-- =====================================================
+             BACK
+        ====================================================== -->
+
+        <div class="management-back">
+
+            <a
+                href="{% url 'cinemas:cinema_detail' screen.cinema.slug %}"
+            >
+                <i class="bi bi-arrow-left"></i>
+                Back to Cinema
+            </a>
+
+        </div>
+
+
+        <!-- =====================================================
+             HEADER
+        ====================================================== -->
+
+        <div class="management-header">
+
+            <div>
+
+                <span class="section-label">
+                    SEAT MANAGEMENT
+                </span>
+
+                <h1>
+                    {{ screen.name }}
+                </h1>
+
+                <p>
+                    Manage the seats available in
+                    {{ screen.name }} at
+                    {{ screen.cinema.name }}.
+                </p>
+
+            </div>
+
+
+            <div class="management-header-actions">
+
+                <a
+                    href="{% url 'cinemas:generate_seats' screen.id %}"
+                    class="btn cine-btn-primary"
+                >
+                    <i class="bi bi-magic"></i>
+                    Generate Seats
+                </a>
+
+                <a
+                    href="{% url 'cinemas:create_seat' screen.id %}"
+                    class="btn cine-btn-outline"
+                >
+                    <i class="bi bi-plus-lg"></i>
+                    Add Seat
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             SCREEN SUMMARY
+        ====================================================== -->
+
+        <div class="management-info-card">
+
+            <div>
+
+                <span>
+                    Cinema
+                </span>
+
+                <strong>
+                    {{ screen.cinema.name }}
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    Screen
+                </span>
+
+                <strong>
+                    {{ screen.name }}
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    Type
+                </span>
+
+                <strong>
+                    {{ screen.get_screen_type_display }}
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    Capacity
+                </span>
+
+                <strong>
+                    {{ screen.capacity }}
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    Active Seats
+                </span>
+
+                <strong>
+                    {{ seats.count }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             SEAT MAP
+        ====================================================== -->
+
+        <div class="management-card">
+
+            <div class="management-card-header">
+
+                <div>
+
+                    <span class="section-label">
+                        SEAT MAP
+                    </span>
+
+                    <h2>
+                        {{ seats.count }} Seats
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            {% if seats %}
+
+                <div class="management-seat-map">
+
+                    {% regroup seats by row as row_groups %}
+
+
+                    {% for row_group in row_groups %}
+
+                        <div class="management-seat-row">
+
+                            <!-- ROW LABEL -->
+
+                            <div class="management-seat-row-label">
+
+                                {{ row_group.grouper }}
+
+                            </div>
+
+
+                            <!-- SEATS -->
+
+                            <div class="management-seat-row-seats">
+
+                                {% for seat in row_group.list %}
+
+                                    <div class="management-seat">
+
+                                        <span class="management-seat-label">
+                                            {{ seat.label }}
+                                        </span>
+
+
+                                        <div class="management-seat-actions">
+
+                                            <a
+                                                href="{% url 'cinemas:edit_seat' seat.id %}"
+                                                title="Edit {{ seat.label }}"
+                                            >
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+
+
+                                            <a
+                                                href="{% url 'cinemas:delete_seat' seat.id %}"
+                                                title="Deactivate {{ seat.label }}"
+                                            >
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+
+                                        </div>
+
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+
+            {% else %}
+
+                <!-- =================================================
+                     EMPTY STATE
+                ================================================== -->
+
+                <div class="empty-state">
+
+                    <i class="bi bi-grid-3x3-gap"></i>
+
+                    <h3>
+                        No seats configured
+                    </h3>
+
+                    <p>
+                        This screen does not have any seats yet.
+                        Generate seats automatically or add them
+                        individually.
+                    </p>
+
+
+                    <div class="empty-state-actions">
+
+                        <a
+                            href="{% url 'cinemas:generate_seats' screen.id %}"
+                            class="btn cine-btn-primary"
+                        >
+                            <i class="bi bi-magic"></i>
+                            Generate Seats
+                        </a>
+
+
+                        <a
+                            href="{% url 'cinemas:create_seat' screen.id %}"
+                            class="btn cine-btn-outline"
+                        >
+                            <i class="bi bi-plus-lg"></i>
+                            Add Seat
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

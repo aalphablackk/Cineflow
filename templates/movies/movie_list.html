@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    Movies | CineFlow
+{% endblock %}
+
+
+{% block content %}
+
+
+<!-- =========================================================
+     PAGE HEADER
+========================================================= -->
+
+<section class="movies-page-header">
+
+    <div class="container">
+
+        <span class="section-label">
+            CINEFLOW MOVIES
+        </span>
+
+        <h1>
+            Find your next movie.
+        </h1>
+
+        <p>
+            Explore movies currently showing
+            at CineFlow cinemas.
+        </p>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     MOVIE LIST
+========================================================= -->
+
+<section class="movies-list-section">
+
+    <div class="container">
+
+        <div class="row g-4">
+
+            {% for movie in movies %}
+
+                <div class="col-6 col-md-4 col-lg-3">
+
+                    <article class="movie-card">
+
+
+                        <!-- Poster -->
+
+                        <div class="movie-poster">
+
+                            {% if movie.poster_source %}
+
+                                <img
+                                    src="{{ movie.poster_source }}"
+                                    alt="{{ movie.title }}"
+                                    loading="lazy"
+                                >
+
+                            {% else %}
+
+                                <div class="poster-placeholder">
+
+                                    <i class="bi bi-film"></i>
+
+                                    <span>
+                                        No poster
+                                    </span>
+
+                                </div>
+
+                            {% endif %}
+
+
+                            <span class="movie-rating">
+                                {{ movie.age_rating }}
+                            </span>
+
+                        </div>
+
+
+                        <!-- Movie Information -->
+
+                        <div class="movie-card-body">
+
+                            <h2 class="movie-title">
+                                {{ movie.title }}
+                            </h2>
+
+
+                            <div class="movie-meta">
+
+                                <span>
+
+                                    <i class="bi bi-clock"></i>
+
+                                    {{ movie.duration }} min
+
+                                </span>
+
+                                <span>
+                                    {{ movie.release_date|date:"Y" }}
+                                </span>
+
+                            </div>
+
+
+                            <a
+                                href="{% url "movies:movie_detail" movie.slug %}"
+                                class="movie-card-link"
+                            >
+                                View Movie
+
+                                <i class="bi bi-arrow-right"></i>
+
+                            </a>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+            {% empty %}
+
+                <div class="col-12">
+
+                    <div class="empty-state">
+
+                        <i class="bi bi-film"></i>
+
+                        <h3>
+                            No movies available.
+                        </h3>
+
+                        <p>
+                            There are currently no movies
+                            showing at CineFlow.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
+
+{% endblock %}

@@ -1,0 +1,298 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    Contact Support | CineFlow
+{% endblock %}
+
+
+{% block content %}
+
+<section class="support-page">
+
+    <div class="container">
+
+        <!-- =====================================================
+             HEADER
+        ====================================================== -->
+
+        <div class="page-header">
+
+            <a
+                href="{% if booking %}{% url 'bookings:booking_detail' booking.booking_reference %}{% else %}{% url 'support:my_tickets' %}{% endif %}"
+                class="booking-back"
+            >
+
+                <i class="bi bi-arrow-left"></i>
+
+                Back
+
+            </a>
+
+
+            <span class="section-label">
+                CINEFLOW SUPPORT
+            </span>
+
+            <h1>
+                Contact Support
+            </h1>
+
+            <p>
+                Tell us what you need help with and our staff
+                will get back to you.
+            </p>
+
+        </div>
+
+
+        <div class="support-form-layout">
+
+            <!-- =================================================
+                 FORM
+            ================================================== -->
+
+            <div class="support-form-card">
+
+                <form
+                    method="post"
+                >
+
+                    {% csrf_token %}
+
+
+                    {% if form.non_field_errors %}
+
+                        <div class="alert alert-danger">
+
+                            {{ form.non_field_errors }}
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- SUBJECT -->
+
+                    <div class="support-form-group">
+
+                        <label
+                            for="{{ form.subject.id_for_label }}"
+                        >
+                            Subject
+                        </label>
+
+                        {{ form.subject }}
+
+                        {% if form.subject.errors %}
+
+                            <div class="form-error">
+
+                                {{ form.subject.errors }}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- PRIORITY -->
+
+                    <div class="support-form-group">
+
+                        <label
+                            for="{{ form.priority.id_for_label }}"
+                        >
+                            Priority
+                        </label>
+
+                        {{ form.priority }}
+
+                        {% if form.priority.errors %}
+
+                            <div class="form-error">
+
+                                {{ form.priority.errors }}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- MESSAGE -->
+
+                    <div class="support-form-group">
+
+                        <label
+                            for="{{ form.message.id_for_label }}"
+                        >
+                            Message
+                        </label>
+
+                        {{ form.message }}
+
+                        {% if form.message.errors %}
+
+                            <div class="form-error">
+
+                                {{ form.message.errors }}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- BOOKING -->
+
+                    {% if booking %}
+
+                        <div class="support-linked-booking">
+
+                            <div class="support-linked-booking-icon">
+
+                                <i class="bi bi-ticket-perforated"></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Related Booking
+                                </span>
+
+                                <strong>
+                                    {{ booking.booking_reference }}
+                                </strong>
+
+                                <small>
+                                    {{ booking.showtime.movie.title }}
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- ACTIONS -->
+
+                    <div class="support-form-actions">
+
+                        <a
+                            href="{% if booking %}{% url 'bookings:booking_detail' booking.booking_reference %}{% else %}{% url 'support:my_tickets' %}{% endif %}"
+                            class="btn cine-btn-outline"
+                        >
+                            Cancel
+                        </a>
+
+
+                        <button
+                            type="submit"
+                            class="btn cine-btn-primary"
+                        >
+
+                            Submit Request
+
+                            <i class="bi bi-send"></i>
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+
+            <!-- =================================================
+                 INFORMATION
+            ================================================== -->
+
+            <aside class="support-info-card">
+
+                <span class="section-label">
+                    NEED HELP?
+                </span>
+
+                <h2>
+                    We're here to help.
+                </h2>
+
+                <p>
+                    Tell us what happened and provide as much
+                    information as possible.
+                </p>
+
+
+                <div class="support-info-item">
+
+                    <i class="bi bi-ticket-perforated"></i>
+
+                    <div>
+
+                        <strong>
+                            Booking issues
+                        </strong>
+
+                        <span>
+                            Payment, seats, tickets or showtimes.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="support-info-item">
+
+                    <i class="bi bi-person"></i>
+
+                    <div>
+
+                        <strong>
+                            Account issues
+                        </strong>
+
+                        <span>
+                            Login, password or profile problems.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="support-info-item">
+
+                    <i class="bi bi-question-circle"></i>
+
+                    <div>
+
+                        <strong>
+                            General questions
+                        </strong>
+
+                        <span>
+                            Ask us anything about CineFlow.
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </aside>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

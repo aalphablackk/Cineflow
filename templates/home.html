@@ -1,0 +1,336 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    CineFlow — Your Movie Experience
+{% endblock %}
+
+
+{% block content %}
+
+
+<!-- =========================================================
+     HERO
+========================================================= -->
+
+<section class="cine-hero">
+
+    <div class="container">
+
+        <div class="hero-content">
+
+            <span class="hero-label">
+                YOUR MOVIE EXPERIENCE
+            </span>
+
+
+            <h1 class="hero-title">
+
+                Discover your
+                <span>next movie.</span>
+
+            </h1>
+
+
+            <p class="hero-description">
+
+                Find movies, explore showtimes,
+                choose your preferred seats and
+                book your cinema experience effortlessly.
+
+            </p>
+
+
+            <div class="hero-actions">
+
+                <a
+                    href="#now-showing"
+                    class="btn cine-btn-primary btn-lg"
+                >
+                    Browse Movies
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+
+
+                <a
+                    href="#now-showing"
+                    class="hero-secondary-link"
+                >
+                    See what's showing
+                    <i class="bi bi-chevron-down"></i>
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     NOW SHOWING
+========================================================= -->
+
+<section
+    class="movies-section"
+    id="now-showing"
+>
+
+    <div class="container">
+
+        <div class="section-header">
+
+            <div>
+
+                <span class="section-label">
+                    NOW SHOWING
+                </span>
+
+                <h2>
+                    Movies worth watching.
+                </h2>
+
+                <p>
+                    Catch the latest movies currently
+                    showing at CineFlow cinemas.
+                </p>
+
+            </div>
+
+
+            <a
+                href="{% url "movies:movie_list" %}"
+                class="section-link"
+            >
+                View all
+                <i class="bi bi-arrow-right"></i>
+            </a>
+
+        </div>
+
+
+        <div class="row g-4">
+
+            {% for movie in movies %}
+
+                <div class="col-6 col-md-4 col-lg-3">
+
+                    <article class="movie-card">
+
+
+                        <!-- Poster -->
+
+                        <div class="movie-poster">
+
+                            {% if movie.poster_source %}
+
+                                <img
+                                    src="{{ movie.poster_source }}"
+                                    alt="{{ movie.title }}"
+                                    loading="lazy"
+                                >
+
+                            {% else %}
+
+                                <div class="poster-placeholder">
+
+                                    <i class="bi bi-film"></i>
+
+                                    <span>
+                                        No poster
+                                    </span>
+
+                                </div>
+
+                            {% endif %}
+
+
+                            <!-- Rating / Age -->
+
+                            <span class="movie-rating">
+                                {{ movie.age_rating }}
+                            </span>
+
+                        </div>
+
+
+                        <!-- Movie information -->
+
+                        <div class="movie-card-body">
+
+                            <h3 class="movie-title">
+                                {{ movie.title }}
+                            </h3>
+
+
+                            <div class="movie-meta">
+
+                                <span>
+                                    <i class="bi bi-clock"></i>
+
+                                    {{ movie.duration }} min
+                                </span>
+
+                                <span>
+                                    {{ movie.status|title }}
+                                </span>
+
+                            </div>
+
+
+                            <a
+                                href="{% url "movies:movie_detail" movie.slug %}"
+                                class="movie-card-link"
+                            >
+                                View Movie
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+            {% empty %}
+
+                <div class="col-12">
+
+                    <div class="empty-state">
+
+                        <i class="bi bi-film"></i>
+
+                        <h3>
+                            No movies showing right now.
+                        </h3>
+
+                        <p>
+                            Check back soon for new releases.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     WHY CINEFLOW
+========================================================= -->
+
+<section class="features-section">
+
+    <div class="container">
+
+        <div class="section-header centered">
+
+            <span class="section-label">
+                THE CINEFLOW EXPERIENCE
+            </span>
+
+            <h2>
+                Cinema made simpler.
+            </h2>
+
+            <p>
+                Everything you need for a better
+                movie-going experience.
+            </p>
+
+        </div>
+
+
+        <div class="row g-4">
+
+            <div class="col-md-4">
+
+                <div class="feature-card">
+
+                    <div class="feature-icon">
+
+                        <i class="bi bi-ticket-perforated"></i>
+
+                    </div>
+
+                    <h3>
+                        Easy Booking
+                    </h3>
+
+                    <p>
+                        Find a movie, choose your
+                        showtime and book your tickets
+                        in just a few steps.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="feature-card">
+
+                    <div class="feature-icon">
+
+                        <i class="bi bi-grid"></i>
+
+                    </div>
+
+                    <h3>
+                        Choose Your Seat
+                    </h3>
+
+                    <p>
+                        Pick your preferred seat or
+                        choose general admission when
+                        available.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="feature-card">
+
+                    <div class="feature-icon">
+
+                        <i class="bi bi-shield-check"></i>
+
+                    </div>
+
+                    <h3>
+                        Secure Booking
+                    </h3>
+
+                    <p>
+                        Your booking is protected by
+                        CineFlow's secure booking system.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+{% endblock %}

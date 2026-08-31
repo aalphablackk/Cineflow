@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    Support | CineFlow
+{% endblock %}
+
+
+{% block content %}
+
+<section class="support-page">
+
+    <div class="container">
+
+        <!-- =====================================================
+             PAGE HEADER
+        ====================================================== -->
+
+        <div class="page-header">
+
+            <span class="section-label">
+                CINEFLOW SUPPORT
+            </span>
+
+            <h1>
+                Support
+            </h1>
+
+            <p>
+                Get help with your bookings and CineFlow account.
+            </p>
+
+        </div>
+
+
+        <!-- =====================================================
+             ACTION
+        ====================================================== -->
+
+        <div class="support-page-actions">
+
+            <a
+                href="{% url 'support:create_ticket' %}"
+                class="btn cine-btn-primary"
+            >
+
+                <i class="bi bi-plus-lg"></i>
+
+                New Support Request
+
+            </a>
+
+        </div>
+
+
+        <!-- =====================================================
+             TICKETS
+        ====================================================== -->
+
+        {% if tickets %}
+
+            <div class="support-ticket-list">
+
+                {% for ticket in tickets %}
+
+                    <article class="support-ticket-card">
+
+                        <div class="support-ticket-main">
+
+                            <div class="support-ticket-heading">
+
+                                <span class="support-ticket-number">
+                                    #{{ ticket.id }}
+                                </span>
+
+                                <span
+                                    class="support-status {{ ticket.status }}"
+                                >
+                                    {{ ticket.get_status_display }}
+                                </span>
+
+                            </div>
+
+
+                            <h2>
+                                {{ ticket.subject }}
+                            </h2>
+
+
+                            {% if ticket.booking %}
+
+                                <p class="support-booking-reference">
+
+                                    <i class="bi bi-ticket-perforated"></i>
+
+                                    Booking:
+                                    {{ ticket.booking.booking_reference }}
+
+                                </p>
+
+                            {% else %}
+
+                                <p class="support-booking-reference">
+
+                                    <i class="bi bi-chat-left-text"></i>
+
+                                    General Support
+
+                                </p>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="support-ticket-meta">
+
+                            <div>
+
+                                <span>
+                                    Priority
+                                </span>
+
+                                <strong
+                                    class="support-priority {{ ticket.priority }}"
+                                >
+                                    {{ ticket.get_priority_display }}
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Last Updated
+                                </span>
+
+                                <strong>
+                                    {{ ticket.updated_at|date:"M j, Y g:i A" }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="support-ticket-action">
+
+                            <a
+                                href="{% url 'support:ticket_detail' ticket.id %}"
+                                class="btn cine-btn-outline"
+                            >
+
+                                View Conversation
+
+                                <i class="bi bi-arrow-right"></i>
+
+                            </a>
+
+                        </div>
+
+                    </article>
+
+                {% endfor %}
+
+            </div>
+
+
+        {% else %}
+
+            <!-- =================================================
+                 EMPTY STATE
+            ================================================== -->
+
+            <div class="empty-state">
+
+                <i class="bi bi-headset"></i>
+
+                <h2>
+                    No support requests
+                </h2>
+
+                <p>
+                    You haven't contacted CineFlow support yet.
+                </p>
+
+                <a
+                    href="{% url 'support:create_ticket' %}"
+                    class="btn cine-btn-primary"
+                >
+
+                    Contact Support
+
+                    <i class="bi bi-arrow-right"></i>
+
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}

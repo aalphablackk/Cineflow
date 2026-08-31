@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+
+{% block title %}
+    {{ page_title }} | CineFlow
+{% endblock %}
+
+
+{% block content %}
+
+<section class="management-form-page">
+
+    <div class="container">
+
+        <div class="management-form-wrapper">
+
+            <!-- =================================================
+                 BACK
+            ================================================== -->
+
+            <a
+                href="{% if screen %}{% url 'cinemas:cinema_detail' screen.cinema.slug %}{% else %}{% url 'cinemas:cinema_list' %}{% endif %}"
+                class="management-back"
+            >
+
+                <i class="bi bi-arrow-left"></i>
+
+                Back
+
+            </a>
+
+
+            <!-- =================================================
+                 HEADER
+            ================================================== -->
+
+            <div class="management-form-header">
+
+                <span class="section-label">
+                    SCREEN MANAGEMENT
+                </span>
+
+                <h1>
+                    {{ page_title }}
+                </h1>
+
+                <p>
+                    Configure the screen and its seating
+                    capacity for CineFlow.
+                </p>
+
+            </div>
+
+
+            <!-- =================================================
+                 FORM
+            ================================================== -->
+
+            <div class="management-form-card">
+
+                <form
+                    method="post"
+                    novalidate
+                >
+
+                    {% csrf_token %}
+
+                    {{ form|crispy }}
+
+
+                    <div class="management-form-actions">
+
+                        <a
+                            href="{% if screen %}{% url 'cinemas:cinema_detail' screen.cinema.slug %}{% else %}{% url 'cinemas:cinema_list' %}{% endif %}"
+                            class="btn cine-btn-outline"
+                        >
+                            Cancel
+                        </a>
+
+
+                        <button
+                            type="submit"
+                            class="btn cine-btn-primary"
+                        >
+
+                            {{ submit_text }}
+
+                            <i class="bi bi-arrow-right"></i>
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
