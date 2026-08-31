@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}
+Support Ticket #{{ ticket.id }} | CineFlow Staff
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <span class="text-muted small">
+                SUPPORT TICKET
+            </span>
+
+            <h2 class="mb-1">
+                #{{ ticket.id }} — {{ ticket.subject|default:ticket.category|title }}
+            </h2>
+
+            <p class="text-muted mb-0">
+                {{ ticket.created_at|date:"M d, Y H:i" }}
+            </p>
+        </div>
+
+        <a
+            href="{% url 'staff:support' %}"
+            class="btn btn-outline-secondary"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Back to Support
+        </a>
+
+    </div>
+
+
+    <!-- Ticket Information -->
+    <div class="card mb-4">
+
+        <div class="card-body">
+
+            <div class="row">
+
+                <div class="col-md-4">
+                    <strong>Status</strong>
+
+                    <div class="mt-1">
+                        {{ ticket.status|title }}
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <strong>Category</strong>
+
+                    <div class="mt-1">
+                        {{ ticket.category|title }}
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <strong>Priority</strong>
+
+                    <div class="mt-1">
+                        {{ ticket.priority|default:"Normal"|title }}
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Conversation -->
+    <div class="card mb-4">
+
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="bi bi-chat-left-text"></i>
+                Conversation
+            </h5>
+        </div>
+
+        <div class="card-body">
+
+            {% for message in support_messages %}
+
+                <div class="mb-4">
+
+                    <div class="d-flex justify-content-between">
+
+                        <strong>
+                            {{ message.sender|default:"User" }}
+                        </strong>
+
+                        <small class="text-muted">
+                            {{ message.created_at|date:"M d, Y H:i" }}
+                        </small>
+
+                    </div>
+
+                    <div class="mt-2 p-3 bg-light rounded">
+                        {{ message.message|linebreaks }}
+                    </div>
+
+                </div>
+
+            {% empty %}
+
+                <p class="text-muted mb-0">
+                    No messages yet.
+                </p>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+
+    <!-- Reply -->
+    <div class="card">
+
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="bi bi-reply"></i>
+                Reply to Customer
+            </h5>
+        </div>
+
+        <div class="card-body">
+
+            <form
+                method="post"
+                action="{% url 'staff:support' %}"
+            >
+
+                {% csrf_token %}
+
+                <input
+                    type="hidden"
+                    name="ticket_id"
+                    value="{{ ticket.id }}"
+                >
+
+                {{ form|crispy }}
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    <i class="bi bi-send"></i>
+                    Send Reply
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

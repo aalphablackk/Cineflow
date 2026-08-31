@@ -56,6 +56,36 @@
 
                 {% if booking.status == "held" %}
 
+                    {% if booking.hold_expires_at %}
+
+                        <div
+                            class="booking-countdown"
+                            data-expiration="{{ booking.hold_expires_at|date:'c' }}"
+                        >
+
+                            <span class="booking-countdown-label">
+                                Time remaining
+                            </span>
+
+                            <strong
+                                id="booking-countdown"
+                                class="booking-countdown-time"
+                            >
+                                --:--
+                            </strong>
+
+                        </div>
+
+
+                        <small class="booking-hold-expiry">
+
+                            Hold expires:
+                            {{ booking.hold_expires_at|date:"M j, Y g:i A" }}
+
+                        </small>
+
+                    {% endif %}
+
                     <span class="booking-status held">
                         <i class="bi bi-clock"></i>
                         Payment Pending
@@ -468,5 +498,133 @@
     </div>
 
 </section>
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const countdown =
+            document.getElementById(
+                "booking-countdown"
+            );
+
+
+        const countdownContainer =
+            document.querySelector(
+                ".booking-countdown"
+            );
+
+
+        if (
+            !countdown ||
+            !countdownContainer
+        ) {
+            return;
+        }
+
+
+        const expirationString =
+            countdownContainer.dataset.expiration;
+
+
+        const expiration =
+            new Date(
+                expirationString
+            ).getTime();
+
+
+        function updateCountdown() {
+
+            const now =
+                new Date().getTime();
+
+
+            const remaining =
+                expiration - now;
+
+
+            if (remaining <= 0) {
+
+                countdown.textContent =
+                    "00:00";
+
+
+                countdown.classList.add(
+                    "expired"
+                );
+
+
+                clearInterval(
+                    countdownInterval
+                );
+
+
+                /*
+                Reload the page so the Django
+                booking_detail view performs
+                the authoritative expiration
+                check.
+                */
+
+                setTimeout(
+                    function () {
+
+                        window.location.reload();
+
+                    },
+                    1000
+                );
+
+
+                return;
+            }
+
+
+            const totalSeconds =
+                Math.floor(
+                    remaining / 1000
+                );
+
+
+            const minutes =
+                Math.floor(
+                    totalSeconds / 60
+                );
+
+
+            const seconds =
+                totalSeconds % 60;
+
+
+            countdown.textContent =
+                String(minutes).padStart(
+                    2,
+                    "0"
+                )
+                + ":"
+                +
+                String(seconds).padStart(
+                    2,
+                    "0"
+                );
+
+        }
+
+
+        updateCountdown();
+
+
+        const countdownInterval =
+            setInterval(
+                updateCountdown,
+                1000
+            );
+
+    }
+);
+
+</script>
 
 {% endblock %}

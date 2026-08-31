@@ -137,6 +137,75 @@ urlpatterns = [
     views.generate_seats,
     name="generate_seats",
     ),
+    # ========================================================
+    # SHOWTIMES
+    # ========================================================
+
+    path(
+        "showtimes/",
+        views.showtimes,
+        name="showtimes",
+    ),
+
+    path(
+        "showtimes/create/",
+        views.showtime_create,
+        name="showtime_create",
+    ),
+
+    path(
+        "showtimes/<int:pk>/edit/",
+        views.showtime_edit,
+        name="showtime_edit",
+    ),
+
+    path(
+        "showtimes/<int:pk>/cancel/",
+        views.showtime_cancel,
+        name="showtime_cancel",
+    ),
+
+    path(
+        "showtimes/<int:pk>/delete/",
+        views.showtime_delete,
+        name="showtime_delete",
+    ),
+
+    path(
+        "showtimes/cinema/<int:cinema_id>/screens/",
+        views.cinema_screens,
+        name="cinema_screens",
+    ),
+    # ========================================================
+    # BOOKINGS
+    # ========================================================
+
+    path(
+        "bookings/",
+        views.bookings,
+        name="bookings",
+    ),
+    # ========================================================
+    # SUPPORT
+    # ========================================================
+
+    path(
+        "support/",
+        views.support,
+        name="support",
+    ),
+
+    path(
+        "support/<int:ticket_id>/status/",
+        views.support_ticket_status,
+        name="support_ticket_status",
+    ),
+
+    path(
+        "support/<int:ticket_id>/priority/",
+        views.support_ticket_priority,
+        name="support_ticket_priority",
+    ),
 ]
 
 

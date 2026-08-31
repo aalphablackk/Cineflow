@@ -1,0 +1,1112 @@
+{% extends "staff/base.html" %}
+
+
+{% block staff_title %}
+    Support | CineFlow
+{% endblock %}
+
+
+{% block staff_content %}
+
+<section class="staff-support-page">
+
+    <div class="staff-container">
+
+
+        <!-- =====================================================
+             PAGE HEADER
+        ====================================================== -->
+
+        <div class="staff-page-header">
+
+            <div>
+
+                <span class="section-label">
+                    CUSTOMER SERVICE
+                </span>
+
+                <h1>
+                    Support
+                </h1>
+
+                <p>
+                    Manage customer support requests and
+                    respond to customer issues.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             SUPPORT STATISTICS
+        ====================================================== -->
+
+        <div class="staff-stat-grid">
+
+
+            <!-- OPEN -->
+
+            <div class="staff-stat-card">
+
+                <div class="staff-stat-icon">
+                    <i class="bi bi-inbox"></i>
+                </div>
+
+                <div>
+
+                    <span>
+                        Open
+                    </span>
+
+                    <strong>
+                        {{ open_count }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- IN PROGRESS -->
+
+            <div class="staff-stat-card">
+
+                <div class="staff-stat-icon">
+                    <i class="bi bi-arrow-repeat"></i>
+                </div>
+
+                <div>
+
+                    <span>
+                        In Progress
+                    </span>
+
+                    <strong>
+                        {{ in_progress_count }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- WAITING -->
+
+            <div class="staff-stat-card">
+
+                <div class="staff-stat-icon">
+                    <i class="bi bi-hourglass-split"></i>
+                </div>
+
+                <div>
+
+                    <span>
+                        Waiting
+                    </span>
+
+                    <strong>
+                        {{ waiting_count }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- RESOLVED -->
+
+            <div class="staff-stat-card">
+
+                <div class="staff-stat-icon">
+                    <i class="bi bi-check-circle"></i>
+                </div>
+
+                <div>
+
+                    <span>
+                        Resolved
+                    </span>
+
+                    <strong>
+                        {{ resolved_count }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             SUPPORT SECTION
+        ====================================================== -->
+
+        <div class="staff-section">
+
+
+            <!-- =================================================
+                 SECTION HEADER
+            ================================================== -->
+
+            <div class="staff-section-header">
+
+                <div>
+
+                    <span class="section-label">
+                        SUPPORT REQUESTS
+                    </span>
+
+                    <h2>
+                        Customer Tickets
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 FILTERS
+            ================================================== -->
+
+            <div class="staff-filter-card">
+
+                <form
+                    method="get"
+                    class="staff-filter-form"
+                >
+
+
+                    <!-- SEARCH -->
+
+                    <div class="staff-filter-search">
+
+                        <label for="supportSearch">
+                            Search
+                        </label>
+
+                        <div class="staff-search-input">
+
+                            <i class="bi bi-search"></i>
+
+                            <input
+                                type="search"
+                                id="supportSearch"
+                                name="search"
+                                value="{{ search }}"
+                                placeholder="Search ticket, customer or booking..."
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- STATUS -->
+
+                    <div class="staff-filter-group">
+
+                        <label for="supportStatus">
+                            Status
+                        </label>
+
+                        <select
+                            id="supportStatus"
+                            name="status"
+                        >
+
+                            <option value="">
+                                All statuses
+                            </option>
+
+                            {% for value, label in status_choices %}
+
+                                <option
+                                    value="{{ value }}"
+                                    {% if status == value %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ label }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- PRIORITY -->
+
+                    <div class="staff-filter-group">
+
+                        <label for="supportPriority">
+                            Priority
+                        </label>
+
+                        <select
+                            id="supportPriority"
+                            name="priority"
+                        >
+
+                            <option value="">
+                                All priorities
+                            </option>
+
+                            {% for value, label in priority_choices %}
+
+                                <option
+                                    value="{{ value }}"
+                                    {% if priority == value %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ label }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- FILTER BUTTON -->
+
+                    <div class="staff-filter-actions">
+
+                        <button
+                            type="submit"
+                            class="btn staff-primary-btn"
+                        >
+
+                            <i class="bi bi-funnel"></i>
+
+                            Apply
+
+                        </button>
+
+
+                        {% if search or status or priority %}
+
+                            <a
+                                href="{% url 'staff:support' %}"
+                                class="btn staff-outline-btn"
+                            >
+
+                                <i class="bi bi-x-lg"></i>
+
+                                Clear
+
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+                </form>
+
+            </div>
+
+
+            <!-- =================================================
+                 TICKET LIST
+            ================================================== -->
+
+            {% if tickets %}
+
+                <div class="staff-management-card staff-support-table-card">
+
+                    <div class="staff-table-wrapper">
+
+                        <table class="table staff-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Ticket
+                                    </th>
+
+                                    <th>
+                                        Customer
+                                    </th>
+
+                                    <th>
+                                        Subject
+                                    </th>
+
+                                    <th>
+                                        Booking
+                                    </th>
+
+                                    <th>
+                                        Priority
+                                    </th>
+
+                                    <th>
+                                        Status
+                                    </th>
+
+                                    <th>
+                                        Updated
+                                    </th>
+
+                                    <th class="text-end">
+                                        Action
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                {% for ticket in tickets %}
+
+                                    <!-- =================================================
+                                         TICKET ROW
+                                    ================================================== -->
+
+                                    <tr>
+
+                                        <!-- TICKET -->
+
+                                        <td>
+
+                                            <strong>
+                                                #{{ ticket.id }}
+                                            </strong>
+
+                                        </td>
+
+
+                                        <!-- CUSTOMER -->
+
+                                        <td>
+
+                                            <div class="staff-support-customer">
+
+                                                <strong>
+
+                                                    {% if ticket.customer.get_full_name %}
+
+                                                        {{ ticket.customer.get_full_name }}
+
+                                                    {% else %}
+
+                                                        {{ ticket.customer.username }}
+
+                                                    {% endif %}
+
+                                                </strong>
+
+                                                <small>
+                                                    {{ ticket.customer.email }}
+                                                </small>
+
+                                            </div>
+
+                                        </td>
+
+
+                                        <!-- SUBJECT -->
+
+                                        <td>
+
+                                            <strong>
+                                                {{ ticket.subject }}
+                                            </strong>
+
+                                        </td>
+
+
+                                        <!-- BOOKING -->
+
+                                        <td>
+
+                                            {% if ticket.booking %}
+
+                                                <span class="staff-support-booking-reference">
+
+                                                    {{ ticket.booking.booking_reference }}
+
+                                                </span>
+
+                                            {% else %}
+
+                                                <span class="staff-text-muted">
+                                                    No booking
+                                                </span>
+
+                                            {% endif %}
+
+                                        </td>
+
+
+                                        <!-- PRIORITY -->
+
+                                        <td>
+
+                                            <span
+                                                class="staff-support-priority staff-support-priority-{{ ticket.priority }}"
+                                            >
+
+                                                {% if ticket.priority == "urgent" %}
+
+                                                    <i class="bi bi-exclamation-triangle-fill"></i>
+
+                                                {% elif ticket.priority == "high" %}
+
+                                                    <i class="bi bi-arrow-up"></i>
+
+                                                {% elif ticket.priority == "normal" %}
+
+                                                    <i class="bi bi-dash"></i>
+
+                                                {% else %}
+
+                                                    <i class="bi bi-arrow-down"></i>
+
+                                                {% endif %}
+
+                                                {{ ticket.get_priority_display }}
+
+                                            </span>
+
+                                        </td>
+
+
+                                        <!-- STATUS -->
+
+                                        <td>
+
+                                            <span
+                                                class="staff-support-status staff-support-status-{{ ticket.status }}"
+                                            >
+
+                                                {% if ticket.status == "open" %}
+
+                                                    <i class="bi bi-circle-fill"></i>
+
+                                                {% elif ticket.status == "in_progress" %}
+
+                                                    <i class="bi bi-arrow-repeat"></i>
+
+                                                {% elif ticket.status == "waiting_for_customer" %}
+
+                                                    <i class="bi bi-hourglass-split"></i>
+
+                                                {% elif ticket.status == "resolved" %}
+
+                                                    <i class="bi bi-check-circle-fill"></i>
+
+                                                {% elif ticket.status == "closed" %}
+
+                                                    <i class="bi bi-x-circle-fill"></i>
+
+                                                {% endif %}
+
+                                                {{ ticket.get_status_display }}
+
+                                            </span>
+
+                                        </td>
+
+
+                                        <!-- UPDATED -->
+
+                                        <td>
+
+                                            <span class="staff-support-date">
+
+                                                {{ ticket.updated_at|date:"M j, Y" }}
+
+                                                <small>
+                                                    {{ ticket.updated_at|time:"g:i A" }}
+                                                </small>
+
+                                            </span>
+
+                                        </td>
+
+
+                                        <!-- VIEW -->
+
+                                        <td class="text-end">
+
+                                            <a
+                                                class="btn staff-outline-btn staff-support-view-btn"
+                                                data-bs-toggle="collapse"
+                                                href="#supportTicket{{ ticket.id }}"
+                                                role="button"
+                                                aria-expanded="false"
+                                                aria-controls="supportTicket{{ ticket.id }}"
+                                            >
+
+                                                <i class="bi bi-eye"></i>
+
+                                                View
+
+                                            </a>
+
+                                        </td>
+
+                                    </tr>
+
+
+                                    <!-- =================================================
+                                         EXPANDABLE TICKET PANEL
+                                    ================================================== -->
+
+                                    <tr>
+
+                                        <td
+                                            colspan="8"
+                                            class="staff-support-collapse-cell"
+                                        >
+
+                                            <div
+                                                class="collapse"
+                                                id="supportTicket{{ ticket.id }}"
+                                            >
+
+                                                <div class="staff-support-ticket-panel">
+
+
+                                                    <!-- =================================
+                                                         TICKET HEADER
+                                                    ================================== -->
+
+                                                    <div class="staff-support-ticket-header">
+
+                                                        <div>
+
+                                                            <span class="section-label">
+                                                                SUPPORT TICKET
+                                                            </span>
+
+                                                            <h3>
+                                                                #{{ ticket.id }}
+                                                                —
+                                                                {{ ticket.subject }}
+                                                            </h3>
+
+                                                        </div>
+
+
+                                                        <a
+                                                            class="btn staff-outline-btn"
+                                                            data-bs-toggle="collapse"
+                                                            href="#supportTicket{{ ticket.id }}"
+                                                            role="button"
+                                                        >
+
+                                                            <i class="bi bi-chevron-up"></i>
+
+                                                            Close
+
+                                                        </a>
+
+                                                    </div>
+
+
+                                                    <!-- =================================
+                                                         TICKET INFORMATION
+                                                    ================================== -->
+
+                                                    <div class="staff-support-ticket-info">
+
+
+                                                        <!-- CUSTOMER -->
+
+                                                        <div>
+
+                                                            <span>
+                                                                Customer
+                                                            </span>
+
+                                                            <strong>
+
+                                                                {% if ticket.customer.get_full_name %}
+
+                                                                    {{ ticket.customer.get_full_name }}
+
+                                                                {% else %}
+
+                                                                    {{ ticket.customer.username }}
+
+                                                                {% endif %}
+
+                                                            </strong>
+
+                                                            <small>
+                                                                {{ ticket.customer.email }}
+                                                            </small>
+
+                                                        </div>
+
+
+                                                        <!-- BOOKING -->
+
+                                                        <div>
+
+                                                            <span>
+                                                                Booking
+                                                            </span>
+
+                                                            <strong>
+
+                                                                {% if ticket.booking %}
+
+                                                                    {{ ticket.booking.booking_reference }}
+
+                                                                {% else %}
+
+                                                                    No booking attached
+
+                                                                {% endif %}
+
+                                                            </strong>
+
+                                                        </div>
+
+
+                                                        <!-- CREATED -->
+
+                                                        <div>
+
+                                                            <span>
+                                                                Created
+                                                            </span>
+
+                                                            <strong>
+                                                                {{ ticket.created_at|date:"M j, Y g:i A" }}
+                                                            </strong>
+
+                                                        </div>
+
+
+                                                        <!-- UPDATED -->
+
+                                                        <div>
+
+                                                            <span>
+                                                                Last Updated
+                                                            </span>
+
+                                                            <strong>
+                                                                {{ ticket.updated_at|date:"M j, Y g:i A" }}
+                                                            </strong>
+
+                                                        </div>
+
+                                                    </div>
+
+
+                                                    <!-- =================================
+                                                         STATUS / PRIORITY
+                                                    ================================== -->
+
+                                                    <div class="staff-support-controls">
+
+
+                                                        <!-- STATUS -->
+
+                                                        <form
+                                                            method="post"
+                                                            action="{% url 'staff:support_ticket_status' ticket.id %}"
+                                                        >
+
+                                                            {% csrf_token %}
+
+                                                            <label>
+                                                                Status
+                                                            </label>
+
+                                                            <div class="staff-support-control-row">
+
+                                                                <select
+                                                                    name="status"
+                                                                    class="form-select"
+                                                                >
+
+                                                                    {% for value, label in status_choices %}
+
+                                                                        <option
+                                                                            value="{{ value }}"
+                                                                            {% if ticket.status == value %}
+                                                                                selected
+                                                                            {% endif %}
+                                                                        >
+
+                                                                            {{ label }}
+
+                                                                        </option>
+
+                                                                    {% endfor %}
+
+                                                                </select>
+
+
+                                                                <button
+                                                                    type="submit"
+                                                                    class="btn staff-outline-btn"
+                                                                    title="Update status"
+                                                                >
+
+                                                                    <i class="bi bi-check-lg"></i>
+
+                                                                </button>
+
+                                                            </div>
+
+                                                        </form>
+
+
+                                                        <!-- PRIORITY -->
+
+                                                        <form
+                                                            method="post"
+                                                            action="{% url 'staff:support_ticket_priority' ticket.id %}"
+                                                        >
+
+                                                            {% csrf_token %}
+
+                                                            <label>
+                                                                Priority
+                                                            </label>
+
+                                                            <div class="staff-support-control-row">
+
+                                                                <select
+                                                                    name="priority"
+                                                                    class="form-select"
+                                                                >
+
+                                                                    {% for value, label in priority_choices %}
+
+                                                                        <option
+                                                                            value="{{ value }}"
+                                                                            {% if ticket.priority == value %}
+                                                                                selected
+                                                                            {% endif %}
+                                                                        >
+
+                                                                            {{ label }}
+
+                                                                        </option>
+
+                                                                    {% endfor %}
+
+                                                                </select>
+
+
+                                                                <button
+                                                                    type="submit"
+                                                                    class="btn staff-outline-btn"
+                                                                    title="Update priority"
+                                                                >
+
+                                                                    <i class="bi bi-check-lg"></i>
+
+                                                                </button>
+
+                                                            </div>
+
+                                                        </form>
+
+                                                    </div>
+
+
+                                                    <hr>
+
+
+                                                    <!-- =================================
+                                                         CONVERSATION
+                                                    ================================== -->
+
+                                                    <div class="staff-support-conversation">
+
+
+                                                        <div class="staff-support-conversation-header">
+
+                                                            <div>
+
+                                                                <span class="section-label">
+                                                                    CONVERSATION
+                                                                </span>
+
+                                                            </div>
+
+                                                            <span>
+
+                                                                {{ ticket.messages.count }}
+
+                                                                message{{ ticket.messages.count|pluralize }}
+
+                                                            </span>
+
+                                                        </div>
+
+
+                                                        <!-- MESSAGE LIST -->
+
+                                                        <div class="staff-support-messages">
+
+                                                            {% for support_message in ticket.messages.all %}
+
+                                                                <div
+                                                                    class="
+                                                                        staff-support-message
+                                                                        {% if support_message.sender_id == ticket.customer_id %}
+                                                                            customer
+                                                                        {% else %}
+                                                                            staff
+                                                                        {% endif %}
+                                                                    "
+                                                                >
+
+
+                                                                    <div class="staff-support-message-meta">
+
+                                                                        <strong>
+
+                                                                            {% if support_message.sender_id == ticket.customer_id %}
+
+                                                                                {{ ticket.customer.get_full_name|default:ticket.customer.username }}
+
+                                                                            {% else %}
+
+                                                                                {{ support_message.sender.get_full_name|default:support_message.sender.username }}
+
+                                                                            {% endif %}
+
+                                                                        </strong>
+
+
+                                                                        <small>
+
+                                                                            {{ support_message.created_at|date:"M j, Y g:i A" }}
+
+                                                                        </small>
+
+                                                                    </div>
+
+
+                                                                    <div class="staff-support-message-bubble">
+
+                                                                        {{ support_message.message|linebreaksbr }}
+
+                                                                    </div>
+
+                                                                </div>
+
+                                                            {% empty %}
+
+                                                                <div class="staff-empty-state">
+
+                                                                    <i class="bi bi-chat"></i>
+
+                                                                    <h3>
+                                                                        No messages yet
+                                                                    </h3>
+
+                                                                    <p>
+                                                                        There are no messages in this ticket.
+                                                                    </p>
+
+                                                                </div>
+
+                                                            {% endfor %}
+
+                                                        </div>
+
+                                                    </div>
+
+
+                                                    <hr>
+
+
+                                                    <!-- =================================
+                                                         REPLY
+                                                    ================================== -->
+
+                                                    {% if ticket.status != "closed" %}
+
+                                                        <div class="staff-support-reply-section">
+
+                                                            <span class="section-label">
+                                                                REPLY TO CUSTOMER
+                                                            </span>
+
+
+                                                            <form
+                                                                method="post"
+                                                                action="{% url 'staff:support'%}"
+                                                            >
+
+                                                                {% csrf_token %}
+                                                                <input
+                                                                    type="hidden"
+                                                                    name="ticket_id"
+                                                                    value="{{ ticket.id }}"
+                                                                >
+                                                                <input
+                                                                    type="hidden"
+                                                                    name="action"
+                                                                    value="reply"
+                                                                >
+
+
+                                                                <div class="staff-form-field">
+
+                                                                    {{ form.message }}
+
+                                                                    {% if form.message.errors %}
+
+                                                                        <div class="staff-form-errors">
+
+                                                                            {% for error in form.message.errors %}
+
+                                                                                <div>
+                                                                                    {{ error }}
+                                                                                </div>
+
+                                                                            {% endfor %}
+
+                                                                        </div>
+
+                                                                    {% endif %}
+
+                                                                </div>
+
+
+                                                                <div class="staff-support-reply-actions">
+
+                                                                    <button
+                                                                        type="submit"
+                                                                        class="btn staff-primary-btn"
+                                                                    >
+
+                                                                        <i class="bi bi-send"></i>
+
+                                                                        Send Reply
+
+                                                                    </button>
+
+                                                                </div>
+
+                                                            </form>
+
+                                                        </div>
+
+                                                    {% else %}
+
+                                                        <div class="staff-support-closed-message">
+
+                                                            <i class="bi bi-lock"></i>
+
+                                                            <div>
+
+                                                                <strong>
+                                                                    This ticket is closed.
+                                                                </strong>
+
+                                                                <p>
+                                                                    No further replies can be sent.
+                                                                </p>
+
+                                                            </div>
+
+                                                        </div>
+
+                                                    {% endif %}
+
+
+                                                </div>
+
+                                            </div>
+
+                                        </td>
+
+                                    </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            {% else %}
+
+
+                <!-- =================================================
+                     EMPTY STATE
+                ================================================== -->
+
+                <div class="staff-empty-state staff-support-empty-state">
+
+                    <div class="staff-empty-icon">
+
+                        <i class="bi bi-headset"></i>
+
+                    </div>
+
+                    <span class="section-label">
+                        SUPPORT
+                    </span>
+
+                    <h2>
+                        No support tickets found
+                    </h2>
+
+
+                    {% if search or status or priority %}
+
+                        <p>
+                            No tickets match your current search
+                            and filter criteria.
+                        </p>
+
+                        <a
+                            href="{% url 'staff:support' %}"
+                            class="btn staff-outline-btn"
+                        >
+
+                            <i class="bi bi-arrow-counterclockwise"></i>
+
+                            Clear Filters
+
+                        </a>
+
+                    {% else %}
+
+                        <p>
+                            Customer support requests will appear here
+                            when they are submitted.
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

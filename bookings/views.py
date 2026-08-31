@@ -225,7 +225,26 @@ def booking_detail(
         user=request.user,
     )
 
+
+    # ========================================================
+    # CHECK HOLD EXPIRATION
+    # ========================================================
+
+    if (
+        booking.status == Booking.Status.HELD
+        and (
+            booking.hold_expires_at is None
+            or booking.hold_expires_at <= timezone.now()
+        )
+    ):
+
+        expire_booking(booking)
+
+        booking.refresh_from_db()
+
+
     booking_seats = booking.booking_seats.all()
+
 
     return render(
         request,

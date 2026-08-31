@@ -96,6 +96,24 @@
                 </li>
 
 
+
+                    {% if user.is_staff %}
+
+                    <li class="nav-item">
+    
+                        <a
+                            class="nav-link"
+                            href="{% url 'staff:dashboard' %}"
+                        >
+                            Staff Dashboard
+                        </a>
+    
+                    </li>
+                    {% endif %}
+
+
+
+
                 <!-- MY BOOKINGS -->
 
                 {% if user.is_authenticated %}
@@ -194,7 +212,30 @@
 
                         <ul
                             class="dropdown-menu dropdown-menu-end cine-user-dropdown"
+
                         >
+
+                            <!-- STAFF DASHBOARD -->
+
+                            {% if user.is_staff %}
+                            
+                            <li>
+
+                                <a
+                                        class="dropdown-item"
+                                        href="{% url 'staff:dashboard' %}"
+                                    >
+
+                                    <i class="bi bi-speedometer2"></i>
+
+                                        Staff Dashboard
+
+                                    </a>
+                                    
+                                </li>
+                            
+
+                            {% endif %}
 
 
                             <!-- PROFILE -->

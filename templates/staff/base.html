@@ -91,8 +91,8 @@
                 </a>
 
             </div>
-
-
+            
+            
             <!-- CINEMA MANAGEMENT -->
 
             <div class="staff-nav-section">
@@ -115,7 +115,7 @@
 
                 </a>
 
-
+{% comment %} 
                 <a
                     href="#"
                     class="staff-nav-link"
@@ -133,7 +133,7 @@
                 <a
                     href="#"
                     class="staff-nav-link"
-                >
+                    >
 
                     <i class="bi bi-grid-3x3-gap"></i>
 
@@ -141,23 +141,32 @@
                         Seats
                     </span>
 
-                </a>
+                    </a> {% endcomment %}
+                    
+                </div>
+                    
+                    
+                                <div class="staff-nav-section">
+                    
+                                    <span class="staff-nav-label">
+                                        SHOWTIMES MANAGEMENT
+                                    </span>
+                    
+                    
+                                    <a
+                                    href="{% url "staff:showtimes" %}"
+                                    class="staff-nav-link"
+                                >
+                
+                                    <i class="bi bi-calendar3"></i>
+                
+                                    <span>
+                                        Showtimes
+                                    </span>
+                
+                                </a>
+                                </div>
 
-
-                <a
-                    href="#"
-                    class="staff-nav-link"
-                >
-
-                    <i class="bi bi-calendar3"></i>
-
-                    <span>
-                        Showtimes
-                    </span>
-
-                </a>
-
-            </div>
 
 
             <!-- OPERATIONS -->
@@ -170,7 +179,7 @@
 
 
                 <a
-                    href="#"
+                    href="{% url "staff:bookings" %}"
                     class="staff-nav-link"
                 >
 

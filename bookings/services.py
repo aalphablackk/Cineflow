@@ -15,7 +15,7 @@ from .models import Booking, BookingSeat
 # CONFIGURATION
 # ============================================================
 
-HOLD_DURATION_MINUTES = 1
+HOLD_DURATION_MINUTES = 2
 
 
 # ============================================================

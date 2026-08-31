@@ -1,0 +1,1444 @@
+{% extends "staff/base.html" %}
+
+
+{% block title %}
+    Bookings | CineFlow Staff
+{% endblock %}
+
+
+{% block staff_content %}
+
+<section class="staff-page">
+
+    <div class="staff-container">
+
+
+        <!-- =====================================================
+             PAGE HEADER
+        ====================================================== -->
+
+        <div class="staff-page-header">
+
+            <div>
+
+                <span class="section-label">
+                    BOOKING MANAGEMENT
+                </span>
+
+                <h1>
+                    Bookings
+                </h1>
+
+                <p>
+                    Monitor and manage customer bookings across
+                    CineFlow.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             BOOKING SUMMARY
+        ====================================================== -->
+
+        <div class="row g-3 mb-4">
+
+
+            <!-- TOTAL BOOKINGS -->
+
+            <div class="col-6 col-xl-3">
+
+                <div class="staff-stat-card">
+
+                    <div class="staff-stat-icon">
+
+                        <i class="bi bi-ticket-perforated"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Total Bookings
+                        </span>
+
+                        <strong>
+                            {{ total_bookings }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- HELD -->
+
+            <div class="col-6 col-xl-3">
+
+                <div class="staff-stat-card">
+
+                    <div class="staff-stat-icon">
+
+                        <i class="bi bi-clock"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Held
+                        </span>
+
+                        <strong>
+                            {{ held_count }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- CONFIRMED -->
+
+            <div class="col-6 col-xl-3">
+
+                <div class="staff-stat-card">
+
+                    <div class="staff-stat-icon">
+
+                        <i class="bi bi-check-circle"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Confirmed
+                        </span>
+
+                        <strong>
+                            {{ confirmed_count }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- EXPIRED -->
+
+            <div class="col-6 col-xl-3">
+
+                <div class="staff-stat-card">
+
+                    <div class="staff-stat-icon">
+
+                        <i class="bi bi-clock-history"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Expired
+                        </span>
+
+                        <strong>
+                            {{ expired_count }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             SEARCH & FILTERS
+        ====================================================== -->
+
+        <div class="staff-management-card staff-bookings-filter-card">
+
+            <form
+                method="get"
+                class="staff-bookings-filters"
+            >
+
+
+                <!-- SEARCH -->
+
+                <div class="staff-filter-search">
+
+                    <label
+                        for="bookingSearch"
+                        class="visually-hidden"
+                    >
+                        Search bookings
+                    </label>
+
+                    <div class="staff-search-wrapper">
+
+                        <i class="bi bi-search"></i>
+
+                        <input
+                            type="search"
+                            id="bookingSearch"
+                            name="q"
+                            value="{{ search_query }}"
+                            class="staff-search"
+                            placeholder="Search reference, customer or movie..."
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- STATUS -->
+
+                <div class="staff-filter">
+
+                    <label
+                        for="bookingStatus"
+                        class="visually-hidden"
+                    >
+                        Booking status
+                    </label>
+
+                    <select
+                        id="bookingStatus"
+                        name="status"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            All Statuses
+                        </option>
+
+                        <option
+                            value="held"
+                            {% if status_filter == "held" %}
+                                selected
+                            {% endif %}
+                        >
+                            Held
+                        </option>
+
+                        <option
+                            value="confirmed"
+                            {% if status_filter == "confirmed" %}
+                                selected
+                            {% endif %}
+                        >
+                            Confirmed
+                        </option>
+
+                        <option
+                            value="cancelled"
+                            {% if status_filter == "cancelled" %}
+                                selected
+                            {% endif %}
+                        >
+                            Cancelled
+                        </option>
+
+                        <option
+                            value="expired"
+                            {% if status_filter == "expired" %}
+                                selected
+                            {% endif %}
+                        >
+                            Expired
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- CINEMA -->
+
+                <div class="staff-filter">
+
+                    <label
+                        for="bookingCinema"
+                        class="visually-hidden"
+                    >
+                        Cinema
+                    </label>
+
+                    <select
+                        id="bookingCinema"
+                        name="cinema"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            All Cinemas
+                        </option>
+
+                        {% for cinema in cinemas %}
+
+                            <option
+                                value="{{ cinema.id }}"
+                                {% if cinema_filter == cinema.id|stringformat:"s" %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ cinema.name }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- SHOW DATE -->
+
+                <div class="staff-filter">
+
+                    <label
+                        for="bookingShowDate"
+                        class="visually-hidden"
+                    >
+                        Showtime date
+                    </label>
+
+                    <input
+                        type="date"
+                        id="bookingShowDate"
+                        name="show_date"
+                        value="{{ show_date }}"
+                        class="form-control"
+                    >
+
+                </div>
+
+
+                <!-- FILTER -->
+
+                <button
+                    type="submit"
+                    class="staff-primary-button"
+                >
+
+                    <i class="bi bi-funnel"></i>
+
+                    Filter
+
+                </button>
+
+
+                <!-- CLEAR -->
+
+                {% if search_query or status_filter or cinema_filter or show_date %}
+
+                    <a
+                        href="{% url 'staff:bookings' %}"
+                        class="staff-secondary-button"
+                    >
+
+                        <i class="bi bi-x-lg"></i>
+
+                        Clear
+
+                    </a>
+
+                {% endif %}
+
+            </form>
+
+        </div>
+
+
+        <!-- =====================================================
+             RESULTS TOOLBAR
+        ====================================================== -->
+
+        <div class="staff-list-toolbar">
+
+            <div class="staff-list-toolbar-info">
+
+                <span class="section-label">
+                    BOOKINGS
+                </span>
+
+                <strong>
+                    {{ bookings|length }}
+                </strong>
+
+                result{{ bookings|length|pluralize }}
+
+            </div>
+
+        </div>
+
+
+        {% if bookings %}
+
+
+            <!-- =================================================
+                 DESKTOP TABLE
+            ================================================== -->
+
+            <div class="staff-table-wrapper staff-bookings-table-wrapper">
+
+                <table class="staff-table staff-bookings-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Booking
+                            </th>
+
+                            <th>
+                                Customer
+                            </th>
+
+                            <th>
+                                Movie
+                            </th>
+
+                            <th>
+                                Showtime
+                            </th>
+
+                            <th>
+                                Tickets
+                            </th>
+
+                            <th>
+                                Amount
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Created
+                            </th>
+
+                            <th>
+                                Action
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for booking in bookings %}
+
+                            <tr>
+
+
+                                <!-- =================================
+                                     BOOKING REFERENCE
+                                ================================== -->
+
+                                <td>
+
+                                    <div class="staff-booking-reference">
+
+                                        <strong>
+                                            {{ booking.booking_reference }}
+                                        </strong>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- =================================
+                                     CUSTOMER
+                                ================================== -->
+
+                                <td>
+
+                                    <div class="staff-booking-customer">
+
+                                        <strong>
+
+                                            {% if booking.user.get_full_name %}
+
+                                                {{ booking.user.get_full_name }}
+
+                                            {% else %}
+
+                                                {{ booking.user.username }}
+
+                                            {% endif %}
+
+                                        </strong>
+
+                                        <span>
+                                            {{ booking.user.email }}
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- =================================
+                                     MOVIE
+                                ================================== -->
+
+                                <td>
+
+                                    <div class="staff-booking-movie">
+
+                                        <strong>
+                                            {{ booking.showtime.movie.title }}
+                                        </strong>
+
+                                        <span>
+                                            {{ booking.showtime.screen.cinema.name }}
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- =================================
+                                     SHOWTIME
+                                ================================== -->
+
+                                <td>
+
+                                    <div class="staff-booking-showtime">
+
+                                        <strong>
+                                            {{ booking.showtime.show_date|date:"M j, Y" }}
+                                        </strong>
+
+                                        <span>
+                                            {{ booking.showtime.start_time|time:"g:i A" }}
+                                        </span>
+
+                                        <small>
+                                            {{ booking.showtime.screen.name }}
+                                        </small>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- =================================
+                                     TICKETS
+                                ================================== -->
+
+                                <td>
+
+                                    <span class="staff-booking-ticket-count">
+
+                                        {{ booking.ticket_quantity }}
+
+                                    </span>
+
+                                </td>
+
+
+                                <!-- =================================
+                                     AMOUNT
+                                ================================== -->
+
+                                <td>
+
+                                    <strong class="staff-booking-amount">
+
+                                        ₦{{ booking.total_amount }}
+
+                                    </strong>
+
+                                </td>
+
+
+                                <!-- =================================
+                                     STATUS
+                                ================================== -->
+
+                                <td>
+
+                                    {% if booking.status == "held" %}
+
+                                        <span class="staff-status staff-status-warning">
+
+                                            <i class="bi bi-clock"></i>
+
+                                            Held
+
+                                        </span>
+
+                                    {% elif booking.status == "confirmed" %}
+
+                                        <span class="staff-status staff-status-success">
+
+                                            <i class="bi bi-check-circle-fill"></i>
+
+                                            Confirmed
+
+                                        </span>
+
+                                    {% elif booking.status == "cancelled" %}
+
+                                        <span class="staff-status staff-status-danger">
+
+                                            <i class="bi bi-x-circle-fill"></i>
+
+                                            Cancelled
+
+                                        </span>
+
+                                    {% elif booking.status == "expired" %}
+
+                                        <span class="staff-status staff-status-muted">
+
+                                            <i class="bi bi-clock-history"></i>
+
+                                            Expired
+
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- =================================
+                                     CREATED
+                                ================================== -->
+
+                                <td>
+
+                                    <div class="staff-booking-created">
+
+                                        <span>
+                                            {{ booking.created_at|date:"M j, Y" }}
+                                        </span>
+
+                                        <small>
+                                            {{ booking.created_at|time:"g:i A" }}
+                                        </small>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- =================================
+                                     ACTION
+                                ================================== -->
+
+                                <td>
+
+                                    <button
+                                        type="button"
+                                        class="staff-icon-button"
+                                        title="View booking"
+                                        aria-label="View booking {{ booking.booking_reference }}"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#bookingDetailModal{{ booking.id }}"
+                                    >
+
+                                        <i class="bi bi-eye"></i>
+
+                                    </button>
+
+                                </td>
+
+                            </tr>
+
+
+                            <!-- =====================================
+                                 BOOKING DETAIL MODAL
+                            ====================================== -->
+
+                            <div
+                                class="modal fade staff-modal"
+                                id="bookingDetailModal{{ booking.id }}"
+                                tabindex="-1"
+                                aria-labelledby="bookingDetailModalLabel{{ booking.id }}"
+                                aria-hidden="true"
+                            >
+
+                                <div class="modal-dialog modal-dialog-centered staff-booking-modal-dialog">
+
+                                    <div class="modal-content staff-modal-content">
+
+
+                                        <!-- MODAL HEADER -->
+
+                                        <div class="modal-header">
+
+                                            <div>
+
+                                                <span class="section-label">
+                                                    BOOKING DETAILS
+                                                </span>
+
+                                                <h2
+                                                    class="modal-title"
+                                                    id="bookingDetailModalLabel{{ booking.id }}"
+                                                >
+                                                    {{ booking.booking_reference }}
+                                                </h2>
+
+                                            </div>
+
+
+                                            <button
+                                                type="button"
+                                                class="btn-close"
+                                                data-bs-dismiss="modal"
+                                                aria-label="Close"
+                                            ></button>
+
+                                        </div>
+
+
+                                        <!-- MODAL BODY -->
+
+                                        <div class="modal-body">
+
+
+                                            <!-- STATUS -->
+
+                                            <div class="staff-booking-modal-status">
+
+                                                <span class="section-label">
+                                                    BOOKING STATUS
+                                                </span>
+
+                                                <div class="mt-2">
+
+                                                    {% if booking.status == "held" %}
+
+                                                        <span class="staff-status staff-status-warning">
+
+                                                            <i class="bi bi-clock"></i>
+
+                                                            Held
+
+                                                        </span>
+
+                                                    {% elif booking.status == "confirmed" %}
+
+                                                        <span class="staff-status staff-status-success">
+
+                                                            <i class="bi bi-check-circle-fill"></i>
+
+                                                            Confirmed
+
+                                                        </span>
+
+                                                    {% elif booking.status == "cancelled" %}
+
+                                                        <span class="staff-status staff-status-danger">
+
+                                                            <i class="bi bi-x-circle-fill"></i>
+
+                                                            Cancelled
+
+                                                        </span>
+
+                                                    {% elif booking.status == "expired" %}
+
+                                                        <span class="staff-status staff-status-muted">
+
+                                                            <i class="bi bi-clock-history"></i>
+
+                                                            Expired
+
+                                                        </span>
+
+                                                    {% endif %}
+
+                                                </div>
+
+                                            </div>
+
+
+                                            <hr>
+
+
+                                            <!-- CUSTOMER -->
+
+                                            <div class="staff-booking-modal-section">
+
+                                                <span class="section-label">
+                                                    CUSTOMER
+                                                </span>
+
+
+                                                <div class="staff-booking-modal-customer">
+
+                                                    <div class="staff-booking-modal-avatar">
+
+                                                        {% if booking.user.first_name %}
+
+                                                            {{ booking.user.first_name|first|upper }}
+
+                                                        {% else %}
+
+                                                            {{ booking.user.username|first|upper }}
+
+                                                        {% endif %}
+
+                                                    </div>
+
+
+                                                    <div>
+
+                                                        <strong>
+
+                                                            {% if booking.user.get_full_name %}
+
+                                                                {{ booking.user.get_full_name }}
+
+                                                            {% else %}
+
+                                                                {{ booking.user.username }}
+
+                                                            {% endif %}
+
+                                                        </strong>
+
+                                                        <span>
+                                                            {{ booking.user.email }}
+                                                        </span>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+
+                                            <hr>
+
+
+                                            <!-- MOVIE -->
+
+                                            <div class="staff-booking-modal-section">
+
+                                                <span class="section-label">
+                                                    MOVIE
+                                                </span>
+
+                                                <h3>
+                                                    {{ booking.showtime.movie.title }}
+                                                </h3>
+
+                                                {% if booking.showtime.movie.age_rating %}
+
+                                                    <small>
+                                                        {{ booking.showtime.movie.age_rating }}
+                                                    </small>
+
+                                                {% endif %}
+
+                                            </div>
+
+
+                                            <hr>
+
+
+                                            <!-- SHOWTIME -->
+
+                                            <div class="staff-booking-modal-section">
+
+                                                <span class="section-label">
+                                                    SHOWTIME
+                                                </span>
+
+
+                                                <div class="staff-booking-modal-grid">
+
+
+                                                    <div>
+
+                                                        <span>
+                                                            Cinema
+                                                        </span>
+
+                                                        <strong>
+                                                            {{ booking.showtime.screen.cinema.name }}
+                                                        </strong>
+
+                                                    </div>
+
+
+                                                    <div>
+
+                                                        <span>
+                                                            Screen
+                                                        </span>
+
+                                                        <strong>
+                                                            {{ booking.showtime.screen.name }}
+                                                        </strong>
+
+                                                    </div>
+
+
+                                                    <div>
+
+                                                        <span>
+                                                            Date
+                                                        </span>
+
+                                                        <strong>
+                                                            {{ booking.showtime.show_date|date:"l, F j, Y" }}
+                                                        </strong>
+
+                                                    </div>
+
+
+                                                    <div>
+
+                                                        <span>
+                                                            Time
+                                                        </span>
+
+                                                        <strong>
+                                                            {{ booking.showtime.start_time|time:"g:i A" }}
+                                                        </strong>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+
+                                            <hr>
+
+
+                                            <!-- TICKETS -->
+
+                                            <div class="staff-booking-modal-section">
+
+                                                <span class="section-label">
+                                                    TICKETS
+                                                </span>
+
+
+                                                <div class="staff-booking-modal-grid">
+
+
+                                                    <div>
+
+                                                        <span>
+                                                            Number of Tickets
+                                                        </span>
+
+                                                        <strong>
+                                                            {{ booking.ticket_quantity }}
+                                                        </strong>
+
+                                                    </div>
+
+
+                                                    <div>
+
+                                                        <span>
+                                                            Ticket Price
+                                                        </span>
+
+                                                        <strong>
+                                                            ₦{{ booking.showtime.ticket_price }}
+                                                        </strong>
+
+                                                    </div>
+
+                                                </div>
+
+
+                                                <!-- SEATS -->
+
+                                                <div class="staff-booking-modal-seats">
+
+                                                    <span>
+                                                        Selected Seats
+                                                    </span>
+
+
+                                                    <div class="staff-booking-seat-list">
+
+                                                        {% for booking_seat in booking.booking_seats.all %}
+
+                                                            <span class="staff-booking-seat">
+
+                                                                <i class="bi bi-grid-3x3-gap"></i>
+
+                                                                {{ booking_seat.seat.label }}
+
+                                                            </span>
+
+                                                        {% empty %}
+
+                                                            <span class="staff-booking-no-seats">
+
+                                                                General Admission
+
+                                                            </span>
+
+                                                        {% endfor %}
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+
+                                            <hr>
+
+
+                                            <!-- HOLD INFORMATION -->
+
+                                            {% if booking.status == "held" %}
+
+                                                <div class="staff-booking-hold-panel">
+
+                                                    <div class="staff-booking-hold-icon">
+
+                                                        <i class="bi bi-clock"></i>
+
+                                                    </div>
+
+
+                                                    <div>
+
+                                                        <span>
+                                                            HOLD EXPIRATION
+                                                        </span>
+
+
+                                                        {% if booking.hold_expires_at %}
+
+                                                            <strong>
+                                                                {{ booking.hold_expires_at|date:"M j, Y g:i A" }}
+                                                            </strong>
+
+                                                            <small>
+                                                                Payment must be completed
+                                                                before this time.
+                                                            </small>
+
+                                                        {% else %}
+
+                                                            <strong>
+                                                                No expiration time
+                                                            </strong>
+
+                                                        {% endif %}
+
+                                                    </div>
+
+                                                </div>
+
+                                                <hr>
+
+                                            {% endif %}
+
+
+                                            <!-- TOTAL -->
+
+                                            <div class="staff-booking-modal-total">
+
+                                                <span>
+                                                    Total Amount
+                                                </span>
+
+                                                <strong>
+                                                    ₦{{ booking.total_amount }}
+                                                </strong>
+
+                                            </div>
+
+
+                                            <!-- CREATED -->
+
+                                            <div class="staff-booking-modal-created">
+
+                                                <span>
+                                                    Booking Created
+                                                </span>
+
+                                                <strong>
+                                                    {{ booking.created_at|date:"M j, Y g:i A" }}
+                                                </strong>
+
+                                            </div>
+
+                                        </div>
+
+
+                                        <!-- MODAL FOOTER -->
+
+                                        <div class="modal-footer">
+
+                                            <button
+                                                type="button"
+                                                class="staff-secondary-button"
+                                                data-bs-dismiss="modal"
+                                            >
+
+                                                <i class="bi bi-x-lg"></i>
+
+                                                Close
+
+                                            </button>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- =================================================
+                 MOBILE BOOKING CARDS
+            ================================================== -->
+
+            <div class="staff-bookings-mobile">
+
+                {% for booking in bookings %}
+
+                    <article class="staff-booking-card">
+
+
+                        <!-- CARD HEADER -->
+
+                        <div class="staff-booking-card-header">
+
+                            <div>
+
+                                <span class="section-label">
+                                    BOOKING
+                                </span>
+
+                                <strong>
+                                    {{ booking.booking_reference }}
+                                </strong>
+
+                            </div>
+
+
+                            {% if booking.status == "held" %}
+
+                                <span class="staff-status staff-status-warning">
+
+                                    <i class="bi bi-clock"></i>
+
+                                    Held
+
+                                </span>
+
+                            {% elif booking.status == "confirmed" %}
+
+                                <span class="staff-status staff-status-success">
+
+                                    <i class="bi bi-check-circle-fill"></i>
+
+                                    Confirmed
+
+                                </span>
+
+                            {% elif booking.status == "cancelled" %}
+
+                                <span class="staff-status staff-status-danger">
+
+                                    <i class="bi bi-x-circle-fill"></i>
+
+                                    Cancelled
+
+                                </span>
+
+                            {% elif booking.status == "expired" %}
+
+                                <span class="staff-status staff-status-muted">
+
+                                    <i class="bi bi-clock-history"></i>
+
+                                    Expired
+
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- CUSTOMER -->
+
+                        <div class="staff-booking-card-section">
+
+                            <span>
+                                Customer
+                            </span>
+
+                            <strong>
+
+                                {% if booking.user.get_full_name %}
+
+                                    {{ booking.user.get_full_name }}
+
+                                {% else %}
+
+                                    {{ booking.user.username }}
+
+                                {% endif %}
+
+                            </strong>
+
+                            <small>
+                                {{ booking.user.email }}
+                            </small>
+
+                        </div>
+
+
+                        <!-- MOVIE -->
+
+                        <div class="staff-booking-card-section">
+
+                            <span>
+                                Movie
+                            </span>
+
+                            <strong>
+                                {{ booking.showtime.movie.title }}
+                            </strong>
+
+                            <small>
+                                {{ booking.showtime.screen.cinema.name }}
+                            </small>
+
+                        </div>
+
+
+                        <!-- SHOWTIME -->
+
+                        <div class="staff-booking-card-grid">
+
+
+                            <div>
+
+                                <span>
+                                    Screen
+                                </span>
+
+                                <strong>
+                                    {{ booking.showtime.screen.name }}
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Date
+                                </span>
+
+                                <strong>
+                                    {{ booking.showtime.show_date|date:"M j, Y" }}
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Time
+                                </span>
+
+                                <strong>
+                                    {{ booking.showtime.start_time|time:"g:i A" }}
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Tickets
+                                </span>
+
+                                <strong>
+                                    {{ booking.ticket_quantity }}
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Total
+                                </span>
+
+                                <strong>
+                                    ₦{{ booking.total_amount }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- HOLD -->
+
+                        {% if booking.status == "held" and booking.hold_expires_at %}
+
+                            <div class="staff-booking-hold-info">
+
+                                <i class="bi bi-clock"></i>
+
+                                <div>
+
+                                    <span>
+                                        Hold expires
+                                    </span>
+
+                                    <strong>
+                                        {{ booking.hold_expires_at|date:"M j, Y g:i A" }}
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        {% endif %}
+
+
+                        <!-- FOOTER -->
+
+                        <div class="staff-booking-card-footer">
+
+                            <small>
+
+                                Created
+                                {{ booking.created_at|date:"M j, Y g:i A" }}
+
+                            </small>
+
+
+                            <button
+                                type="button"
+                                class="staff-secondary-button"
+                                data-bs-toggle="modal"
+                                data-bs-target="#bookingDetailModal{{ booking.id }}"
+                            >
+
+                                <i class="bi bi-eye"></i>
+
+                                View Booking
+
+                            </button>
+
+                        </div>
+
+                    </article>
+
+                {% endfor %}
+
+            </div>
+
+
+        {% else %}
+
+
+            <!-- =================================================
+                 EMPTY STATE
+            ================================================== -->
+
+            <div class="staff-empty-state">
+
+                <div class="staff-empty-icon">
+
+                    <i class="bi bi-ticket-perforated"></i>
+
+                </div>
+
+
+                {% if search_query or status_filter or cinema_filter or show_date %}
+
+                    <h3>
+                        No bookings found
+                    </h3>
+
+                    <p>
+                        We couldn't find any bookings matching
+                        your current search or filter criteria.
+                    </p>
+
+
+                    <a
+                        href="{% url 'staff:bookings' %}"
+                        class="staff-secondary-button"
+                    >
+
+                        <i class="bi bi-arrow-counterclockwise"></i>
+
+                        Clear Filters
+
+                    </a>
+
+                {% else %}
+
+                    <h3>
+                        No bookings yet
+                    </h3>
+
+                    <p>
+                        Customer bookings will appear here when
+                        customers make reservations.
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}

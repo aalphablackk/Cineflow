@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
-from django.db.models import ProtectedError
+from django.db.models import ProtectedError, Q
+from support.forms import SupportReplyForm
 
 from .decorators import staff_required
 
@@ -9,8 +10,18 @@ from movies.forms import StaffMovieForm
 from cinemas.models import Cinema,Screen,Seat
 from cinemas.forms import CinemaForm,ScreenForm,SeatForm,SeatGenerationForm
 from bookings.models import Booking
+from datetime import datetime, timedelta
+from django.utils import timezone
+from bookings.services import expire_booking
+from showtimes.forms import ShowtimeForm
 
-from support.models import SupportTicket
+from django.http import JsonResponse
+
+from showtimes.models import Showtime
+
+from support.models import SupportTicket, SupportMessage
+
+
 
 # Create your views here.
 
@@ -1155,4 +1166,1438 @@ def generate_seats(request, screen_id):
     return redirect(
         "staff:seats",
         screen_id=screen.id,
+    )
+
+
+# ============================================================
+# SHOWTIMES
+# ============================================================
+
+@staff_required
+def showtimes(request):
+
+    showtimes = (
+        Showtime.objects
+        .select_related(
+            "movie",
+            "screen",
+            "screen__cinema",
+        )
+        .order_by(
+            "show_date",
+            "start_time",
+            "movie__title",
+        )
+    )
+
+
+    # ========================================================
+    # SEARCH
+    # ========================================================
+
+    search_query = request.GET.get(
+        "search",
+        ""
+    ).strip()
+
+
+    if search_query:
+
+        showtimes = showtimes.filter(
+
+            Q(
+                movie__title__icontains=search_query
+            )
+
+            |
+
+            Q(
+                screen__name__icontains=search_query
+            )
+
+            |
+
+            Q(
+                screen__cinema__name__icontains=search_query
+            )
+
+        )
+
+
+    # ========================================================
+    # CINEMA FILTER
+    # ========================================================
+
+    cinema_id = request.GET.get(
+        "cinema",
+        ""
+    ).strip()
+
+
+    if cinema_id:
+
+        showtimes = showtimes.filter(
+            screen__cinema_id=cinema_id
+        )
+
+
+    # ========================================================
+    # STATUS FILTER
+    # ========================================================
+
+    status = request.GET.get(
+        "status",
+        ""
+    ).strip()
+
+
+    if status in dict(
+        Showtime.Status.choices
+    ):
+
+        showtimes = showtimes.filter(
+            status=status
+        )
+
+
+    # ========================================================
+    # DATE FILTER
+    # ========================================================
+
+    show_date = request.GET.get(
+        "date",
+        ""
+    ).strip()
+
+
+    if show_date:
+
+        showtimes = showtimes.filter(
+            show_date=show_date
+        )
+
+
+    # ========================================================
+    # FILTER OPTIONS
+    # ========================================================
+
+    cinemas = (
+        Cinema.objects
+        .filter(
+            is_active=True
+        )
+        .order_by(
+            "name"
+        )
+    )
+
+
+    form = ShowtimeForm()
+
+
+    context = {
+
+    "showtimes": showtimes,
+
+    "form": form,
+
+    "cinemas": cinemas,
+
+    "showtime_status_choices": (
+        Showtime.Status.choices
+    ),
+
+    "search_query": search_query,
+
+    "selected_cinema": cinema_id,
+
+    "selected_status": status,
+
+    "selected_date": show_date,
+
+    }
+
+
+    return render(
+        request,
+        "staff/showtimes.html",
+        context,
+    )
+
+
+# ============================================================
+# CREATE SHOWTIME
+# ============================================================
+
+@staff_required
+def showtime_create(request):
+
+    if request.method != "POST":
+
+        return redirect(
+            "staff:showtimes"
+        )
+
+    form = ShowtimeForm(
+        request.POST
+    )
+
+    if form.is_valid():
+
+        showtime = form.save(
+            commit=False
+        )
+
+        # ----------------------------------------------------
+        # CHECK FOR SCREEN CONFLICT
+        # ----------------------------------------------------
+
+        conflict = get_showtime_conflict(
+            showtime
+        )
+
+        if conflict:
+
+            form.add_error(
+                "start_time",
+                (
+                    "This screen already has a showtime "
+                    f"from "
+                    f"{conflict.start_time.strftime('%H:%M')} "
+                    f"to "
+                    f"{conflict.end_time.strftime('%H:%M')} "
+                    "on this date."
+                ),
+            )
+
+        else:
+
+            showtime.save()
+
+            messages.success(
+                request,
+                (
+                    f'Showtime for "{showtime.movie.title}" '
+                    "has been added successfully."
+                ),
+            )
+
+            return redirect(
+                "staff:showtimes"
+            )
+
+    # --------------------------------------------------------
+    # FORM ERROR
+    # --------------------------------------------------------
+
+    showtime_list = (
+        Showtime.objects
+        .select_related(
+            "movie",
+            "screen",
+            "screen__cinema",
+        )
+        .order_by(
+            "-show_date",
+            "start_time",
+            "movie__title",
+        )
+    )
+
+    return render(
+        request,
+        "staff/showtimes.html",
+        {
+            "showtimes": showtime_list,
+
+            "form": form,
+
+            "add_showtime_open": True,
+        },
+    )
+
+
+# ============================================================
+# EDIT SHOWTIME
+# ============================================================
+
+@staff_required
+def showtime_edit(request, pk):
+
+    showtime = get_object_or_404(
+        Showtime.objects.select_related(
+            "movie",
+            "screen",
+            "screen__cinema",
+        ),
+        pk=pk,
+    )
+
+    if request.method != "POST":
+
+        return redirect(
+            "staff:showtimes"
+        )
+
+    form = ShowtimeForm(
+        request.POST,
+        instance=showtime,
+    )
+
+    if form.is_valid():
+
+        updated_showtime = form.save(
+            commit=False
+        )
+
+        # ----------------------------------------------------
+        # CHECK FOR SCREEN CONFLICT
+        # ----------------------------------------------------
+
+        conflict = get_showtime_conflict(
+            updated_showtime,
+            exclude_pk=showtime.pk,
+        )
+
+        if conflict:
+
+            form.add_error(
+                "start_time",
+                (
+                    "This screen already has a showtime "
+                    f"from "
+                    f"{conflict.start_time.strftime('%H:%M')} "
+                    f"to "
+                    f"{conflict.end_time.strftime('%H:%M')} "
+                    "on this date."
+                ),
+            )
+
+        else:
+
+            updated_showtime.save()
+
+            messages.success(
+                request,
+                (
+                    f'Showtime for '
+                    f'"{updated_showtime.movie.title}" '
+                    "has been updated successfully."
+                ),
+            )
+
+            return redirect(
+                "staff:showtimes"
+            )
+
+    # --------------------------------------------------------
+    # FORM ERROR
+    # --------------------------------------------------------
+
+    showtime_list = (
+        Showtime.objects
+        .select_related(
+            "movie",
+            "screen",
+            "screen__cinema",
+        )
+        .order_by(
+            "-show_date",
+            "start_time",
+            "movie__title",
+        )
+    )
+
+    return render(
+        request,
+        "staff/showtimes.html",
+        {
+            "showtimes": showtime_list,
+
+            # Fresh Add Showtime form
+            "form": ShowtimeForm(),
+
+            # Instance-bound Edit form
+            "edit_form": form,
+
+            "edit_showtime": showtime,
+
+            "edit_showtime_open": True,
+        },
+    )
+
+
+# ============================================================
+# CANCEL SHOWTIME
+# ============================================================
+
+@staff_required
+def showtime_cancel(request, pk):
+
+    showtime = get_object_or_404(
+        Showtime,
+        pk=pk,
+    )
+
+    if request.method != "POST":
+
+        return redirect(
+            "staff:showtimes"
+        )
+
+    # --------------------------------------------------------
+    # ALREADY CANCELLED
+    # --------------------------------------------------------
+
+    if showtime.status == Showtime.Status.CANCELLED:
+
+        messages.warning(
+            request,
+            "This showtime is already cancelled.",
+        )
+
+        return redirect(
+            "staff:showtimes"
+        )
+
+    # --------------------------------------------------------
+    # COMPLETED SHOWTIME
+    # --------------------------------------------------------
+
+    if showtime.status == Showtime.Status.COMPLETED:
+
+        messages.error(
+            request,
+            "A completed showtime cannot be cancelled.",
+        )
+
+        return redirect(
+            "staff:showtimes"
+        )
+
+    # --------------------------------------------------------
+    # CANCEL
+    # --------------------------------------------------------
+
+    showtime.status = Showtime.Status.CANCELLED
+
+    showtime.save(
+        update_fields=[
+            "status",
+            "updated_at",
+        ]
+    )
+
+    messages.success(
+        request,
+        (
+            f'Showtime for "{showtime.movie.title}" '
+            "has been cancelled successfully."
+        ),
+    )
+
+    return redirect(
+        "staff:showtimes"
+    )
+
+
+# ============================================================
+# DELETE SHOWTIME
+# ============================================================
+
+@staff_required
+def showtime_delete(request, pk):
+
+    showtime = get_object_or_404(
+        Showtime,
+        pk=pk,
+    )
+
+    if request.method != "POST":
+
+        return redirect(
+            "staff:showtimes"
+        )
+
+    movie_title = showtime.movie.title
+
+    try:
+
+        showtime.delete()
+
+        messages.success(
+            request,
+            (
+                f'Showtime for "{movie_title}" '
+                "has been deleted successfully."
+            ),
+        )
+
+    except ProtectedError:
+
+        messages.warning(
+            request,
+            (
+                f'Showtime for "{movie_title}" cannot be deleted '
+                "because it has existing bookings. "
+                "Cancel the showtime instead."
+            ),
+        )
+
+    return redirect(
+        "staff:showtimes"
+    )
+
+
+# ============================================================
+# CINEMA → SCREEN OPTIONS
+# ============================================================
+
+@staff_required
+def cinema_screens(request, cinema_id):
+
+    cinema = get_object_or_404(
+        Cinema,
+        pk=cinema_id,
+        is_active=True,
+    )
+
+    screens = (
+        Screen.objects
+        .filter(
+            cinema=cinema,
+            is_active=True,
+        )
+        .order_by("name")
+    )
+
+    data = [
+        {
+            "id": screen.id,
+            "name": screen.name,
+            "screen_type": screen.get_screen_type_display(),
+            "capacity": screen.capacity,
+        }
+        for screen in screens
+    ]
+
+    return JsonResponse(
+        {
+            "cinema": cinema.name,
+            "screens": data,
+        }
+    )
+
+
+# ============================================================
+# SHOWTIME CONFLICT CHECK
+# ============================================================
+
+def get_showtime_conflict(
+    showtime,
+    exclude_pk=None,
+):
+
+    if not all(
+        [
+            showtime.screen,
+            showtime.show_date,
+            showtime.start_time,
+            showtime.movie,
+        ]
+    ):
+
+        return None
+
+    # --------------------------------------------------------
+    # NEW SHOWTIME START
+    # --------------------------------------------------------
+
+    new_start = datetime.combine(
+        showtime.show_date,
+        showtime.start_time,
+    )
+
+    # --------------------------------------------------------
+    # NEW SHOWTIME END
+    # --------------------------------------------------------
+
+    new_end = (
+        new_start
+        + timedelta(
+            minutes=showtime.movie.duration
+        )
+    )
+
+    # --------------------------------------------------------
+    # EXISTING SHOWTIMES
+    # --------------------------------------------------------
+
+    existing_showtimes = (
+        Showtime.objects
+        .filter(
+            screen=showtime.screen,
+            show_date=showtime.show_date,
+        )
+        .exclude(
+            status=Showtime.Status.CANCELLED,
+        )
+    )
+
+    # --------------------------------------------------------
+    # DON'T COMPARE AN EDIT AGAINST ITSELF
+    # --------------------------------------------------------
+
+    if exclude_pk:
+
+        existing_showtimes = (
+            existing_showtimes
+            .exclude(pk=exclude_pk)
+        )
+
+    # --------------------------------------------------------
+    # CHECK OVERLAP
+    # --------------------------------------------------------
+
+    for existing in existing_showtimes:
+
+        existing_start = datetime.combine(
+            existing.show_date,
+            existing.start_time,
+        )
+
+        existing_end = (
+            existing_start
+            + timedelta(
+                minutes=existing.movie.duration
+            )
+        )
+
+        # ----------------------------------------------------
+        # OVERLAP CONDITION
+        # ----------------------------------------------------
+
+        if (
+            new_start < existing_end
+            and
+            new_end > existing_start
+        ):
+
+            return existing
+
+    return None
+
+
+# ============================================================
+# BOOKINGS
+# ============================================================
+
+@staff_required
+def bookings(request):
+
+    # ========================================================
+    # EXPIRE OLD HELD BOOKINGS
+    #
+    # This makes the staff booking list reflect the real
+    # booking lifecycle whenever the page is opened.
+    # ========================================================
+
+    now = timezone.now()
+
+    expired_bookings = (
+        Booking.objects
+        .filter(
+            status=Booking.Status.HELD,
+            hold_expires_at__isnull=False,
+            hold_expires_at__lte=now,
+        )
+    )
+
+    for booking in expired_bookings:
+
+        expire_booking(
+            booking
+        )
+
+
+    # ========================================================
+    # BASE QUERYSET
+    # ========================================================
+
+    bookings = (
+        Booking.objects
+        .select_related(
+            "user",
+            "showtime",
+            "showtime__movie",
+            "showtime__screen",
+            "showtime__screen__cinema",
+        )
+        .prefetch_related(
+            "booking_seats",
+            "booking_seats__seat",
+        )
+        .order_by(
+            "-created_at",
+        )
+    )
+
+
+    # ========================================================
+    # SEARCH
+    # ========================================================
+
+    search_query = request.GET.get(
+        "q",
+        ""
+    ).strip()
+
+    if search_query:
+
+        bookings = bookings.filter(
+
+            Q(
+                booking_reference__icontains=
+                search_query
+            )
+
+            |
+
+            Q(
+                user__username__icontains=
+                search_query
+            )
+
+            |
+
+            Q(
+                user__first_name__icontains=
+                search_query
+            )
+
+            |
+
+            Q(
+                user__last_name__icontains=
+                search_query
+            )
+
+            |
+
+            Q(
+                user__email__icontains=
+                search_query
+            )
+
+            |
+
+            Q(
+                showtime__movie__title__icontains=
+                search_query
+            )
+
+        )
+
+
+    # ========================================================
+    # STATUS FILTER
+    # ========================================================
+
+    status_filter = request.GET.get(
+        "status",
+        ""
+    ).strip()
+
+    valid_statuses = {
+        choice[0]
+        for choice in Booking.Status.choices
+    }
+
+    if status_filter in valid_statuses:
+
+        bookings = bookings.filter(
+            status=status_filter
+        )
+
+
+    # ========================================================
+    # CINEMA FILTER
+    # ========================================================
+
+    cinema_filter = request.GET.get(
+        "cinema",
+        ""
+    ).strip()
+
+    if cinema_filter:
+
+        try:
+
+            cinema_id = int(
+                cinema_filter
+            )
+
+            bookings = bookings.filter(
+                showtime__screen__cinema_id=
+                cinema_id
+            )
+
+        except (
+            TypeError,
+            ValueError,
+        ):
+
+            cinema_filter = ""
+
+
+    # ========================================================
+    # DATE FILTER
+    # ========================================================
+
+    show_date = request.GET.get(
+        "show_date",
+        ""
+    ).strip()
+
+    if show_date:
+
+        bookings = bookings.filter(
+            showtime__show_date=show_date
+        )
+
+
+    # ========================================================
+    # CINEMA OPTIONS
+    # ========================================================
+
+    cinemas = (
+        Cinema.objects
+        .filter(
+            is_active=True,
+        )
+        .order_by(
+            "name",
+        )
+    )
+
+
+    # ========================================================
+    # COUNTS
+    # ========================================================
+
+    total_bookings = bookings.count()
+
+    held_count = bookings.filter(
+        status=Booking.Status.HELD
+    ).count()
+
+    confirmed_count = bookings.filter(
+        status=Booking.Status.CONFIRMED
+    ).count()
+
+    cancelled_count = bookings.filter(
+        status=Booking.Status.CANCELLED
+    ).count()
+
+    expired_count = bookings.filter(
+        status=Booking.Status.EXPIRED
+    ).count()
+
+
+    # ========================================================
+    # CONTEXT
+    # ========================================================
+
+    context = {
+
+        "bookings": bookings,
+
+        "cinemas": cinemas,
+
+        "total_bookings": total_bookings,
+
+        "held_count": held_count,
+
+        "confirmed_count": confirmed_count,
+
+        "cancelled_count": cancelled_count,
+
+        "expired_count": expired_count,
+
+        "search_query": search_query,
+
+        "status_filter": status_filter,
+
+        "cinema_filter": cinema_filter,
+
+        "show_date": show_date,
+
+    }
+
+
+    return render(
+        request,
+        "staff/bookings.html",
+        context,
+    )
+
+# ============================================================
+# SUPPORT — TICKET LIST
+# ============================================================
+# ============================================================
+# SUPPORT — STAFF TICKET MANAGEMENT
+# ============================================================
+
+@staff_required
+def support(request):
+
+    # ========================================================
+    # HANDLE STAFF ACTIONS
+    # ========================================================
+
+    if request.method == "POST":
+
+        action = request.POST.get(
+            "action",
+            "",
+        )
+
+        ticket_id = request.POST.get(
+            "ticket_id",
+            "",
+        )
+
+        ticket = get_object_or_404(
+            SupportTicket,
+            id=ticket_id,
+        )
+
+
+        # ====================================================
+        # REPLY TO TICKET
+        # ====================================================
+
+        if action == "reply":
+
+            # -----------------------------------------------
+            # CLOSED TICKET
+            # -----------------------------------------------
+
+            if (
+                ticket.status
+                == SupportTicket.Status.CLOSED
+            ):
+
+                messages.error(
+                    request,
+                    (
+                        "This ticket is closed and "
+                        "cannot receive new replies."
+                    ),
+                )
+
+                return redirect(
+                    "staff:support"
+                )
+
+
+            form = SupportReplyForm(
+                request.POST
+            )
+
+
+            if form.is_valid():
+
+                support_message = form.save(
+                    commit=False
+                )
+
+                support_message.ticket = ticket
+
+                support_message.sender = request.user
+
+                support_message.save()
+
+
+                # -------------------------------------------
+                # UPDATE STATUS
+                # -------------------------------------------
+
+                ticket.status = (
+                    SupportTicket.Status.IN_PROGRESS
+                )
+
+                ticket.save(
+                    update_fields=[
+                        "status",
+                        "updated_at",
+                    ]
+                )
+
+
+                messages.success(
+                    request,
+                    "Reply sent successfully.",
+                )
+
+            else:
+
+                messages.error(
+                    request,
+                    "Please enter a valid reply.",
+                )
+
+
+        # ====================================================
+        # UPDATE STATUS
+        # ====================================================
+
+        elif action == "status":
+
+            new_status = request.POST.get(
+                "status",
+                "",
+            )
+
+
+            valid_statuses = {
+                value
+                for value, label
+                in SupportTicket.Status.choices
+            }
+
+
+            if new_status not in valid_statuses:
+
+                messages.error(
+                    request,
+                    "Invalid support ticket status.",
+                )
+
+            else:
+
+                ticket.status = new_status
+
+                ticket.save(
+                    update_fields=[
+                        "status",
+                        "updated_at",
+                    ]
+                )
+
+
+                messages.success(
+                    request,
+                    "Support ticket status updated successfully.",
+                )
+
+
+        # ====================================================
+        # UPDATE PRIORITY
+        # ====================================================
+
+        elif action == "priority":
+
+            new_priority = request.POST.get(
+                "priority",
+                "",
+            )
+
+
+            valid_priorities = {
+                value
+                for value, label
+                in SupportTicket.Priority.choices
+            }
+
+
+            if new_priority not in valid_priorities:
+
+                messages.error(
+                    request,
+                    "Invalid support ticket priority.",
+                )
+
+            else:
+
+                ticket.priority = new_priority
+
+                ticket.save(
+                    update_fields=[
+                        "priority",
+                        "updated_at",
+                    ]
+                )
+
+
+                messages.success(
+                    request,
+                    "Support ticket priority updated successfully.",
+                )
+
+
+        else:
+
+            messages.error(
+                request,
+                "Invalid support action.",
+            )
+
+
+        return redirect(
+            "staff:support"
+        )
+
+
+    # ========================================================
+    # BASE QUERYSET
+    # ========================================================
+
+    tickets = (
+        SupportTicket.objects
+        .select_related(
+            "customer",
+            "booking",
+            "booking__showtime",
+            "booking__showtime__movie",
+            "booking__showtime__screen",
+            "booking__showtime__screen__cinema",
+        )
+        .prefetch_related(
+            "messages__sender",
+        )
+        .order_by(
+            "-updated_at",
+        )
+    )
+
+
+    # ========================================================
+    # SEARCH
+    # ========================================================
+
+    search = request.GET.get(
+        "search",
+        "",
+    ).strip()
+
+
+    if search:
+
+        tickets = tickets.filter(
+
+            Q(
+                subject__icontains=search
+            )
+
+            |
+
+            Q(
+                customer__username__icontains=search
+            )
+
+            |
+
+            Q(
+                customer__first_name__icontains=search
+            )
+
+            |
+
+            Q(
+                customer__last_name__icontains=search
+            )
+
+            |
+
+            Q(
+                customer__email__icontains=search
+            )
+
+            |
+
+            Q(
+                booking__booking_reference__icontains=search
+            )
+
+        )
+
+
+    # ========================================================
+    # STATUS FILTER
+    # ========================================================
+
+    status = request.GET.get(
+        "status",
+        "",
+    ).strip()
+
+
+    valid_statuses = {
+        value
+        for value, label
+        in SupportTicket.Status.choices
+    }
+
+
+    if status in valid_statuses:
+
+        tickets = tickets.filter(
+            status=status
+        )
+
+    else:
+
+        status = ""
+
+
+    # ========================================================
+    # PRIORITY FILTER
+    # ========================================================
+
+    priority = request.GET.get(
+        "priority",
+        "",
+    ).strip()
+
+
+    valid_priorities = {
+        value
+        for value, label
+        in SupportTicket.Priority.choices
+    }
+
+
+    if priority in valid_priorities:
+
+        tickets = tickets.filter(
+            priority=priority
+        )
+
+    else:
+
+        priority = ""
+
+
+    # ========================================================
+    # SUPPORT COUNTS
+    # ========================================================
+
+    open_count = (
+        SupportTicket.objects
+        .filter(
+            status=SupportTicket.Status.OPEN
+        )
+        .count()
+    )
+
+
+    in_progress_count = (
+        SupportTicket.objects
+        .filter(
+            status=SupportTicket.Status.IN_PROGRESS
+        )
+        .count()
+    )
+
+
+    waiting_count = (
+        SupportTicket.objects
+        .filter(
+            status=(
+                SupportTicket.Status.WAITING_FOR_CUSTOMER
+            )
+        )
+        .count()
+    )
+
+
+    resolved_count = (
+        SupportTicket.objects
+        .filter(
+            status=SupportTicket.Status.RESOLVED
+        )
+        .count()
+    )
+
+
+    # ========================================================
+    # CONTEXT
+    # ========================================================
+
+    context = {
+
+        "tickets": tickets,
+
+        "search": search,
+
+        "status": status,
+
+        "priority": priority,
+
+        "status_choices": (
+            SupportTicket.Status.choices
+        ),
+
+        "priority_choices": (
+            SupportTicket.Priority.choices
+        ),
+
+        "open_count": open_count,
+
+        "in_progress_count": (
+            in_progress_count
+        ),
+
+        "waiting_count": waiting_count,
+
+        "resolved_count": resolved_count,
+
+        "form": SupportReplyForm(),
+
+    }
+
+
+    return render(
+        request,
+        "staff/support.html",
+        context,
+    )
+
+
+# ============================================================
+# SUPPORT — UPDATE STATUS
+# ============================================================
+
+@staff_required
+def support_ticket_status(
+    request,
+    ticket_id,
+):
+
+    ticket = get_object_or_404(
+        SupportTicket,
+        id=ticket_id,
+    )
+
+
+    if request.method != "POST":
+
+        return redirect(
+            "staff:support"
+        )
+
+
+    status = request.POST.get(
+        "status",
+        "",
+    )
+
+
+    valid_statuses = {
+        value
+        for value, label
+        in SupportTicket.Status.choices
+    }
+
+
+    if status not in valid_statuses:
+
+        messages.error(
+            request,
+            "Invalid support ticket status.",
+        )
+
+        return redirect(
+            "staff:support"
+        )
+
+
+    ticket.status = status
+
+    ticket.save(
+        update_fields=[
+            "status",
+            "updated_at",
+        ]
+    )
+
+
+    messages.success(
+        request,
+        "Support ticket status updated successfully.",
+    )
+
+
+    return redirect(
+        "staff:support"
+    )
+
+
+# ============================================================
+# SUPPORT — UPDATE PRIORITY
+# ============================================================
+
+@staff_required
+def support_ticket_priority(
+    request,
+    ticket_id,
+):
+
+    ticket = get_object_or_404(
+        SupportTicket,
+        id=ticket_id,
+    )
+
+
+    if request.method != "POST":
+
+        return redirect(
+            "staff:support"
+        )
+
+
+    priority = request.POST.get(
+        "priority",
+        "",
+    )
+
+
+    valid_priorities = {
+        value
+        for value, label
+        in SupportTicket.Priority.choices
+    }
+
+
+    if priority not in valid_priorities:
+
+        messages.error(
+            request,
+            "Invalid support ticket priority.",
+        )
+
+        return redirect(
+            "staff:support"
+        )
+
+
+    ticket.priority = priority
+
+    ticket.save(
+        update_fields=[
+            "priority",
+            "updated_at",
+        ]
+    )
+
+
+    messages.success(
+        request,
+        "Support ticket priority updated successfully.",
+    )
+
+
+    return redirect(
+        "staff:support"
     )

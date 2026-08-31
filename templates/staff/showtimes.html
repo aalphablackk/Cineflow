@@ -1,0 +1,2230 @@
+{% extends "staff/base.html" %}
+
+
+{% block staff_title %}
+    Showtimes | CineFlow
+{% endblock %}
+
+
+{% block staff_content %}
+
+<section class="staff-dashboard">
+
+    <div class="staff-container">
+
+        <!-- =====================================================
+             PAGE HEADER
+        ====================================================== -->
+
+        <div class="staff-page-header">
+
+            <div>
+
+                <span class="section-label">
+                    CINEFLOW MANAGEMENT
+                </span>
+
+                <h1>
+                    Showtimes
+                </h1>
+
+                <p>
+                    Schedule and manage movie showtimes across
+                    CineFlow cinemas.
+                </p>
+
+            </div>
+
+
+            <div class="staff-page-header-actions">
+
+                <button
+                    type="button"
+                    class="staff-primary-button"
+                    data-bs-toggle="modal"
+                    data-bs-target="#addShowtimeModal"
+                >
+
+                    <i class="bi bi-plus-lg"></i>
+
+                    Add Showtime
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             MESSAGES
+        ====================================================== -->
+
+        {% if messages %}
+
+            <div class="staff-messages">
+
+                {% for message in messages %}
+
+                    <div
+                        class="staff-alert staff-alert-{{ message.tags }}"
+                        role="alert"
+                    >
+
+                        <div class="staff-alert-icon">
+
+                            {% if message.tags == "success" %}
+
+                                <i class="bi bi-check-circle"></i>
+
+                            {% elif message.tags == "warning" %}
+
+                                <i class="bi bi-exclamation-triangle"></i>
+
+                            {% elif message.tags == "error" %}
+
+                                <i class="bi bi-x-circle"></i>
+
+                            {% else %}
+
+                                <i class="bi bi-info-circle"></i>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="staff-alert-content">
+
+                            {{ message }}
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- =====================================================
+             SHOWTIME SECTION HEADER
+        ====================================================== -->
+
+        <div class="staff-section-header">
+
+            <div>
+
+                <span class="section-label">
+                    SCHEDULE
+                </span>
+
+                <h2>
+                    Movie Showtimes
+                </h2>
+
+                <p>
+                    View and manage scheduled screenings.
+                </p>
+
+            </div>
+
+
+            <div class="staff-section-meta">
+
+                <span class="staff-count-badge">
+
+                    {{ showtimes|length }}
+
+                    Showtime{{ showtimes|length|pluralize }}
+
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             FILTERS
+        ====================================================== -->
+
+        <div class="staff-filter-panel">
+
+            <form
+                method="GET"
+                action="{% url 'staff:showtimes' %}"
+                class="staff-filter-form"
+            >
+
+                <!-- =============================================
+                     SEARCH
+                ============================================== -->
+
+                <div class="staff-filter-search">
+
+                    <i class="bi bi-search"></i>
+
+                    <input
+                        type="search"
+                        name="search"
+                        value="{{ search_query }}"
+                        class="form-control"
+                        placeholder="Search movie, cinema or screen..."
+                    >
+
+                </div>
+
+
+                <!-- =============================================
+                     CINEMA
+                ============================================== -->
+
+                <div class="staff-filter-field">
+
+                    <label
+                        for="showtimeCinemaFilter"
+                        class="staff-filter-label"
+                    >
+                        Cinema
+                    </label>
+
+                    <select
+                        id="showtimeCinemaFilter"
+                        name="cinema"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            All Cinemas
+                        </option>
+
+                        {% for cinema in cinemas %}
+
+                            <option
+                                value="{{ cinema.id }}"
+                                {% if selected_cinema == cinema.id|stringformat:"s" %}
+                                    selected
+                                {% endif %}
+                            >
+
+                                {{ cinema.name }}
+
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- =============================================
+                     STATUS
+                ============================================== -->
+
+                <div class="staff-filter-field">
+
+                    <label
+                        for="showtimeStatusFilter"
+                        class="staff-filter-label"
+                    >
+                        Status
+                    </label>
+
+                    <select
+                        id="showtimeStatusFilter"
+                        name="status"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            All Statuses
+                        </option>
+
+                        {% for value, label in showtime_status_choices %}
+
+                            <option
+                                value="{{ value }}"
+                                {% if selected_status == value %}
+                                    selected
+                                {% endif %}
+                            >
+
+                                {{ label }}
+
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- =============================================
+                     DATE
+                ============================================== -->
+
+                <div class="staff-filter-field">
+
+                    <label
+                        for="showtimeDateFilter"
+                        class="staff-filter-label"
+                    >
+                        Date
+                    </label>
+
+                    <input
+                        type="date"
+                        id="showtimeDateFilter"
+                        name="date"
+                        value="{{ selected_date }}"
+                        class="form-control"
+                    >
+
+                </div>
+
+
+                <!-- =============================================
+                     FILTER ACTIONS
+                ============================================== -->
+
+                <div class="staff-filter-actions">
+
+                    <button
+                        type="submit"
+                        class="staff-primary-button"
+                    >
+
+                        <i class="bi bi-funnel"></i>
+
+                        Filter
+
+                    </button>
+
+
+                    {% if search_query or selected_cinema or selected_status or selected_date %}
+
+                        <a
+                            href="{% url 'staff:showtimes' %}"
+                            class="staff-secondary-button"
+                        >
+
+                            <i class="bi bi-x-lg"></i>
+
+                            Clear
+
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <!-- =====================================================
+             SHOWTIME RESULTS
+        ====================================================== -->
+
+        <div class="staff-showtime-results">
+
+
+            <!-- =================================================
+                 RESULTS HEADER
+            ================================================== -->
+
+            <div class="staff-results-header">
+
+                <div>
+
+                    <span class="section-label">
+                        SHOWTIME SCHEDULE
+                    </span>
+
+                    <h3>
+                        Screening Schedule
+                    </h3>
+
+                </div>
+
+
+                <span class="staff-count-badge">
+
+                    {{ showtimes|length }}
+
+                    Showtime{{ showtimes|length|pluralize }}
+
+                </span>
+
+            </div>
+
+
+            <!-- =================================================
+                 EMPTY STATE
+            ================================================== -->
+
+            {% if not showtimes %}
+
+                <div class="staff-empty-state">
+
+                    <div class="staff-empty-icon">
+
+                        {% if search_query or selected_cinema or selected_status or selected_date %}
+
+                            <i class="bi bi-search"></i>
+
+                        {% else %}
+
+                            <i class="bi bi-calendar3"></i>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    {% if search_query or selected_cinema or selected_status or selected_date %}
+
+                        <h3>
+                            No showtimes found
+                        </h3>
+
+                        <p>
+                            No showtimes match your current
+                            search or filter options.
+                        </p>
+
+
+                        <a
+                            href="{% url 'staff:showtimes' %}"
+                            class="staff-secondary-button"
+                        >
+
+                            <i class="bi bi-arrow-counterclockwise"></i>
+
+                            Clear Filters
+
+                        </a>
+
+                    {% else %}
+
+                        <h3>
+                            No showtimes yet
+                        </h3>
+
+                        <p>
+                            Create your first movie showtime
+                            to start scheduling screenings.
+                        </p>
+
+
+                        <button
+                            type="button"
+                            class="staff-primary-button"
+                            data-bs-toggle="modal"
+                            data-bs-target="#addShowtimeModal"
+                        >
+
+                            <i class="bi bi-plus-lg"></i>
+
+                            Add Showtime
+
+                        </button>
+
+                    {% endif %}
+
+                </div>
+
+
+            {% else %}
+
+
+                <!-- =================================================
+                     SHOWTIME TABLE
+                ================================================== -->
+
+                <div class="staff-table-wrapper">
+
+                    <table class="staff-table staff-showtime-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Movie
+                                </th>
+
+                                <th>
+                                    Cinema
+                                </th>
+
+                                <th>
+                                    Screen
+                                </th>
+
+                                <th>
+                                    Date
+                                </th>
+
+                                <th>
+                                    Time
+                                </th>
+
+                                <th>
+                                    Price
+                                </th>
+
+                                <th>
+                                    Booking
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th class="staff-table-actions">
+                                    Actions
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for showtime in showtimes %}
+
+                                <tr>
+
+
+                                    <!-- =================================
+                                         MOVIE
+                                    ================================== -->
+
+                                    <td>
+
+                                        <div class="staff-showtime-movie">
+
+                                            <div class="staff-showtime-movie-poster">
+
+                                                {% if showtime.movie.poster_source %}
+
+                                                    <img
+                                                        src="{{ showtime.movie.poster_source }}"
+                                                        alt="{{ showtime.movie.title }}"
+                                                    >
+
+                                                {% else %}
+
+                                                    <div class="staff-showtime-poster-placeholder">
+
+                                                        <i class="bi bi-film"></i>
+
+                                                    </div>
+
+                                                {% endif %}
+
+                                            </div>
+
+
+                                            <div>
+
+                                                <strong>
+                                                    {{ showtime.movie.title }}
+                                                </strong>
+
+                                                <span>
+                                                    {{ showtime.movie.age_rating }}
+                                                </span>
+
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- =================================
+                                         CINEMA
+                                    ================================== -->
+
+                                    <td>
+
+                                        <div class="staff-showtime-location">
+
+                                            <strong>
+                                                {{ showtime.screen.cinema.name }}
+                                            </strong>
+
+                                            <span>
+
+                                                {{ showtime.screen.cinema.city }}
+
+                                                {% if showtime.screen.cinema.state %}
+
+                                                    ,
+                                                    {{ showtime.screen.cinema.state }}
+
+                                                {% endif %}
+
+                                            </span>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- =================================
+                                         SCREEN
+                                    ================================== -->
+
+                                    <td>
+
+                                        <div class="staff-showtime-screen">
+
+                                            <strong>
+                                                {{ showtime.screen.name }}
+                                            </strong>
+
+                                            <span>
+
+                                                {{ showtime.screen.get_screen_type_display }}
+
+                                                ·
+
+                                                {{ showtime.screen.capacity }}
+                                                seats
+
+                                            </span>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- =================================
+                                         DATE
+                                    ================================== -->
+
+                                    <td>
+
+                                        <div class="staff-showtime-date">
+
+                                            <strong>
+                                                {{ showtime.show_date|date:"M d, Y" }}
+                                            </strong>
+
+                                            <span>
+                                                {{ showtime.show_date|date:"l" }}
+                                            </span>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- =================================
+                                         TIME
+                                    ================================== -->
+
+                                    <td>
+
+                                        <div class="staff-showtime-time">
+
+                                            <strong>
+                                                {{ showtime.start_time|time:"g:i A" }}
+                                            </strong>
+
+                                            <span>
+
+                                                Ends
+                                                {{ showtime.end_time|time:"g:i A" }}
+
+                                            </span>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- =================================
+                                         PRICE
+                                    ================================== -->
+
+                                    <td>
+
+                                        <strong class="staff-price">
+
+                                            ₦{{ showtime.ticket_price|floatformat:2 }}
+
+                                        </strong>
+
+                                    </td>
+
+
+                                    <!-- =================================
+                                         BOOKING MODE
+                                    ================================== -->
+
+                                    <td>
+
+                                        {% if showtime.booking_mode == "assigned" %}
+
+                                            <span class="staff-status-badge staff-status-info">
+
+                                                <i class="bi bi-grid-3x3-gap"></i>
+
+                                                Assigned
+
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="staff-status-badge staff-status-neutral">
+
+                                                <i class="bi bi-people"></i>
+
+                                                General
+
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- =================================
+                                         STATUS
+                                    ================================== -->
+
+                                    <td>
+
+                                        {% if showtime.status == "scheduled" %}
+
+                                            <span class="staff-status-badge staff-status-success">
+
+                                                <i class="bi bi-clock"></i>
+
+                                                Scheduled
+
+                                            </span>
+
+                                        {% elif showtime.status == "cancelled" %}
+
+                                            <span class="staff-status-badge staff-status-danger">
+
+                                                <i class="bi bi-x-circle"></i>
+
+                                                Cancelled
+
+                                            </span>
+
+                                        {% elif showtime.status == "completed" %}
+
+                                            <span class="staff-status-badge staff-status-neutral">
+
+                                                <i class="bi bi-check2-all"></i>
+
+                                                Completed
+
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- =================================
+                                         ACTIONS
+                                    ================================== -->
+
+                                    <td>
+
+                                        <div class="staff-table-action-group">
+
+
+                                            <!-- EDIT -->
+
+                                            <button
+                                                type="button"
+                                                class="staff-icon-button"
+                                                title="Edit Showtime"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#editShowtimeModal{{ showtime.pk }}"
+                                            >
+
+                                                <i class="bi bi-pencil"></i>
+
+                                            </button>
+
+
+                                            <!-- CANCEL -->
+
+                                            {% if showtime.status == "scheduled" %}
+
+                                                <button
+                                                    type="button"
+                                                    class="staff-icon-button staff-icon-warning"
+                                                    title="Cancel Showtime"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#cancelShowtimeModal{{ showtime.pk }}"
+                                                >
+
+                                                    <i class="bi bi-x-lg"></i>
+
+                                                </button>
+
+                                            {% endif %}
+
+
+                                            <!-- DELETE -->
+
+                                            <button
+                                                type="button"
+                                                class="staff-icon-button staff-icon-danger"
+                                                title="Delete Showtime"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#deleteShowtimeModal{{ showtime.pk }}"
+                                            >
+
+                                                <i class="bi bi-trash"></i>
+
+                                            </button>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+
+                                <!-- =================================================
+                                     EDIT SHOWTIME MODAL
+                                ================================================== -->
+
+                                <div
+                                    class="modal fade"
+                                    id="editShowtimeModal{{ showtime.pk }}"
+                                    tabindex="-1"
+                                    aria-labelledby="editShowtimeModalLabel{{ showtime.pk }}"
+                                    aria-hidden="true"
+                                >
+
+                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+
+                                        <div class="modal-content staff-modal-content">
+
+
+                                            <!-- HEADER -->
+
+                                            <div class="modal-header">
+
+                                                <div>
+
+                                                    <span class="section-label">
+                                                        SHOWTIME MANAGEMENT
+                                                    </span>
+
+                                                    <h5
+                                                        class="modal-title"
+                                                        id="editShowtimeModalLabel{{ showtime.pk }}"
+                                                    >
+                                                        Edit Showtime
+                                                    </h5>
+
+                                                </div>
+
+
+                                                <button
+                                                    type="button"
+                                                    class="btn-close"
+                                                    data-bs-dismiss="modal"
+                                                    aria-label="Close"
+                                                ></button>
+
+                                            </div>
+
+
+                                            <!-- FORM -->
+
+                                            <form
+                                                method="POST"
+                                                action="{% url 'staff:showtime_edit' showtime.pk %}"
+                                            >
+
+                                                {% csrf_token %}
+
+
+                                                <div class="modal-body">
+
+                                                    {% if edit_showtime_open and edit_showtime.pk == showtime.pk %}
+
+                                                        {% with current_form=edit_form %}
+
+                                                            {% include "staff/partials/showtime_form.html" with form=current_form form_prefix="edit_" %}
+
+                                                        {% endwith %}
+
+                                                    {% else %}
+
+                                                        <div class="staff-form-grid">
+
+
+                                                            <!-- MOVIE -->
+
+                                                            <div class="staff-form-group">
+
+                                                                <label
+                                                                    class="form-label"
+                                                                    for="edit_movie_{{ showtime.pk }}"
+                                                                >
+                                                                    Movie
+                                                                </label>
+
+                                                                <select
+                                                                    name="movie"
+                                                                    id="edit_movie_{{ showtime.pk }}"
+                                                                    class="form-select"
+                                                                    required
+                                                                >
+
+                                                                    {% for movie in form.fields.movie.queryset %}
+
+                                                                        <option
+                                                                            value="{{ movie.pk }}"
+                                                                            {% if movie.pk == showtime.movie.pk %}
+                                                                                selected
+                                                                            {% endif %}
+                                                                        >
+
+                                                                            {{ movie.title }}
+
+                                                                        </option>
+
+                                                                    {% endfor %}
+
+                                                                </select>
+
+                                                            </div>
+
+
+                                                            <!-- CINEMA -->
+
+                                                            <div class="staff-form-group">
+
+                                                                <label
+                                                                    class="form-label"
+                                                                    for="edit_cinema_{{ showtime.pk }}"
+                                                                >
+                                                                    Cinema
+                                                                </label>
+
+                                                                <select
+                                                                    name="cinema"
+                                                                    id="edit_cinema_{{ showtime.pk }}"
+                                                                    class="form-select showtime-cinema-select"
+                                                                    data-screen-target="edit_screen_{{ showtime.pk }}"
+                                                                    data-current-screen="{{ showtime.screen.pk }}"
+                                                                    required
+                                                                >
+
+                                                                    {% for cinema in form.fields.cinema.queryset %}
+
+                                                                        <option
+                                                                            value="{{ cinema.pk }}"
+                                                                            {% if cinema.pk == showtime.screen.cinema.pk %}
+                                                                                selected
+                                                                            {% endif %}
+                                                                        >
+
+                                                                            {{ cinema.name }}
+
+                                                                        </option>
+
+                                                                    {% endfor %}
+
+                                                                </select>
+
+                                                            </div>
+
+
+                                                            <!-- SCREEN -->
+
+                                                            <div class="staff-form-group">
+
+                                                                <label
+                                                                    class="form-label"
+                                                                    for="edit_screen_{{ showtime.pk }}"
+                                                                >
+                                                                    Screen
+                                                                </label>
+
+                                                                <select
+                                                                    name="screen"
+                                                                    id="edit_screen_{{ showtime.pk }}"
+                                                                    class="form-select showtime-screen-select"
+                                                                    required
+                                                                >
+
+                                                                    <option
+                                                                        value="{{ showtime.screen.pk }}"
+                                                                        selected
+                                                                    >
+
+                                                                        {{ showtime.screen.name }}
+
+                                                                    </option>
+
+                                                                </select>
+
+                                                            </div>
+
+
+                                                            <!-- DATE -->
+
+                                                            <div class="staff-form-group">
+
+                                                                <label
+                                                                    class="form-label"
+                                                                    for="edit_show_date_{{ showtime.pk }}"
+                                                                >
+                                                                    Show Date
+                                                                </label>
+
+                                                                <input
+                                                                    type="date"
+                                                                    name="show_date"
+                                                                    id="edit_show_date_{{ showtime.pk }}"
+                                                                    class="form-control"
+                                                                    value="{{ showtime.show_date|date:'Y-m-d' }}"
+                                                                    required
+                                                                >
+
+                                                            </div>
+
+
+                                                            <!-- START TIME -->
+
+                                                            <div class="staff-form-group">
+
+                                                                <label
+                                                                    class="form-label"
+                                                                    for="edit_start_time_{{ showtime.pk }}"
+                                                                >
+                                                                    Start Time
+                                                                </label>
+
+                                                                <input
+                                                                    type="time"
+                                                                    name="start_time"
+                                                                    id="edit_start_time_{{ showtime.pk }}"
+                                                                    class="form-control"
+                                                                    value="{{ showtime.start_time|time:'H:i' }}"
+                                                                    required
+                                                                >
+
+                                                            </div>
+
+
+                                                            <!-- PRICE -->
+
+                                                            <div class="staff-form-group">
+
+                                                                <label
+                                                                    class="form-label"
+                                                                    for="edit_ticket_price_{{ showtime.pk }}"
+                                                                >
+                                                                    Ticket Price
+                                                                </label>
+
+                                                                <input
+                                                                    type="number"
+                                                                    name="ticket_price"
+                                                                    id="edit_ticket_price_{{ showtime.pk }}"
+                                                                    class="form-control"
+                                                                    value="{{ showtime.ticket_price }}"
+                                                                    min="0"
+                                                                    step="0.01"
+                                                                    required
+                                                                >
+
+                                                            </div>
+
+
+                                                            <!-- BOOKING MODE -->
+
+                                                            <div class="staff-form-group">
+
+                                                                <label
+                                                                    class="form-label"
+                                                                    for="edit_booking_mode_{{ showtime.pk }}"
+                                                                >
+                                                                    Booking Mode
+                                                                </label>
+
+                                                                <select
+                                                                    name="booking_mode"
+                                                                    id="edit_booking_mode_{{ showtime.pk }}"
+                                                                    class="form-select"
+                                                                    required
+                                                                >
+
+                                                                    {% for value, label in form.fields.booking_mode.choices %}
+
+                                                                        <option
+                                                                            value="{{ value }}"
+                                                                            {% if value == showtime.booking_mode %}
+                                                                                selected
+                                                                            {% endif %}
+                                                                        >
+
+                                                                            {{ label }}
+
+                                                                        </option>
+
+                                                                    {% endfor %}
+
+                                                                </select>
+
+                                                            </div>
+
+
+                                                            <!-- STATUS -->
+
+                                                            <div class="staff-form-group">
+
+                                                                <label
+                                                                    class="form-label"
+                                                                    for="edit_status_{{ showtime.pk }}"
+                                                                >
+                                                                    Status
+                                                                </label>
+
+                                                                <select
+                                                                    name="status"
+                                                                    id="edit_status_{{ showtime.pk }}"
+                                                                    class="form-select"
+                                                                    required
+                                                                >
+
+                                                                    {% for value, label in form.fields.status.choices %}
+
+                                                                        <option
+                                                                            value="{{ value }}"
+                                                                            {% if value == showtime.status %}
+                                                                                selected
+                                                                            {% endif %}
+                                                                        >
+
+                                                                            {{ label }}
+
+                                                                        </option>
+
+                                                                    {% endfor %}
+
+                                                                </select>
+
+                                                            </div>
+
+                                                        </div>
+
+                                                    {% endif %}
+
+                                                </div>
+
+
+                                                <!-- FOOTER -->
+
+                                                <div class="modal-footer">
+
+                                                    <button
+                                                        type="button"
+                                                        class="staff-secondary-button"
+                                                        data-bs-dismiss="modal"
+                                                    >
+                                                        Cancel
+                                                    </button>
+
+
+                                                    <button
+                                                        type="submit"
+                                                        class="staff-primary-button"
+                                                    >
+
+                                                        <i class="bi bi-check-lg"></i>
+
+                                                        Save Changes
+
+                                                    </button>
+
+                                                </div>
+
+                                            </form>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- =================================================
+                                     CANCEL SHOWTIME MODAL
+                                ================================================== -->
+
+                                <div
+                                    class="modal fade"
+                                    id="cancelShowtimeModal{{ showtime.pk }}"
+                                    tabindex="-1"
+                                    aria-labelledby="cancelShowtimeModalLabel{{ showtime.pk }}"
+                                    aria-hidden="true"
+                                >
+
+                                    <div class="modal-dialog modal-dialog-centered">
+
+                                        <div class="modal-content staff-modal-content">
+
+
+                                            <div class="modal-header">
+
+                                                <div>
+
+                                                    <span class="section-label">
+                                                        SHOWTIME MANAGEMENT
+                                                    </span>
+
+                                                    <h5
+                                                        class="modal-title"
+                                                        id="cancelShowtimeModalLabel{{ showtime.pk }}"
+                                                    >
+                                                        Cancel Showtime
+                                                    </h5>
+
+                                                </div>
+
+
+                                                <button
+                                                    type="button"
+                                                    class="btn-close"
+                                                    data-bs-dismiss="modal"
+                                                    aria-label="Close"
+                                                ></button>
+
+                                            </div>
+
+
+                                            <div class="modal-body">
+
+                                                <div class="staff-confirmation-content">
+
+
+                                                    <div class="staff-confirmation-icon staff-confirmation-warning">
+
+                                                        <i class="bi bi-exclamation-triangle"></i>
+
+                                                    </div>
+
+
+                                                    <h3>
+                                                        Cancel this showtime?
+                                                    </h3>
+
+
+                                                    <p>
+                                                        You are about to cancel:
+                                                    </p>
+
+
+                                                    <strong>
+                                                        {{ showtime.movie.title }}
+                                                    </strong>
+
+
+                                                    <div class="staff-confirmation-details">
+
+                                                        {{ showtime.screen.cinema.name }}
+
+                                                        ·
+
+                                                        {{ showtime.screen.name }}
+
+                                                        ·
+
+                                                        {{ showtime.show_date|date:"M d, Y" }}
+
+                                                        ·
+
+                                                        {{ showtime.start_time|time:"H:i" }}
+
+                                                    </div>
+
+
+                                                    <p class="staff-confirmation-warning-text">
+
+                                                        Customers with bookings for this
+                                                        showtime may be affected.
+
+                                                    </p>
+
+                                                </div>
+
+                                            </div>
+
+
+                                            <div class="modal-footer">
+
+                                                <button
+                                                    type="button"
+                                                    class="staff-secondary-button"
+                                                    data-bs-dismiss="modal"
+                                                >
+                                                    Keep Showtime
+                                                </button>
+
+
+                                                <form
+                                                    method="POST"
+                                                    action="{% url 'staff:showtime_cancel' showtime.pk %}"
+                                                >
+
+                                                    {% csrf_token %}
+
+                                                    <button
+                                                        type="submit"
+                                                        class="staff-danger-button"
+                                                    >
+
+                                                        <i class="bi bi-x-circle"></i>
+
+                                                        Cancel Showtime
+
+                                                    </button>
+
+                                                </form>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- =================================================
+                                     DELETE SHOWTIME MODAL
+                                ================================================== -->
+
+                                <div
+                                    class="modal fade"
+                                    id="deleteShowtimeModal{{ showtime.pk }}"
+                                    tabindex="-1"
+                                    aria-labelledby="deleteShowtimeModalLabel{{ showtime.pk }}"
+                                    aria-hidden="true"
+                                >
+
+                                    <div class="modal-dialog modal-dialog-centered">
+
+                                        <div class="modal-content staff-modal-content">
+
+
+                                            <div class="modal-header">
+
+                                                <div>
+
+                                                    <span class="section-label">
+                                                        DANGER ZONE
+                                                    </span>
+
+                                                    <h5
+                                                        class="modal-title"
+                                                        id="deleteShowtimeModalLabel{{ showtime.pk }}"
+                                                    >
+                                                        Delete Showtime
+                                                    </h5>
+
+                                                </div>
+
+
+                                                <button
+                                                    type="button"
+                                                    class="btn-close"
+                                                    data-bs-dismiss="modal"
+                                                    aria-label="Close"
+                                                ></button>
+
+                                            </div>
+
+
+                                            <div class="modal-body">
+
+                                                <div class="staff-confirmation-content">
+
+
+                                                    <div class="staff-confirmation-icon staff-confirmation-danger">
+
+                                                        <i class="bi bi-trash"></i>
+
+                                                    </div>
+
+
+                                                    <h3>
+                                                        Delete this showtime?
+                                                    </h3>
+
+
+                                                    <p>
+                                                        This will permanently remove the
+                                                        showtime for:
+                                                    </p>
+
+
+                                                    <strong>
+                                                        {{ showtime.movie.title }}
+                                                    </strong>
+
+
+                                                    <div class="staff-confirmation-details">
+
+                                                        {{ showtime.screen.cinema.name }}
+
+                                                        ·
+
+                                                        {{ showtime.screen.name }}
+
+                                                        ·
+
+                                                        {{ showtime.show_date|date:"M d, Y" }}
+
+                                                        ·
+
+                                                        {{ showtime.start_time|time:"H:i" }}
+
+                                                    </div>
+
+
+                                                    <p class="staff-confirmation-warning-text">
+
+                                                        If this showtime has existing
+                                                        bookings, Django will prevent
+                                                        deletion.
+
+                                                    </p>
+
+                                                </div>
+
+                                            </div>
+
+
+                                            <div class="modal-footer">
+
+                                                <button
+                                                    type="button"
+                                                    class="staff-secondary-button"
+                                                    data-bs-dismiss="modal"
+                                                >
+                                                    Keep Showtime
+                                                </button>
+
+
+                                                <form
+                                                    method="POST"
+                                                    action="{% url 'staff:showtime_delete' showtime.pk %}"
+                                                >
+
+                                                    {% csrf_token %}
+
+                                                    <button
+                                                        type="submit"
+                                                        class="staff-danger-button"
+                                                    >
+
+                                                        <i class="bi bi-trash"></i>
+
+                                                        Delete Showtime
+
+                                                    </button>
+
+                                                </form>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ============================================================
+     ADD SHOWTIME MODAL
+============================================================ -->
+
+<div
+    class="modal fade"
+    id="addShowtimeModal"
+    tabindex="-1"
+    aria-labelledby="addShowtimeModalLabel"
+    aria-hidden="true"
+>
+
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+
+        <div class="modal-content staff-modal-content">
+
+
+            <!-- HEADER -->
+
+            <div class="modal-header">
+
+                <div>
+
+                    <span class="section-label">
+                        SHOWTIME MANAGEMENT
+                    </span>
+
+                    <h5
+                        class="modal-title"
+                        id="addShowtimeModalLabel"
+                    >
+                        Add Showtime
+                    </h5>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+
+            </div>
+
+
+            <!-- FORM -->
+
+            <form
+                method="POST"
+                action="{% url 'staff:showtime_create' %}"
+            >
+
+                {% csrf_token %}
+
+
+                <div class="modal-body">
+
+                    <div class="staff-form-grid">
+
+
+                        <!-- =============================================
+                             MOVIE
+                        ============================================== -->
+
+                        <div class="staff-form-group">
+
+                            <label
+                                for="{{ form.movie.id_for_label }}"
+                                class="form-label"
+                            >
+                                Movie
+                            </label>
+
+                            {{ form.movie }}
+
+                            {% if form.movie.errors %}
+
+                                <div class="staff-form-error">
+
+                                    {% for error in form.movie.errors %}
+
+                                        {{ error }}
+
+                                    {% endfor %}
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- =============================================
+                             CINEMA
+                        ============================================== -->
+
+                        <div class="staff-form-group">
+
+                            <label
+                                for="{{ form.cinema.id_for_label }}"
+                                class="form-label"
+                            >
+                                Cinema
+                            </label>
+
+                            {{ form.cinema }}
+
+                            {% if form.cinema.errors %}
+
+                                <div class="staff-form-error">
+
+                                    {% for error in form.cinema.errors %}
+
+                                        {{ error }}
+
+                                    {% endfor %}
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- =============================================
+                             SCREEN
+                        ============================================== -->
+
+                        <div class="staff-form-group">
+
+                            <label
+                                for="{{ form.screen.id_for_label }}"
+                                class="form-label"
+                            >
+                                Screen
+                            </label>
+
+                            {{ form.screen }}
+
+                            {% if form.screen.errors %}
+
+                                <div class="staff-form-error">
+
+                                    {% for error in form.screen.errors %}
+
+                                        {{ error }}
+
+                                    {% endfor %}
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- =============================================
+                             DATE
+                        ============================================== -->
+
+                        <div class="staff-form-group">
+
+                            <label
+                                for="{{ form.show_date.id_for_label }}"
+                                class="form-label"
+                            >
+                                Show Date
+                            </label>
+
+                            {{ form.show_date }}
+
+                            {% if form.show_date.errors %}
+
+                                <div class="staff-form-error">
+
+                                    {% for error in form.show_date.errors %}
+
+                                        {{ error }}
+
+                                    {% endfor %}
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- =============================================
+                             START TIME
+                        ============================================== -->
+
+                        <div class="staff-form-group">
+
+                            <label
+                                for="{{ form.start_time.id_for_label }}"
+                                class="form-label"
+                            >
+                                Start Time
+                            </label>
+
+                            {{ form.start_time }}
+
+                            {% if form.start_time.errors %}
+
+                                <div class="staff-form-error">
+
+                                    {% for error in form.start_time.errors %}
+
+                                        {{ error }}
+
+                                    {% endfor %}
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- =============================================
+                             PRICE
+                        ============================================== -->
+
+                        <div class="staff-form-group">
+
+                            <label
+                                for="{{ form.ticket_price.id_for_label }}"
+                                class="form-label"
+                            >
+                                Ticket Price
+                            </label>
+
+                            {{ form.ticket_price }}
+
+                            {% if form.ticket_price.errors %}
+
+                                <div class="staff-form-error">
+
+                                    {% for error in form.ticket_price.errors %}
+
+                                        {{ error }}
+
+                                    {% endfor %}
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- =============================================
+                             BOOKING MODE
+                        ============================================== -->
+
+                        <div class="staff-form-group">
+
+                            <label
+                                for="{{ form.booking_mode.id_for_label }}"
+                                class="form-label"
+                            >
+                                Booking Mode
+                            </label>
+
+                            {{ form.booking_mode }}
+
+                            {% if form.booking_mode.errors %}
+
+                                <div class="staff-form-error">
+
+                                    {% for error in form.booking_mode.errors %}
+
+                                        {{ error }}
+
+                                    {% endfor %}
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- =============================================
+                             STATUS
+                        ============================================== -->
+
+                        <div class="staff-form-group">
+
+                            <label
+                                for="{{ form.status.id_for_label }}"
+                                class="form-label"
+                            >
+                                Status
+                            </label>
+
+                            {{ form.status }}
+
+                            {% if form.status.errors %}
+
+                                <div class="staff-form-error">
+
+                                    {% for error in form.status.errors %}
+
+                                        {{ error }}
+
+                                    {% endfor %}
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =============================================
+                         NON FIELD ERRORS
+                    ============================================== -->
+
+                    {% if form.non_field_errors %}
+
+                        <div class="staff-form-errors">
+
+                            {% for error in form.non_field_errors %}
+
+                                <div class="staff-form-error">
+
+                                    {{ error }}
+
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- FOOTER -->
+
+                <div class="modal-footer">
+
+                    <button
+                        type="button"
+                        class="staff-secondary-button"
+                        data-bs-dismiss="modal"
+                    >
+                        Cancel
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="staff-primary-button"
+                    >
+
+                        <i class="bi bi-calendar-plus"></i>
+
+                        Add Showtime
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ============================================================
+     DYNAMIC CINEMA → SCREEN SCRIPT
+============================================================ -->
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+
+        /* =====================================================
+           LOAD SCREENS
+        ====================================================== */
+
+        async function loadScreens(
+            cinemaSelect,
+            screenSelect,
+            selectedScreen = null
+        ) {
+
+            const cinemaId =
+                cinemaSelect.value;
+
+
+            screenSelect.innerHTML = "";
+
+
+            if (!cinemaId) {
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+                option.value = "";
+
+                option.textContent =
+                    "Select cinema first";
+
+                screenSelect.appendChild(
+                    option
+                );
+
+                screenSelect.disabled =
+                    true;
+
+                return;
+            }
+
+
+            screenSelect.disabled =
+                true;
+
+
+            const loadingOption =
+                document.createElement(
+                    "option"
+                );
+
+            loadingOption.value = "";
+
+            loadingOption.textContent =
+                "Loading screens...";
+
+            screenSelect.appendChild(
+                loadingOption
+            );
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "{% url 'staff:cinema_screens' 0 %}"
+                        .replace(
+                            "/0/",
+                            "/" + cinemaId + "/"
+                        ),
+                        {
+                            headers: {
+                                "X-Requested-With":
+                                    "XMLHttpRequest"
+                            }
+                        }
+                    );
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Unable to load screens."
+                    );
+
+                }
+
+
+                const data =
+                    await response.json();
+
+
+                screenSelect.innerHTML =
+                    "";
+
+
+                if (!data.screens.length) {
+
+                    const option =
+                        document.createElement(
+                            "option"
+                        );
+
+                    option.value = "";
+
+                    option.textContent =
+                        "No active screens available";
+
+                    screenSelect.appendChild(
+                        option
+                    );
+
+                    screenSelect.disabled =
+                        true;
+
+                    return;
+                }
+
+
+                const defaultOption =
+                    document.createElement(
+                        "option"
+                    );
+
+                defaultOption.value = "";
+
+                defaultOption.textContent =
+                    "Select screen";
+
+                screenSelect.appendChild(
+                    defaultOption
+                );
+
+
+                data.screens.forEach(
+                    function (screen) {
+
+                        const option =
+                            document.createElement(
+                                "option"
+                            );
+
+                        option.value =
+                            screen.id;
+
+                        option.textContent =
+                            `${screen.name} — ${screen.screen_type} (${screen.capacity} seats)`;
+
+
+                        if (
+                            selectedScreen &&
+                            String(screen.id) ===
+                            String(selectedScreen)
+                        ) {
+
+                            option.selected =
+                                true;
+
+                        }
+
+
+                        screenSelect.appendChild(
+                            option
+                        );
+
+                    }
+                );
+
+
+                screenSelect.disabled =
+                    false;
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    error
+                );
+
+
+                screenSelect.innerHTML =
+                    "";
+
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+                option.value = "";
+
+                option.textContent =
+                    "Unable to load screens";
+
+                screenSelect.appendChild(
+                    option
+                );
+
+                screenSelect.disabled =
+                    true;
+
+            }
+
+        }
+
+
+        /* =====================================================
+           ADD SHOWTIME
+        ====================================================== */
+
+        const addCinema =
+            document.getElementById(
+                "{{ form.cinema.id_for_label }}"
+            );
+
+
+        const addScreen =
+            document.getElementById(
+                "{{ form.screen.id_for_label }}"
+            );
+
+
+        if (
+            addCinema &&
+            addScreen
+        ) {
+
+            addCinema.addEventListener(
+                "change",
+                function () {
+
+                    loadScreens(
+                        addCinema,
+                        addScreen
+                    );
+
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+           EDIT SHOWTIME MODALS
+        ====================================================== */
+
+        document
+            .querySelectorAll(
+                ".showtime-cinema-select"
+            )
+            .forEach(
+                function (cinemaSelect) {
+
+                    const screenTargetId =
+                        cinemaSelect.dataset.screenTarget;
+
+
+                    const screenSelect =
+                        document.getElementById(
+                            screenTargetId
+                        );
+
+
+                    if (!screenSelect) {
+                        return;
+                    }
+
+
+                    const currentScreen =
+                        cinemaSelect.dataset.currentScreen;
+
+
+                    cinemaSelect.addEventListener(
+                        "change",
+                        function () {
+
+                            loadScreens(
+                                cinemaSelect,
+                                screenSelect
+                            );
+
+                        }
+                    );
+
+
+                    if (cinemaSelect.value) {
+
+                        loadScreens(
+                            cinemaSelect,
+                            screenSelect,
+                            currentScreen
+                        );
+
+                    }
+
+                }
+            );
+
+
+        /* =====================================================
+           AUTO OPEN CREATE MODAL
+           AFTER VALIDATION ERROR
+        ====================================================== */
+
+        {% if add_showtime_open %}
+
+            const addModal =
+                document.getElementById(
+                    "addShowtimeModal"
+                );
+
+
+            if (addModal) {
+
+                const modal =
+                    new bootstrap.Modal(
+                        addModal
+                    );
+
+                modal.show();
+
+            }
+
+        {% endif %}
+
+
+        /* =====================================================
+           AUTO OPEN EDIT MODAL
+           AFTER VALIDATION ERROR
+        ====================================================== */
+
+        {% if edit_showtime_open and edit_showtime %}
+
+            const editModal =
+                document.getElementById(
+                    "editShowtimeModal{{ edit_showtime.pk }}"
+                );
+
+
+            if (editModal) {
+
+                const modal =
+                    new bootstrap.Modal(
+                        editModal
+                    );
+
+                modal.show();
+
+            }
+
+        {% endif %}
+
+    }
+);
+
+</script>
+
+
+{% endblock %}
