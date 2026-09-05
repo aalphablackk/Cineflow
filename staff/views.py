@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
-from django.db.models import ProtectedError, Q, Prefetch, Count
+from django.db.models import ProtectedError, Q, Prefetch, Count, Sum
 from support.forms import SupportReplyForm
 from django.contrib.auth.models import User
 
@@ -10,7 +10,7 @@ from movies.models import Movie
 from movies.forms import StaffMovieForm
 from cinemas.models import Cinema,Screen,Seat
 from cinemas.forms import CinemaForm,ScreenForm,SeatForm,SeatGenerationForm
-from bookings.models import Booking
+from bookings.models import Booking, Payment
 from datetime import datetime, timedelta
 from django.utils import timezone
 from bookings.services import expire_booking
@@ -2813,5 +2813,147 @@ def screens_overview(request):
         "staff/screens_overview.html",
         {
             "cinemas": cinemas,
+        },
+    )
+
+# ============================================================
+# PAYMENTS
+# ============================================================
+
+@staff_required
+def payments(request):
+
+    payments_queryset = (
+        Payment.objects
+        .select_related(
+            "booking",
+            "booking__user",
+            "booking__showtime",
+            "booking__showtime__movie",
+            "booking__showtime__screen",
+            "booking__showtime__screen__cinema",
+        )
+        .order_by("-created_at")
+    )
+
+
+    # ========================================================
+    # SEARCH
+    # ========================================================
+
+    search = request.GET.get(
+        "search",
+        "",
+    ).strip()
+
+
+    if search:
+
+        payments_queryset = payments_queryset.filter(
+
+            Q(payment_reference__icontains=search)
+            |
+            Q(booking__booking_reference__icontains=search)
+            |
+            Q(booking__user__username__icontains=search)
+            |
+            Q(booking__user__first_name__icontains=search)
+            |
+            Q(booking__user__last_name__icontains=search)
+            |
+            Q(booking__user__email__icontains=search)
+
+        )
+
+
+    # ========================================================
+    # STATUS FILTER
+    # ========================================================
+
+    status = request.GET.get(
+        "status",
+        "",
+    )
+
+
+    if status:
+
+        payments_queryset = payments_queryset.filter(
+            status=status,
+        )
+
+
+    # ========================================================
+    # PROVIDER FILTER
+    # ========================================================
+
+    provider = request.GET.get(
+        "provider",
+        "",
+    )
+
+
+    if provider:
+
+        payments_queryset = payments_queryset.filter(
+            provider=provider,
+        )
+
+
+    # ========================================================
+    # STATISTICS
+    # ========================================================
+
+    payment_stats = Payment.objects.aggregate(
+
+        total_transactions=Count(
+            "id",
+        ),
+
+        successful_transactions=Count(
+            "id",
+            filter=Q(
+                status=Payment.Status.SUCCESSFUL,
+            ),
+        ),
+
+        pending_transactions=Count(
+            "id",
+            filter=Q(
+                status=Payment.Status.PENDING,
+            ),
+        ),
+
+        failed_transactions=Count(
+            "id",
+            filter=Q(
+                status=Payment.Status.FAILED,
+            ),
+        ),
+
+        successful_revenue=Sum(
+            "amount",
+            filter=Q(
+                status=Payment.Status.SUCCESSFUL,
+            ),
+        ),
+
+    )
+
+
+    return render(
+        request,
+        "staff/payments.html",
+        {
+            "payments": payments_queryset,
+
+            "payment_stats": payment_stats,
+
+            "search": search,
+            "status": status,
+            "provider": provider,
+
+            "payment_statuses": Payment.Status.choices,
+            "payment_providers": Payment.Provider.choices,
         },
     )

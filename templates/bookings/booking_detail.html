@@ -363,6 +363,82 @@
                     </div>
 
 
+                    <!-- PAYMENT INFORMATION -->
+
+                    {% if payment %}
+
+                        <div class="booking-reference-card">
+
+                            <span class="section-label">
+                                PAYMENT REFERENCE
+                            </span>
+
+                            <strong>
+                                {{ payment.payment_reference }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="booking-reference-card">
+
+                            <span class="section-label">
+                                PAYMENT STATUS
+                            </span>
+
+                            {% if payment.status == "successful" %}
+
+                                <strong class="text-success">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    Successful
+                                </strong>
+
+                            {% elif payment.status == "pending" %}
+
+                                <strong class="text-warning">
+                                    <i class="bi bi-clock"></i>
+                                    Pending
+                                </strong>
+
+                            {% elif payment.status == "failed" %}
+
+                                <strong class="text-danger">
+                                    <i class="bi bi-x-circle-fill"></i>
+                                    Failed
+                                </strong>
+
+                            {% elif payment.status == "cancelled" %}
+
+                                <strong class="text-secondary">
+                                    <i class="bi bi-x-circle"></i>
+                                    Cancelled
+                                </strong>
+
+                            {% elif payment.status == "refunded" %}
+
+                                <strong class="text-info">
+                                    <i class="bi bi-arrow-counterclockwise"></i>
+                                    Refunded
+                                </strong>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="booking-reference-card">
+
+                            <span class="section-label">
+                                PAYMENT METHOD
+                            </span>
+
+                            <strong>
+                                {{ payment.get_provider_display }}
+                            </strong>
+
+                        </div>
+
+                    {% endif %}
                     <!-- HOLD -->
 
                     {% if booking.status == "held" %}

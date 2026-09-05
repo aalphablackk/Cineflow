@@ -185,6 +185,7 @@ urlpatterns = [
         views.bookings,
         name="bookings",
     ),
+    path("payments/", views.payments, name="payments"),
     # ========================================================
     # SUPPORT
     # ========================================================

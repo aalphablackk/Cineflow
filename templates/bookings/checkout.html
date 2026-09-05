@@ -334,17 +334,25 @@
                          PAYMENT BUTTON
                     ========================================== -->
 
-                    <button
-                        type="button"
-                        class="btn cine-btn-primary checkout-pay-button"
-                        id="checkout-pay-button"
+                    <form
+                        method="POST"
+                        action="{% url 'bookings:initialize_payment' booking.id %}"
                     >
+                        {% csrf_token %}
 
-                        Proceed to Payment
+                        <button
+                            type="submit"
+                            class="btn cine-btn-primary checkout-pay-button"
+                            id="checkout-pay-button"
+                        >
 
-                        <i class="bi bi-arrow-right"></i>
+                            Proceed to Payment
 
-                    </button>
+                            <i class="bi bi-arrow-right"></i>
+
+                        </button>
+
+                    </form>
 
 
                     <p class="checkout-secure">

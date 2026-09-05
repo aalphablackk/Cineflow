@@ -8,7 +8,7 @@ from django.utils import timezone
 from cinemas.models import Seat
 from showtimes.models import Showtime
 
-from .models import Booking, BookingSeat
+from .models import Booking, BookingSeat, Payment
 
 
 # ============================================================
@@ -268,13 +268,11 @@ def create_assigned_hold(
     # --------------------------------------------------------
 
     if showtime.status != Showtime.Status.SCHEDULED:
-
         raise ValidationError(
             "This showtime is no longer available for booking."
         )
 
     if showtime.booking_mode != Showtime.BookingMode.ASSIGNED:
-
         raise ValidationError(
             "This showtime uses general admission. "
             "Please select the number of tickets instead."
@@ -285,7 +283,6 @@ def create_assigned_hold(
     # --------------------------------------------------------
 
     if not seat_ids:
-
         raise ValidationError(
             "Please select at least one seat to continue."
         )
@@ -320,7 +317,6 @@ def create_assigned_hold(
     # --------------------------------------------------------
 
     if len(seats) != len(seat_ids):
-
         raise ValidationError(
             "One or more of your selected seats are "
             "invalid or unavailable. Please review "
@@ -364,7 +360,6 @@ def create_assigned_hold(
     )
 
     if occupied_seat_ids:
-
         raise ValidationError(
             "One or more of your selected seats are "
             "no longer available. Please choose different "
@@ -462,13 +457,11 @@ def create_general_hold(
     # --------------------------------------------------------
 
     if showtime.status != Showtime.Status.SCHEDULED:
-
         raise ValidationError(
             "This showtime is no longer available for booking."
         )
 
     if showtime.booking_mode != Showtime.BookingMode.GENERAL:
-
         raise ValidationError(
             "This showtime uses assigned seating. "
             "Please select your seats instead."
@@ -482,13 +475,11 @@ def create_general_hold(
         ticket_quantity,
         int,
     ):
-
         raise ValidationError(
             "Please enter a valid number of tickets."
         )
 
     if ticket_quantity <= 0:
-
         raise ValidationError(
             "Please select at least one ticket."
         )
@@ -514,7 +505,6 @@ def create_general_hold(
     if ticket_quantity > available_capacity:
 
         if available_capacity == 0:
-
             raise ValidationError(
                 "Sorry, this showtime is currently sold out."
             )
@@ -559,64 +549,38 @@ def create_general_hold(
 
 
 # ============================================================
-# CONFIRM BOOKING
+# INTERNAL BOOKING EXPIRATION HELPER
 # ============================================================
 
-@transaction.atomic
-def confirm_booking(booking):
+def _expire_booking_locked(booking):
     """
-    Confirm a held booking after successful payment.
+    Expire an already-locked HELD booking.
+
+    IMPORTANT:
+    This function does not use transaction.atomic itself.
+
+    It is designed to be called from another transaction where
+    the booking is already locked.
+
+    This prevents expiration changes from being rolled back when
+    the caller needs to raise a ValidationError after the
+    transaction has completed.
     """
-
-    booking = (
-        Booking.objects
-        .select_for_update()
-        .select_related(
-            "showtime",
-        )
-        .get(
-            pk=booking.pk,
-        )
-    )
-
-    # --------------------------------------------------------
-    # 1. Validate booking status
-    # --------------------------------------------------------
 
     if booking.status != Booking.Status.HELD:
-
-        raise ValidationError(
-            "This booking is no longer available for payment."
-        )
-
-    # --------------------------------------------------------
-    # 2. Validate hold expiration
-    # --------------------------------------------------------
+        return False
 
     if (
         booking.hold_expires_at is None
-        or booking.hold_expires_at <= timezone.now()
+        or booking.hold_expires_at > timezone.now()
     ):
-
-        booking.status = Booking.Status.EXPIRED
-
-        booking.save(
-            update_fields=[
-                "status",
-                "updated_at",
-            ],
-        )
-
-        raise ValidationError(
-            "Your booking hold has expired. "
-            "Please start a new booking."
-        )
+        return False
 
     # --------------------------------------------------------
-    # 3. Confirm booking
+    # Mark booking expired
     # --------------------------------------------------------
 
-    booking.status = Booking.Status.CONFIRMED
+    booking.status = Booking.Status.EXPIRED
 
     booking.save(
         update_fields=[
@@ -625,50 +589,277 @@ def confirm_booking(booking):
         ],
     )
 
+    # --------------------------------------------------------
+    # Mark pending payments as failed
+    # --------------------------------------------------------
+
+    Payment.objects.filter(
+        booking=booking,
+        status=Payment.Status.PENDING,
+    ).update(
+        status=Payment.Status.FAILED,
+        updated_at=timezone.now(),
+    )
+
+    # --------------------------------------------------------
+    # Release temporarily held seats
+    # --------------------------------------------------------
+
+    booking.booking_seats.all().delete()
+
+    return True
+
+
+# ============================================================
+# CONFIRM BOOKING
+# ============================================================
+
+# ============================================================
+# CONFIRM BOOKING
+# ============================================================
+
+def confirm_booking(booking):
+    """
+    Confirm a held booking.
+
+    If the booking has expired, persist the expiration
+    first, then raise ValidationError after the transaction
+    has committed.
+    """
+
+    booking_expired = False
+
+    with transaction.atomic():
+
+        booking = (
+            Booking.objects
+            .select_for_update()
+            .select_related(
+                "showtime",
+            )
+            .get(
+                pk=booking.pk,
+            )
+        )
+
+        # ----------------------------------------------------
+        # 1. Booking must still be held
+        # ----------------------------------------------------
+
+        if booking.status != Booking.Status.HELD:
+            raise ValidationError(
+                "This booking is no longer available for payment."
+            )
+
+        # ----------------------------------------------------
+        # 2. Check expiration
+        # ----------------------------------------------------
+
+        if (
+            booking.hold_expires_at is None
+            or booking.hold_expires_at <= timezone.now()
+        ):
+
+            _expire_booking_locked(
+                booking
+            )
+
+            booking_expired = True
+
+        else:
+
+            # ------------------------------------------------
+            # 3. Confirm booking
+            # ------------------------------------------------
+
+            booking.status = Booking.Status.CONFIRMED
+
+            booking.save(
+                update_fields=[
+                    "status",
+                    "updated_at",
+                ],
+            )
+
+    # --------------------------------------------------------
+    # IMPORTANT:
+    # We are now OUTSIDE the atomic block.
+    # The EXPIRED status has already been committed.
+    # --------------------------------------------------------
+
+    if booking_expired:
+        raise ValidationError(
+            "Your booking hold has expired. "
+            "Please start a new booking."
+        )
+
     return booking
+
+# ============================================================
+# PROCESS SUCCESSFUL PAYMENT
+# ============================================================
+# ============================================================
+# PROCESS SUCCESSFUL PAYMENT
+# ============================================================
+
+def process_successful_payment(payment):
+    """
+    Process a successful payment and confirm its booking.
+
+    Database changes for expired bookings or failed amount
+    verification are committed before ValidationError is raised.
+    """
+
+    booking_expired = False
+    amount_mismatch = False
+
+    with transaction.atomic():
+
+        payment = (
+            Payment.objects
+            .select_for_update()
+            .select_related(
+                "booking",
+                "booking__showtime",
+            )
+            .get(
+                pk=payment.pk,
+            )
+        )
+
+        booking = payment.booking
+
+        # ----------------------------------------------------
+        # 1. Payment must still be pending
+        # ----------------------------------------------------
+
+        if payment.status != Payment.Status.PENDING:
+            raise ValidationError(
+                "This payment has already been processed."
+            )
+
+        # ----------------------------------------------------
+        # 2. Booking must still be held
+        # ----------------------------------------------------
+
+        if booking.status != Booking.Status.HELD:
+            raise ValidationError(
+                "This booking is no longer available for payment."
+            )
+
+        # ----------------------------------------------------
+        # 3. Check booking hold expiration
+        # ----------------------------------------------------
+
+        if (
+            booking.hold_expires_at is None
+            or booking.hold_expires_at <= timezone.now()
+        ):
+
+            _expire_booking_locked(
+                booking
+            )
+
+            booking_expired = True
+
+        # ----------------------------------------------------
+        # 4. Verify payment amount
+        # ----------------------------------------------------
+
+        elif payment.amount != booking.total_amount:
+
+            payment.status = Payment.Status.FAILED
+
+            payment.save(
+                update_fields=[
+                    "status",
+                    "updated_at",
+                ],
+            )
+
+            amount_mismatch = True
+
+        else:
+
+            # ------------------------------------------------
+            # 5. Mark payment successful
+            # ------------------------------------------------
+
+            payment.status = Payment.Status.SUCCESSFUL
+
+            payment.save(
+                update_fields=[
+                    "status",
+                    "updated_at",
+                ],
+            )
+
+            # ------------------------------------------------
+            # 6. Confirm booking
+            # ------------------------------------------------
+
+            booking.status = Booking.Status.CONFIRMED
+            booking.hold_expires_at = None
+
+            booking.save(
+                update_fields=[
+                    "status",
+                    "hold_expires_at",
+                    "updated_at",
+                ],
+            )
+
+    # --------------------------------------------------------
+    # At this point the atomic transaction has successfully
+    # committed, so these errors will NOT undo the updates.
+    # --------------------------------------------------------
+
+    if booking_expired:
+        raise ValidationError(
+            "Your booking hold has expired. "
+            "Payment cannot be completed."
+        )
+
+    if amount_mismatch:
+        raise ValidationError(
+            "Payment amount verification failed."
+        )
+
+    return payment
 
 
 # ============================================================
 # EXPIRE A BOOKING
 # ============================================================
 
-
 @transaction.atomic
 def expire_booking(booking):
     """
-    Expire a booking whose hold period has ended
-    and release its temporarily held seats.
+    Expire a booking whose hold period has ended.
+
+    Any pending payment associated with the booking
+    is marked as failed.
+
+    Temporarily held seats are also released.
     """
 
-    booking = (
-        Booking.objects
-        .select_for_update()
-        .get(
-            pk=booking.pk,
-        )
-    )
+    with transaction.atomic():
 
-    if booking.status != Booking.Status.HELD:
-        return booking
-
-    if (
-        booking.hold_expires_at is not None
-        and booking.hold_expires_at <= timezone.now()
-    ):
-
-        booking.status = Booking.Status.EXPIRED
-
-        booking.save(
-            update_fields=[
-                "status",
-                "updated_at",
-            ],
+        booking = (
+            Booking.objects
+            .select_for_update()
+            .get(
+                pk=booking.pk,
+            )
         )
 
-        # Release seats belonging to the expired hold.
-        booking.booking_seats.all().delete()
+        _expire_booking_locked(
+            booking
+        )
 
     return booking
+
+
 # ============================================================
 # EXPIRE SHOWTIME HOLDS
 # ============================================================
@@ -676,14 +867,18 @@ def expire_booking(booking):
 @transaction.atomic
 def expire_holds_for_showtime(showtime):
     """
-    Expire all expired holds for a showtime and release
-    their temporarily reserved seats.
+    Expire all expired holds for a showtime.
+
+    Pending payments are marked as failed and
+    temporarily held seats are released.
     """
 
     now = timezone.now()
 
     expired_bookings = list(
-        Booking.objects.filter(
+        Booking.objects
+        .select_for_update()
+        .filter(
             showtime=showtime,
             status=Booking.Status.HELD,
             hold_expires_at__lte=now,
@@ -692,13 +887,6 @@ def expire_holds_for_showtime(showtime):
 
     for booking in expired_bookings:
 
-        booking.status = Booking.Status.EXPIRED
-
-        booking.save(
-            update_fields=[
-                "status",
-                "updated_at",
-            ],
+        _expire_booking_locked(
+            booking
         )
-
-        booking.booking_seats.all().delete()

@@ -1,0 +1,419 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    Test Payment | CineFlow
+{% endblock %}
+
+
+{% block content %}
+
+<section class="checkout-page">
+
+    <div class="container">
+
+        <div class="checkout-header">
+
+            <a
+                href="{% url 'bookings:checkout' booking.id %}"
+                class="booking-back"
+            >
+                <i class="bi bi-arrow-left"></i>
+                Back to Checkout
+            </a>
+
+            <span class="section-label">
+                CINEFLOW TEST PAYMENT
+            </span>
+
+            <h1>
+                Complete Payment
+            </h1>
+
+            <p>
+                This is a test payment environment.
+                No real money will be charged.
+            </p>
+
+        </div>
+
+
+        <div class="row justify-content-center">
+
+            <div class="col-lg-6">
+
+                <div class="checkout-summary">
+
+
+                    <!-- =========================================
+                         HOLD COUNTDOWN
+                    ========================================== -->
+
+                    <div class="booking-hold-alert">
+
+                        <div class="booking-hold-icon">
+
+                            <i class="bi bi-clock"></i>
+
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Your booking is temporarily held
+                            </strong>
+                            <br>
+
+                            <span>
+                                Complete payment before your hold expires.
+                            </span>
+
+                        </div>
+
+                        <strong
+                            id="payment-countdown"
+                            data-expires-at="{{ booking.hold_expires_at|date:'c' }}"
+                        >
+                            --:--
+                        </strong>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         PAYMENT HEADER
+                    ========================================== -->
+
+                    <div class="text-center mb-4">
+
+                        <div
+                            class="booking-hold-icon mx-auto mb-3"
+                        >
+
+                            <i class="bi bi-credit-card"></i>
+
+                        </div>
+
+                        <span class="section-label">
+                            TEST PAYMENT
+                        </span>
+
+                        <h2>
+                            Payment Simulation
+                        </h2>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         PAYMENT INFORMATION
+                    ========================================== -->
+
+                    <div class="summary-row">
+
+                        <span>
+                            Booking Reference
+                        </span>
+
+                        <strong>
+                            {{ booking.booking_reference }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-row">
+
+                        <span>
+                            Payment Reference
+                        </span>
+
+                        <strong>
+                            {{ payment.payment_reference }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-row">
+
+                        <span>
+                            Movie
+                        </span>
+
+                        <strong>
+                            {{ booking.showtime.movie.title }}
+                        </strong>
+
+                    </div>
+
+
+                    <hr>
+
+
+                    <div class="summary-total">
+
+                        <span>
+                            Amount
+                        </span>
+
+                        <strong>
+                            ₦{{ payment.amount }}
+                        </strong>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         TEST PAYMENT NOTICE
+                    ========================================== -->
+
+                    <div
+                        class="alert alert-info mt-4"
+                        id="payment-info"
+                    >
+
+                        <i class="bi bi-info-circle"></i>
+
+                        <span>
+                            This is a simulated payment.
+                            No real transaction will occur.
+                        </span>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         PAYMENT ACTIONS
+                    ========================================== -->
+
+                    <div
+                        id="payment-actions"
+                        class="d-grid gap-2 mt-4"
+                    >
+
+                        <form
+                            method="POST"
+                            action="{% url 'bookings:simulate_successful_payment' payment.payment_reference %}"
+                        >
+
+                            {% csrf_token %}
+
+                            <button
+                                type="submit"
+                                class="btn cine-btn-primary w-100"
+                                id="successful-payment-button"
+                            >
+
+                                <i class="bi bi-check-circle"></i>
+
+                                Simulate Successful Payment
+
+                            </button>
+
+                        </form>
+
+
+                        <form
+                            method="POST"
+                            action="{% url 'bookings:simulate_failed_payment' payment.payment_reference %}"
+                        >
+
+                            {% csrf_token %}
+
+                            <button
+                                type="submit"
+                                class="btn btn-outline-secondary w-100"
+                                id="failed-payment-button"
+                            >
+
+                                <i class="bi bi-x-circle"></i>
+
+                                Simulate Failed Payment
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         EXPIRED MESSAGE
+                    ========================================== -->
+
+                    <div
+                        id="payment-expired-message"
+                        class="alert alert-danger mt-4 d-none"
+                    >
+
+                        <i class="bi bi-exclamation-triangle"></i>
+
+                        <strong>
+                            Payment window expired.
+                        </strong>
+
+                        <div>
+                            Your booking hold has expired.
+                            Please start a new booking.
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const countdown =
+        document.getElementById("payment-countdown");
+
+    const successfulButton =
+        document.getElementById(
+            "successful-payment-button"
+        );
+
+    const failedButton =
+        document.getElementById(
+            "failed-payment-button"
+        );
+
+    const paymentActions =
+        document.getElementById(
+            "payment-actions"
+        );
+
+    const expiredMessage =
+        document.getElementById(
+            "payment-expired-message"
+        );
+
+
+    if (!countdown) {
+        return;
+    }
+
+
+    const expiresAt =
+        new Date(
+            countdown.dataset.expiresAt
+        );
+
+
+    function expirePayment() {
+
+        countdown.textContent =
+            "Expired";
+
+
+        countdown.classList.add(
+            "expired"
+        );
+
+
+        if (successfulButton) {
+
+            successfulButton.disabled =
+                true;
+
+        }
+
+
+        if (failedButton) {
+
+            failedButton.disabled =
+                true;
+
+        }
+
+
+        if (paymentActions) {
+
+            paymentActions.classList.add(
+                "opacity-50"
+            );
+
+        }
+
+
+        if (expiredMessage) {
+
+            expiredMessage.classList.remove(
+                "d-none"
+            );
+
+        }
+
+    }
+
+
+    function updateCountdown() {
+
+        const now =
+            new Date();
+
+
+        const remaining =
+            expiresAt.getTime()
+            - now.getTime();
+
+
+        if (remaining <= 0) {
+
+            expirePayment();
+
+            return;
+
+        }
+
+
+        const totalSeconds =
+            Math.floor(
+                remaining / 1000
+            );
+
+
+        const minutes =
+            Math.floor(
+                totalSeconds / 60
+            );
+
+
+        const seconds =
+            totalSeconds % 60;
+
+
+        countdown.textContent =
+            `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+
+    }
+
+
+    updateCountdown();
+
+
+    setInterval(
+        updateCountdown,
+        1000
+    );
+
+});
+
+</script>
+
+{% endblock %}

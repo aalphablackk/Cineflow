@@ -111,3 +111,55 @@ class BookingSeat(models.Model):
             f"{self.booking.booking_reference} - "
             f"{self.seat.label}"
         )
+
+class Payment(models.Model):
+
+    class Status(models.TextChoices):
+        PENDING = "pending", "Pending"
+        SUCCESSFUL = "successful", "Successful"
+        FAILED = "failed", "Failed"
+        CANCELLED = "cancelled", "Cancelled"
+        REFUNDED = "refunded", "Refunded"
+
+    class Provider(models.TextChoices):
+        TEST = "test", "Test Payment"
+        PAYSTACK = "paystack", "Paystack"
+
+    booking = models.ForeignKey(
+        Booking,
+        on_delete=models.PROTECT,
+        related_name="payments",
+    )
+
+    payment_reference = models.CharField(
+        max_length=100,
+        unique=True,
+    )
+
+    amount = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=Status.choices,
+        default=Status.PENDING,
+    )
+
+    provider = models.CharField(
+        max_length=20,
+        choices=Provider.choices,
+        default=Provider.TEST,
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+    )
+
+    def __str__(self):
+        return self.payment_reference

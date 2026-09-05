@@ -158,3 +158,22 @@ LOGIN_REDIRECT_URL = "movies:home"
 LOGOUT_REDIRECT_URL = "movies:home"
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+# ============================================================
+# PAYSTACK
+# ============================================================
+
+PAYSTACK_SECRET_KEY = config(
+    "PAYSTACK_SECRET_KEY",
+    default="",
+)
+
+PAYSTACK_PUBLIC_KEY = config(
+    "PAYSTACK_PUBLIC_KEY",
+    default="",
+)
+
+PAYSTACK_BASE_URL = config(
+    "PAYSTACK_BASE_URL",
+    default="https://api.paystack.co",
+)
