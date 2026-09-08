@@ -196,11 +196,25 @@ class CineFlowPasswordResetConfirmView(
         print("USERNAME:", form.user.username)
         print("================================")
 
-        response = super().form_valid(form)
+        def form_valid(self, form):
 
-        print("PASSWORD RESET SAVED")
+            print("================================")
+            print("PASSWORD RESET FORM IS VALID")
+            print("USER:", form.user)
+            print("USERNAME:", form.user.username)
+            print("================================")
 
-        return response
+            response = super().form_valid(form)
+
+            print("PASSWORD RESET SAVED")
+            print(
+                "PASSWORD CHECK:",
+                form.user.check_password(
+                    form.cleaned_data["new_password1"]
+                )
+            )
+
+            return response
 
 class CineFlowPasswordResetCompleteView(
     PasswordResetCompleteView
