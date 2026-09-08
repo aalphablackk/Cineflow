@@ -199,6 +199,8 @@ class CineFlowPasswordResetConfirmView(
         response = super().form_valid(form)
 
         print("PASSWORD RESET SAVED")
+        print("PASSWORD HASH:", form.user.password[:20])
+        print("PASSWORD IS HASHED:", form.user.password.startswith("pbkdf2_"))
 
         return response
     
