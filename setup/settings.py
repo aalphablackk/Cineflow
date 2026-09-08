@@ -26,9 +26,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config ("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ['*']
+# DEBUG = True
+DEBUG = config("DEBUG", default=False, cast=bool)
+ALLOWED_HOSTS = [
+    ".vercel.app",
+]
+CSRF_TRUSTED_ORIGINS = [
+    "https://cineflow-chi.vercel.app/",
+]
 
 
 # Application definition
