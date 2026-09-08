@@ -4,11 +4,17 @@
 
         <div class="row g-4">
 
-            <!-- Brand -->
+
+            <!-- =====================================================
+                 BRAND
+            ====================================================== -->
 
             <div class="col-lg-5">
 
-                <div class="cine-brand mb-3">
+                <a
+                    href="{% url 'movies:home' %}"
+                    class="cine-brand mb-3 text-decoration-none"
+                >
 
                     <span class="brand-mark">
                         C
@@ -18,7 +24,8 @@
                         CineFlow
                     </span>
 
-                </div>
+                </a>
+
 
                 <p class="footer-description">
 
@@ -31,7 +38,9 @@
             </div>
 
 
-            <!-- Company -->
+            <!-- =====================================================
+                 CINEFLOW
+            ====================================================== -->
 
             <div class="col-6 col-lg-2">
 
@@ -42,20 +51,20 @@
                 <ul class="footer-links">
 
                     <li>
-                        <a href="#">
-                            About
+                        <a href="{% url 'movies:home' %}">
+                            Home
                         </a>
                     </li>
 
                     <li>
-                        <a href="#">
-                            Cinemas
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="#">
+                        <a href="{% url 'movies:movie_list' %}">
                             Movies
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{% url 'cinemas:cinema_list' %}">
+                            Cinemas
                         </a>
                     </li>
 
@@ -64,7 +73,62 @@
             </div>
 
 
-            <!-- Support -->
+            <!-- =====================================================
+                 MY ACCOUNT
+            ====================================================== -->
+
+            <div class="col-6 col-lg-2">
+
+                <h6>
+                    My Account
+                </h6>
+
+                <ul class="footer-links">
+
+                    {% if user.is_authenticated %}
+
+                        <li>
+                            <a href="{% url 'accounts:profile' %}">
+                                Profile
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'bookings:my_bookings' %}">
+                                My Bookings
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'support:my_tickets' %}">
+                                Support
+                            </a>
+                        </li>
+
+                    {% else %}
+
+                        <li>
+                            <a href="{% url 'accounts:login' %}">
+                                Login
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'accounts:register' %}">
+                                Create Account
+                            </a>
+                        </li>
+
+                    {% endif %}
+
+                </ul>
+
+            </div>
+
+
+            <!-- =====================================================
+                 SUPPORT
+            ====================================================== -->
 
             <div class="col-6 col-lg-2">
 
@@ -75,20 +139,20 @@
                 <ul class="footer-links">
 
                     <li>
-                        <a href="#">
-                            Help Center
+                        <a href="{% url 'support:create_ticket' %}">
+                            Contact Support
                         </a>
                     </li>
 
                     <li>
-                        <a href="#">
-                            Contact
+                        <a href="{% url 'support:my_tickets' %}">
+                            My Support Tickets
                         </a>
                     </li>
 
                     <li>
-                        <a href="#">
-                            FAQs
+                        <a href="{% url 'movies:movie_list' %}">
+                            Browse Movies
                         </a>
                     </li>
 
@@ -96,38 +160,20 @@
 
             </div>
 
-
-            <!-- Legal -->
-
-            <div class="col-6 col-lg-2">
-
-                <h6>
-                    Legal
-                </h6>
-
-                <ul class="footer-links">
-
-                    <li>
-                        <a href="#">
-                            Privacy
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="#">
-                            Terms
-                        </a>
-                    </li>
-
-                </ul>
-
-            </div>
 
         </div>
 
 
+        <!-- =====================================================
+             DIVIDER
+        ====================================================== -->
+
         <hr>
 
+
+        <!-- =====================================================
+             FOOTER BOTTOM
+        ====================================================== -->
 
         <div class="footer-bottom">
 
@@ -140,6 +186,7 @@
             </span>
 
         </div>
+
 
     </div>
 

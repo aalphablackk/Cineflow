@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Booking, BookingSeat
+from .models import Booking, BookingSeat, Payment
 
 
 # ============================================================
@@ -177,3 +177,82 @@ class BookingSeatAdmin(admin.ModelAdmin):
     readonly_fields = (
         "created_at",
     )
+
+
+# ============================================================
+# PAYMENT ADMIN
+# ============================================================
+
+@admin.register(Payment)
+class PaymentAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "payment_reference",
+        "booking",
+        "customer",
+        "amount",
+        "provider",
+        "status",
+        "created_at",
+        "updated_at",
+    )
+
+    list_filter = (
+        "status",
+        "provider",
+        "created_at",
+        "updated_at",
+    )
+
+    search_fields = (
+        "payment_reference",
+        "booking__booking_reference",
+        "booking__user__username",
+        "booking__user__email",
+    )
+
+    ordering = (
+        "-created_at",
+    )
+
+    readonly_fields = (
+        "payment_reference",
+        "created_at",
+        "updated_at",
+    )
+
+    fieldsets = (
+
+        (
+            "Payment",
+            {
+                "fields": (
+                    "payment_reference",
+                    "booking",
+                    "amount",
+                    "provider",
+                    "status",
+                ),
+            },
+        ),
+
+        (
+            "System Information",
+            {
+                "fields": (
+                    "created_at",
+                    "updated_at",
+                ),
+                "classes": (
+                    "collapse",
+                ),
+            },
+        ),
+
+    )
+
+    def customer(self, obj):
+
+        return obj.booking.user
+
+    customer.short_description = "Customer"

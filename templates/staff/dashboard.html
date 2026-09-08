@@ -1,6 +1,5 @@
 {% extends "staff/base.html" %}
 
-
 {% block staff_title %}
     Staff Dashboard | CineFlow
 {% endblock %}
@@ -10,417 +9,1392 @@
 
 <section class="staff-dashboard">
 
-    <div class="staff-container">
+    <div class="staff-dashboard-scroll">
+
+        <div class="staff-container">
 
 
-        <!-- =====================================================
-             HEADER
-        ====================================================== -->
+            <!-- =====================================================
+                 PAGE HEADER
+            ====================================================== -->
 
-        <div class="staff-page-header">
-
-            <div>
-
-                <span class="section-label">
-                    CINEFLOW MANAGEMENT
-                </span>
-
-                <h1>
-                    Dashboard
-                </h1>
-
-                <p>
-                    Manage CineFlow operations from one place.
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <!-- =====================================================
-             STATISTICS
-        ====================================================== -->
-
-        <div class="staff-stat-grid">
-
-
-            <!-- MOVIES -->
-
-            <div class="staff-stat-card">
-
-                <div class="staff-stat-icon">
-                    <i class="bi bi-film"></i>
-                </div>
-
-                <div>
-
-                    <span>
-                        Movies
-                    </span>
-
-                    <strong>
-                        {{ movie_count }}
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            <!-- CINEMAS -->
-
-            <div class="staff-stat-card">
-
-                <div class="staff-stat-icon">
-                    <i class="bi bi-building"></i>
-                </div>
-
-                <div>
-
-                    <span>
-                        Cinemas
-                    </span>
-
-                    <strong>
-                        {{ cinema_count }}
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            <!-- BOOKINGS -->
-
-            <div class="staff-stat-card">
-
-                <div class="staff-stat-icon">
-                    <i class="bi bi-ticket-perforated"></i>
-                </div>
-
-                <div>
-
-                    <span>
-                        Bookings
-                    </span>
-
-                    <strong>
-                        {{ booking_count }}
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            <!-- OPEN SUPPORT -->
-
-            <div class="staff-stat-card">
-
-                <div class="staff-stat-icon">
-                    <i class="bi bi-headset"></i>
-                </div>
-
-                <div>
-
-                    <span>
-                        Open Support
-                    </span>
-
-                    <strong>
-                        {{ open_support_count }}
-                    </strong>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- =====================================================
-             MANAGEMENT
-        ====================================================== -->
-
-        <div class="staff-section">
-
-
-            <!-- SECTION HEADER -->
-
-            <div class="staff-section-header">
+            <div class="staff-page-header">
 
                 <div>
 
                     <span class="section-label">
-                        MANAGEMENT
+                        CINEFLOW MANAGEMENT
                     </span>
 
-                    <h2>
-                        CineFlow Operations
-                    </h2>
+                    <h1>
+                        Dashboard
+                    </h1>
+
+                    <p>
+                        Monitor and manage CineFlow operations from one place.
+                    </p>
 
                 </div>
 
             </div>
 
 
-            <!-- =================================================
-                 MANAGEMENT CARDS
-            ================================================== -->
+            <!-- =====================================================
+                 OVERVIEW STATISTICS
+            ====================================================== -->
 
-            <div class="staff-management-grid">
+            <div class="staff-dashboard-section">
+
+                <div class="staff-dashboard-section-heading">
+
+                    <div>
+                        <span class="section-label">
+                            OVERVIEW
+                        </span>
+
+                        <h2>
+                            Platform Overview
+                        </h2>
+                    </div>
+
+                </div>
 
 
-                <!-- =================================================
-                     MOVIES
-                ================================================== -->
+                <div class="staff-stat-grid">
 
-                <a
-                    href="{% url 'staff:movies' %}"
-                    class="staff-management-card"
-                >
 
-                    <div class="staff-management-icon">
+                    <!-- MOVIES -->
 
-                        <i class="bi bi-film"></i>
+                    <div class="staff-stat-card">
+
+                        <div class="staff-stat-icon">
+                            <i class="bi bi-film"></i>
+                        </div>
+
+                        <div class="staff-stat-content">
+
+                            <span>
+                                Movies
+                            </span>
+
+                            <strong>
+                                {{ movie_count }}
+                            </strong>
+
+                        </div>
 
                     </div>
+
+
+                    <!-- CINEMAS -->
+
+                    <div class="staff-stat-card">
+
+                        <div class="staff-stat-icon">
+                            <i class="bi bi-building"></i>
+                        </div>
+
+                        <div class="staff-stat-content">
+
+                            <span>
+                                Cinemas
+                            </span>
+
+                            <strong>
+                                {{ cinema_count }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- CUSTOMERS -->
+
+                    <div class="staff-stat-card">
+
+                        <div class="staff-stat-icon">
+                            <i class="bi bi-people"></i>
+                        </div>
+
+                        <div class="staff-stat-content">
+
+                            <span>
+                                Customers
+                            </span>
+
+                            <strong>
+                                {{ customer_count }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- BOOKINGS -->
+
+                    <div class="staff-stat-card">
+
+                        <div class="staff-stat-icon">
+                            <i class="bi bi-ticket-perforated"></i>
+                        </div>
+
+                        <div class="staff-stat-content">
+
+                            <span>
+                                Bookings
+                            </span>
+
+                            <strong>
+                                {{ booking_count }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- CONFIRMED -->
+
+                    <div class="staff-stat-card">
+
+                        <div class="staff-stat-icon">
+                            <i class="bi bi-check-circle"></i>
+                        </div>
+
+                        <div class="staff-stat-content">
+
+                            <span>
+                                Confirmed
+                            </span>
+
+                            <strong>
+                                {{ confirmed_booking_count }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- TICKETS -->
+
+                    <div class="staff-stat-card">
+
+                        <div class="staff-stat-icon">
+                            <i class="bi bi-ticket-detailed"></i>
+                        </div>
+
+                        <div class="staff-stat-content">
+
+                            <span>
+                                Digital Tickets
+                            </span>
+
+                            <strong>
+                                {{ ticket_count }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- VALID TICKETS -->
+
+                    <div class="staff-stat-card">
+
+                        <div class="staff-stat-icon">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+
+                        <div class="staff-stat-content">
+
+                            <span>
+                                Valid Tickets
+                            </span>
+
+                            <strong>
+                                {{ valid_ticket_count }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- REVENUE -->
+
+                    <div class="staff-stat-card staff-stat-card-revenue">
+
+                        <div class="staff-stat-icon">
+                            <i class="bi bi-cash-stack"></i>
+                        </div>
+
+                        <div class="staff-stat-content">
+
+                            <span>
+                                Revenue
+                            </span>
+
+                            <strong>
+                                ₦{{ revenue|floatformat:2 }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================================
+                 QUICK ACTIONS
+            ====================================================== -->
+
+            <div class="staff-dashboard-section">
+
+                <div class="staff-dashboard-section-heading">
 
                     <div>
 
-                        <h3>
-                            Movies
-                        </h3>
+                        <span class="section-label">
+                            QUICK ACTIONS
+                        </span>
 
-                        <p>
-                            Add, edit and manage movies.
-                        </p>
-
-                    </div>
-
-                    <i class="bi bi-arrow-right"></i>
-
-                </a>
-
-
-                <!-- =================================================
-                     CINEMAS
-                ================================================== -->
-
-                <a
-                    href="{% url 'staff:cinemas' %}"
-                    class="staff-management-card"
-                >
-
-                    <div class="staff-management-icon">
-
-                        <i class="bi bi-building"></i>
+                        <h2>
+                            Frequently Used
+                        </h2>
 
                     </div>
 
-                    <div>
-
-                        <h3>
-                            Cinemas
-                        </h3>
-
-                        <p>
-                            Manage cinema locations.
-                        </p>
-
-                    </div>
-
-                    <i class="bi bi-arrow-right"></i>
-
-                </a>
+                </div>
 
 
-                <!-- =================================================
-                     SCREENS
-                ================================================== -->
-
-                <a
-                    href="{% url 'staff:screens_overview' %}"
-                    class="staff-management-card"
-                >
-
-                    <div class="staff-management-icon">
-
-                        <i class="bi bi-display"></i>
-
-                    </div>
-
-                    <div>
-
-                        <h3>
-                            Screens
-                        </h3>
-
-                        <p>
-                            Manage screens and seating.
-                        </p>
-
-                    </div>
-
-                    <i class="bi bi-arrow-right"></i>
-
-                </a>
+                <div class="staff-quick-actions">
 
 
-                <!-- =================================================
-                     SHOWTIMES
-                ================================================== -->
+                    <a
+                        href="{% url 'staff:movies' %}"
+                        class="staff-quick-action"
+                    >
 
-                <a
-                    href="{% url 'staff:showtimes' %}"
-                    class="staff-management-card"
-                >
+                        <i class="bi bi-plus-circle"></i>
 
-                    <div class="staff-management-icon">
+                        <span>
+                            Manage Movies
+                        </span>
 
-                        <i class="bi bi-calendar3"></i>
-
-                    </div>
-
-                    <div>
-
-                        <h3>
-                            Showtimes
-                        </h3>
-
-                        <p>
-                            Schedule and manage showtimes.
-                        </p>
-
-                    </div>
-
-                    <i class="bi bi-arrow-right"></i>
-
-                </a>
+                    </a>
 
 
-                <!-- =================================================
-                     BOOKINGS
-                ================================================== -->
+                    <a
+                        href="{% url 'staff:showtimes' %}"
+                        class="staff-quick-action"
+                    >
 
-                <a
-                    href="{% url 'staff:bookings' %}"
-                    class="staff-management-card"
-                >
+                        <i class="bi bi-calendar-plus"></i>
 
-                    <div class="staff-management-icon">
+                        <span>
+                            Manage Showtimes
+                        </span>
+
+                    </a>
+
+
+                    <a
+                        href="{% url 'staff:bookings' %}"
+                        class="staff-quick-action"
+                    >
 
                         <i class="bi bi-ticket-perforated"></i>
 
-                    </div>
+                        <span>
+                            View Bookings
+                        </span>
 
-                    <div>
+                    </a>
 
-                        <h3>
-                            Bookings
-                        </h3>
 
-                        <p>
-                            View and manage customer bookings.
-                        </p>
+                    <a
+                        href="{% url 'staff:payments' %}"
+                        class="staff-quick-action"
+                    >
 
-                    </div>
-
-                    <i class="bi bi-arrow-right"></i>
-
-                </a>
-                
-                <!-- =================================================
-                     PAYMENT
-                ================================================== -->
-                <a
-                href="{% url 'staff:payments' %}"
-                    class="staff-management-card"
-                >
-                    <div class="staff-management-icon">
                         <i class="bi bi-credit-card"></i>
-                    </div>
 
-                    <div>
-                        <h3>
-                            Payments
-                        </h3>
+                        <span>
+                            View Payments
+                        </span>
 
-                        <p>
-                            Monitor payment transactions and revenue.
-                        </p>
-                    </div>
-
-                    <i class="bi bi-arrow-right"></i>
-                </a>
+                    </a>
 
 
-                <!-- =================================================
-                     CUSTOMERS
-                ================================================== -->
+                    <a
+                        href="{% url 'staff:customers' %}"
+                        class="staff-quick-action"
+                    >
 
-                <a
-                    href="{% url 'staff:customers' %}"
-                    class="staff-management-card"
-                >
+                        <i class="bi bi-person-lines-fill"></i>
 
-                    <div class="staff-management-icon">
-
-                        <i class="bi bi-people"></i>
-
-                    </div>
-
-                    <div>
-
-                        <h3>
+                        <span>
                             Customers
-                        </h3>
+                        </span>
 
-                        <p>
-                            View CineFlow customers.
-                        </p>
-
-                    </div>
-
-                    <i class="bi bi-arrow-right"></i>
-
-                </a>
+                    </a>
 
 
-                <!-- =================================================
-                     SUPPORT
-                ================================================== -->
+                    <a
+                        href="{% url 'tickets:verify_ticket' %}"
+                        class="staff-quick-action staff-quick-action-primary"
+                    >
 
-                <a
-                    href="{% url 'staff:support' %}"
-                    class="staff-management-card"
-                >
+                        <i class="bi bi-qr-code-scan"></i>
 
-                    <div class="staff-management-icon">
+                        <span>
+                            Verify Ticket
+                        </span>
 
-                        <i class="bi bi-headset"></i>
+                    </a>
 
-                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================================
+                 OPERATION SUMMARY
+            ====================================================== -->
+
+            <div class="staff-dashboard-section">
+
+                <div class="staff-dashboard-section-heading">
 
                     <div>
 
-                        <h3>
-                            Support
-                        </h3>
+                        <span class="section-label">
+                            OPERATIONS
+                        </span>
 
-                        <p>
-                            Respond to customer requests.
-                        </p>
+                        <h2>
+                            Current Status
+                        </h2>
 
                     </div>
 
-                    <i class="bi bi-arrow-right"></i>
+                </div>
 
-                </a>
+
+                <div class="staff-operation-grid">
+
+
+                    <!-- BOOKINGS -->
+
+                    <div class="staff-operation-card">
+
+                        <div class="staff-operation-header">
+
+                            <div class="staff-operation-icon">
+                                <i class="bi bi-ticket-perforated"></i>
+                            </div>
+
+                            <div>
+
+                                <h3>
+                                    Bookings
+                                </h3>
+
+                                <span>
+                                    Booking activity
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="staff-operation-list">
+
+                            <div>
+                                <span>Confirmed</span>
+                                <strong>{{ confirmed_booking_count }}</strong>
+                            </div>
+
+                            <div>
+                                <span>Held</span>
+                                <strong>{{ held_booking_count }}</strong>
+                            </div>
+
+                            <div>
+                                <span>Cancelled</span>
+                                <strong>{{ cancelled_booking_count }}</strong>
+                            </div>
+
+                            <div>
+                                <span>Expired</span>
+                                <strong>{{ expired_booking_count }}</strong>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PAYMENTS -->
+
+                    <div class="staff-operation-card">
+
+                        <div class="staff-operation-header">
+
+                            <div class="staff-operation-icon">
+                                <i class="bi bi-credit-card"></i>
+                            </div>
+
+                            <div>
+
+                                <h3>
+                                    Payments
+                                </h3>
+
+                                <span>
+                                    Payment activity
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="staff-operation-list">
+
+                            <div>
+                                <span>Successful</span>
+                                <strong>{{ successful_payment_count }}</strong>
+                            </div>
+
+                            <div>
+                                <span>Pending</span>
+                                <strong>{{ pending_payment_count }}</strong>
+                            </div>
+
+                            <div>
+                                <span>Failed</span>
+                                <strong>{{ failed_payment_count }}</strong>
+                            </div>
+
+                            <div>
+                                <span>Refunded</span>
+                                <strong>{{ refunded_payment_count }}</strong>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- TICKETS -->
+
+                    <div class="staff-operation-card">
+
+                        <div class="staff-operation-header">
+
+                            <div class="staff-operation-icon">
+                                <i class="bi bi-qr-code"></i>
+                            </div>
+
+                            <div>
+
+                                <h3>
+                                    Digital Tickets
+                                </h3>
+
+                                <span>
+                                    Admission status
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="staff-operation-list">
+
+                            <div>
+                                <span>Total Issued</span>
+                                <strong>{{ ticket_count }}</strong>
+                            </div>
+
+                            <div>
+                                <span>Valid</span>
+                                <strong>{{ valid_ticket_count }}</strong>
+                            </div>
+
+                            <div>
+                                <span>Used</span>
+                                <strong>{{ used_ticket_count }}</strong>
+                            </div>
+
+                            <div>
+                                <span>Invalid</span>
+                                <strong>{{ invalid_ticket_count }}</strong>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- SUPPORT -->
+
+                    <div class="staff-operation-card">
+
+                        <div class="staff-operation-header">
+
+                            <div class="staff-operation-icon">
+                                <i class="bi bi-headset"></i>
+                            </div>
+
+                            <div>
+
+                                <h3>
+                                    Support
+                                </h3>
+
+                                <span>
+                                    Customer requests
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="staff-operation-list">
+
+                            <div>
+                                <span>Open</span>
+                                <strong>{{ open_support_count }}</strong>
+                            </div>
+
+                            <div>
+                                <span>In Progress</span>
+                                <strong>{{ in_progress_support_count }}</strong>
+                            </div>
+
+                            <div>
+                                <span>Waiting</span>
+                                <strong>{{ waiting_support_count }}</strong>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================================
+                 UPCOMING SHOWTIMES + RECENT BOOKINGS
+            ====================================================== -->
+
+            <div class="staff-dashboard-columns">
+
+
+                <!-- UPCOMING SHOWTIMES -->
+
+                <div class="staff-dashboard-panel">
+
+                    <div class="staff-panel-header">
+
+                        <div>
+
+                            <span class="section-label">
+                                SCHEDULE
+                            </span>
+
+                            <h2>
+                                Upcoming Showtimes
+                            </h2>
+
+                        </div>
+
+                        <a
+                            href="{% url 'staff:showtimes' %}"
+                            class="staff-panel-link"
+                        >
+                            View all
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+
+                    </div>
+
+
+                    <div class="staff-panel-body">
+
+
+                        {% for showtime in upcoming_showtimes %}
+
+                            <div class="staff-showtime-row">
+
+                                <div class="staff-showtime-date">
+
+                                    <strong>
+                                        {{ showtime.show_date|date:"d" }}
+                                    </strong>
+
+                                    <span>
+                                        {{ showtime.show_date|date:"M" }}
+                                    </span>
+
+                                </div>
+
+
+                                <div class="staff-showtime-info">
+
+                                    <strong>
+                                        {{ showtime.movie.title }}
+                                    </strong>
+
+                                    <span>
+                                        {{ showtime.screen.cinema.name }}
+                                        ·
+                                        {{ showtime.screen.name }}
+                                    </span>
+
+                                </div>
+
+
+                                <div class="staff-showtime-time">
+
+                                    <strong>
+                                        {{ showtime.start_time|time:"g:i A" }}
+                                    </strong>
+
+                                    <span>
+                                        → {{ showtime.end_time|time:"g:i A" }}
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        {% empty %}
+
+                            <div class="staff-empty-state">
+
+                                <i class="bi bi-calendar-x"></i>
+
+                                <span>
+                                    No upcoming showtimes.
+                                </span>
+
+                            </div>
+
+                        {% endfor %}
+
+
+                    </div>
+
+                </div>
+
+
+                <!-- RECENT BOOKINGS -->
+
+                <div class="staff-dashboard-panel">
+
+                    <div class="staff-panel-header">
+
+                        <div>
+
+                            <span class="section-label">
+                                BOOKINGS
+                            </span>
+
+                            <h2>
+                                Recent Bookings
+                            </h2>
+
+                        </div>
+
+                        <a
+                            href="{% url 'staff:bookings' %}"
+                            class="staff-panel-link"
+                        >
+                            View all
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+
+                    </div>
+
+
+                    <div class="staff-panel-body">
+
+
+                        {% for booking in recent_bookings %}
+
+                            <div class="staff-booking-row">
+
+                                <div class="staff-row-icon">
+                                    <i class="bi bi-ticket-perforated"></i>
+                                </div>
+
+
+                                <div class="staff-row-main">
+
+                                    <strong>
+                                        {{ booking.booking_reference }}
+                                    </strong>
+
+                                    <span>
+                                        {{ booking.user.get_full_name|default:booking.user.username }}
+                                    </span>
+
+                                </div>
+
+
+                                <div class="staff-row-meta">
+
+                                    <span
+                                        class="staff-status staff-status-{{ booking.status }}"
+                                    >
+                                        {{ booking.get_status_display }}
+                                    </span>
+
+                                    <strong>
+                                        ₦{{ booking.total_amount|floatformat:2 }}
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        {% empty %}
+
+                            <div class="staff-empty-state">
+
+                                <i class="bi bi-ticket"></i>
+
+                                <span>
+                                    No bookings yet.
+                                </span>
+
+                            </div>
+
+                        {% endfor %}
+
+
+                    </div>
+
+                </div>
 
 
             </div>
+
+
+            <!-- =====================================================
+                 PAYMENTS + SUPPORT
+            ====================================================== -->
+
+            <div class="staff-dashboard-columns">
+
+
+                <!-- RECENT PAYMENTS -->
+
+                <div class="staff-dashboard-panel">
+
+                    <div class="staff-panel-header">
+
+                        <div>
+
+                            <span class="section-label">
+                                FINANCE
+                            </span>
+
+                            <h2>
+                                Recent Payments
+                            </h2>
+
+                        </div>
+
+                        <a
+                            href="{% url 'staff:payments' %}"
+                            class="staff-panel-link"
+                        >
+                            View all
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+
+                    </div>
+
+
+                    <div class="staff-panel-body">
+
+
+                        {% for payment in recent_payments %}
+
+                            <div class="staff-payment-row">
+
+                                <div class="staff-row-icon">
+                                    <i class="bi bi-credit-card"></i>
+                                </div>
+
+
+                                <div class="staff-row-main">
+
+                                    <strong>
+                                        {{ payment.payment_reference }}
+                                    </strong>
+
+                                    <span>
+                                        {{ payment.booking.user.get_full_name|default:payment.booking.user.username }}
+                                    </span>
+
+                                </div>
+
+
+                                <div class="staff-row-meta">
+
+                                    <span
+                                        class="staff-status staff-status-{{ payment.status }}"
+                                    >
+                                        {{ payment.get_status_display }}
+                                    </span>
+
+                                    <strong>
+                                        ₦{{ payment.amount|floatformat:2 }}
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        {% empty %}
+
+                            <div class="staff-empty-state">
+
+                                <i class="bi bi-credit-card"></i>
+
+                                <span>
+                                    No payments yet.
+                                </span>
+
+                            </div>
+
+                        {% endfor %}
+
+
+                    </div>
+
+                </div>
+
+
+                <!-- SUPPORT -->
+
+                <div class="staff-dashboard-panel">
+
+                    <div class="staff-panel-header">
+
+                        <div>
+
+                            <span class="section-label">
+                                CUSTOMER CARE
+                            </span>
+
+                            <h2>
+                                Support Requiring Attention
+                            </h2>
+
+                        </div>
+
+                        <a
+                            href="{% url 'staff:support' %}"
+                            class="staff-panel-link"
+                        >
+                            View all
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+
+                    </div>
+
+
+                    <div class="staff-panel-body">
+
+
+                        {% for support in support_tickets %}
+
+                            <div class="staff-support-row">
+
+                                <div class="staff-row-icon">
+                                    <i class="bi bi-headset"></i>
+                                </div>
+
+
+                                <div class="staff-row-main">
+
+                                    <strong>
+                                        {{ support.subject }}
+                                    </strong>
+
+                                    <span>
+                                        {{ support.customer.get_full_name|default:support.customer.username }}
+                                    </span>
+
+                                </div>
+
+
+                                <div class="staff-row-meta">
+
+                                    <span
+                                        class="staff-priority staff-priority-{{ support.priority }}"
+                                    >
+                                        {{ support.get_priority_display }}
+                                    </span>
+
+                                    <span
+                                        class="staff-status staff-status-{{ support.status }}"
+                                    >
+                                        {{ support.get_status_display }}
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        {% empty %}
+
+                            <div class="staff-empty-state">
+
+                                <i class="bi bi-check2-circle"></i>
+
+                                <span>
+                                    No support requests require attention.
+                                </span>
+
+                            </div>
+
+                        {% endfor %}
+
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- =====================================================
+                 DIGITAL TICKETS
+            ====================================================== -->
+
+            <div class="staff-dashboard-panel staff-ticket-dashboard-panel">
+
+                <div class="staff-panel-header">
+
+                    <div>
+
+                        <span class="section-label">
+                            ADMISSION
+                        </span>
+
+                        <h2>
+                            Recent Digital Tickets
+                        </h2>
+
+                    </div>
+
+                    <a
+                        href="{% url 'tickets:verify_ticket' %}"
+                        class="staff-panel-action"
+                    >
+                        <i class="bi bi-qr-code-scan"></i>
+                        Verify Ticket
+                    </a>
+
+                </div>
+
+
+                <div class="staff-panel-body staff-ticket-list">
+
+
+                    {% for ticket in recent_tickets %}
+
+                        <div class="staff-ticket-row">
+
+
+                            <div class="staff-ticket-icon">
+
+                                <i class="bi bi-ticket-perforated"></i>
+
+                            </div>
+
+
+                            <div class="staff-ticket-main">
+
+                                <strong>
+                                    {{ ticket.ticket_number }}
+                                </strong>
+
+                                <span>
+                                    {{ ticket.booking.showtime.movie.title }}
+                                </span>
+
+                            </div>
+
+
+                            <div class="staff-ticket-customer">
+
+                                <span>
+                                    Customer
+                                </span>
+
+                                <strong>
+                                    {{ ticket.booking.user.get_full_name|default:ticket.booking.user.username }}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="staff-ticket-status">
+
+                                {% if not ticket.is_valid %}
+
+                                    <span class="staff-status staff-status-invalid">
+                                        Invalid
+                                    </span>
+
+                                {% elif ticket.used_at %}
+
+                                    <span class="staff-status staff-status-used">
+                                        Used
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="staff-status staff-status-valid">
+                                        Valid
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+
+                        </div>
+
+                    {% empty %}
+
+                        <div class="staff-empty-state">
+
+                            <i class="bi bi-ticket-perforated"></i>
+
+                            <span>
+                                No digital tickets have been issued yet.
+                            </span>
+
+                        </div>
+
+                    {% endfor %}
+
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================================
+                 MANAGEMENT
+            ====================================================== -->
+
+            <div class="staff-dashboard-section">
+
+                <div class="staff-dashboard-section-heading">
+
+                    <div>
+
+                        <span class="section-label">
+                            MANAGEMENT
+                        </span>
+
+                        <h2>
+                            CineFlow Operations
+                        </h2>
+
+                        <p>
+                            Access and manage the main areas of the platform.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="staff-management-grid">
+
+
+                    <!-- MOVIES -->
+
+                    <a
+                        href="{% url 'staff:movies' %}"
+                        class="staff-management-card"
+                    >
+
+                        <div class="staff-management-icon">
+                            <i class="bi bi-film"></i>
+                        </div>
+
+                        <div class="staff-management-content">
+
+                            <h3>
+                                Movies
+                            </h3>
+
+                            <p>
+                                Add, edit and manage movies.
+                            </p>
+
+                        </div>
+
+                        <i class="bi bi-arrow-right staff-management-arrow"></i>
+
+                    </a>
+
+
+                    <!-- CINEMAS -->
+
+                    <a
+                        href="{% url 'staff:cinemas' %}"
+                        class="staff-management-card"
+                    >
+
+                        <div class="staff-management-icon">
+                            <i class="bi bi-building"></i>
+                        </div>
+
+                        <div class="staff-management-content">
+
+                            <h3>
+                                Cinemas
+                            </h3>
+
+                            <p>
+                                Manage cinema locations.
+                            </p>
+
+                        </div>
+
+                        <i class="bi bi-arrow-right staff-management-arrow"></i>
+
+                    </a>
+
+
+                    <!-- SCREENS -->
+
+                    <a
+                        href="{% url 'staff:screens_overview' %}"
+                        class="staff-management-card"
+                    >
+
+                        <div class="staff-management-icon">
+                            <i class="bi bi-display"></i>
+                        </div>
+
+                        <div class="staff-management-content">
+
+                            <h3>
+                                Screens & Seats
+                            </h3>
+
+                            <p>
+                                Manage screens, capacity and seating.
+                            </p>
+
+                        </div>
+
+                        <i class="bi bi-arrow-right staff-management-arrow"></i>
+
+                    </a>
+
+
+                    <!-- SHOWTIMES -->
+
+                    <a
+                        href="{% url 'staff:showtimes' %}"
+                        class="staff-management-card"
+                    >
+
+                        <div class="staff-management-icon">
+                            <i class="bi bi-calendar3"></i>
+                        </div>
+
+                        <div class="staff-management-content">
+
+                            <h3>
+                                Showtimes
+                            </h3>
+
+                            <p>
+                                Schedule and manage movie showtimes.
+                            </p>
+
+                        </div>
+
+                        <i class="bi bi-arrow-right staff-management-arrow"></i>
+
+                    </a>
+
+
+                    <!-- BOOKINGS -->
+
+                    <a
+                        href="{% url 'staff:bookings' %}"
+                        class="staff-management-card"
+                    >
+
+                        <div class="staff-management-icon">
+                            <i class="bi bi-ticket-perforated"></i>
+                        </div>
+
+                        <div class="staff-management-content">
+
+                            <h3>
+                                Bookings
+                            </h3>
+
+                            <p>
+                                View and manage customer bookings.
+                            </p>
+
+                        </div>
+
+                        <i class="bi bi-arrow-right staff-management-arrow"></i>
+
+                    </a>
+
+
+                    <!-- PAYMENTS -->
+
+                    <a
+                        href="{% url 'staff:payments' %}"
+                        class="staff-management-card"
+                    >
+
+                        <div class="staff-management-icon">
+                            <i class="bi bi-credit-card"></i>
+                        </div>
+
+                        <div class="staff-management-content">
+
+                            <h3>
+                                Payments
+                            </h3>
+
+                            <p>
+                                Monitor transactions and revenue.
+                            </p>
+
+                        </div>
+
+                        <i class="bi bi-arrow-right staff-management-arrow"></i>
+
+                    </a>
+
+
+                    <!-- CUSTOMERS -->
+
+                    <a
+                        href="{% url 'staff:customers' %}"
+                        class="staff-management-card"
+                    >
+
+                        <div class="staff-management-icon">
+                            <i class="bi bi-people"></i>
+                        </div>
+
+                        <div class="staff-management-content">
+
+                            <h3>
+                                Customers
+                            </h3>
+
+                            <p>
+                                View and manage CineFlow customers.
+                            </p>
+
+                        </div>
+
+                        <i class="bi bi-arrow-right staff-management-arrow"></i>
+
+                    </a>
+
+
+                    <!-- SUPPORT -->
+
+                    <a
+                        href="{% url 'staff:support' %}"
+                        class="staff-management-card"
+                    >
+
+                        <div class="staff-management-icon">
+                            <i class="bi bi-headset"></i>
+                        </div>
+
+                        <div class="staff-management-content">
+
+                            <h3>
+                                Support
+                            </h3>
+
+                            <p>
+                                Respond to customer requests.
+                            </p>
+
+                        </div>
+
+                        <i class="bi bi-arrow-right staff-management-arrow"></i>
+
+                    </a>
+
+
+                    <!-- TICKET VERIFICATION -->
+
+                    <a
+                        href="{% url 'tickets:verify_ticket' %}"
+                        class="staff-management-card staff-management-card-highlight"
+                    >
+
+                        <div class="staff-management-icon">
+                            <i class="bi bi-qr-code-scan"></i>
+                        </div>
+
+                        <div class="staff-management-content">
+
+                            <h3>
+                                Ticket Verification
+                            </h3>
+
+                            <p>
+                                Scan and verify customer tickets for admission.
+                            </p>
+
+                        </div>
+
+                        <i class="bi bi-arrow-right staff-management-arrow"></i>
+
+                    </a>
+
+
+                </div>
+
+            </div>
+
 
         </div>
 

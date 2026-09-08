@@ -206,3 +206,3923 @@
     }
 
 }
+
+/* ============================================================
+   DIGITAL TICKET
+   ============================================================ */
+
+@media print {
+
+    body {
+        background: #ffffff !important;
+    }
+
+    nav,
+    footer,
+    .navbar,
+    .btn,
+    .no-print {
+        display: none !important;
+    }
+
+    .card {
+        border: 1px solid #000 !important;
+        box-shadow: none !important;
+    }
+
+    .container {
+        max-width: 100% !important;
+    }
+
+}
+
+/* ============================================================
+   CINEFLOW DIGITAL TICKET
+   ============================================================ */
+
+.cine-ticket {
+    position: relative;
+    overflow: hidden;
+
+    background: var(--bg-card);
+    color: var(--text-primary);
+
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+
+    box-shadow: var(--shadow);
+}
+
+
+/* ============================================================
+   TICKET HEADER
+   ============================================================ */
+
+.cine-ticket-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 28px 32px;
+
+    border-bottom: 1px solid var(--border-color);
+}
+
+
+.cine-ticket-brand {
+    color: var(--primary);
+
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+
+.cine-ticket-subtitle {
+    margin-top: 4px;
+
+    color: var(--text-secondary);
+
+    font-size: 0.7rem;
+    font-weight: 700;
+
+    letter-spacing: 2px;
+}
+
+
+.ticket-status {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 7px 12px;
+
+    border-radius: 999px;
+
+    font-size: 0.7rem;
+    font-weight: 800;
+
+    letter-spacing: 1px;
+}
+
+
+.ticket-status.valid {
+    color: #198754;
+    background: rgba(25, 135, 84, 0.12);
+}
+
+
+.ticket-status.invalid {
+    color: #dc3545;
+    background: rgba(220, 53, 69, 0.12);
+}
+
+
+/* ============================================================
+   MOVIE
+   ============================================================ */
+
+.cine-ticket-movie {
+    display: flex;
+    align-items: center;
+
+    gap: 18px;
+
+    padding: 32px;
+}
+
+
+.cine-ticket-movie-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 58px;
+    height: 58px;
+
+    flex-shrink: 0;
+
+    color: #ffffff;
+    background: var(--primary);
+
+    border-radius: 16px;
+
+    font-size: 1.5rem;
+}
+
+
+.cine-ticket-movie h1 {
+    margin: 4px 0 0;
+
+    font-size: clamp(1.5rem, 4vw, 2.2rem);
+    font-weight: 800;
+
+    line-height: 1.15;
+}
+
+
+/* ============================================================
+   LABELS
+   ============================================================ */
+
+.ticket-label {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: var(--text-secondary);
+
+    font-size: 0.65rem;
+    font-weight: 800;
+
+    letter-spacing: 1.3px;
+}
+
+
+/* ============================================================
+   SHOWTIME DETAILS
+   ============================================================ */
+
+.cine-ticket-details {
+    display: grid;
+
+    grid-template-columns: repeat(4, 1fr);
+
+    gap: 20px;
+
+    padding: 0 32px 32px;
+}
+
+
+.ticket-detail strong {
+    display: block;
+
+    font-size: 0.95rem;
+}
+
+
+/* ============================================================
+   PERFORATION
+   ============================================================ */
+
+.ticket-perforation {
+    position: relative;
+
+    height: 1px;
+
+    margin: 0 32px;
+
+    border-top: 2px dashed var(--border-color);
+}
+
+
+.ticket-perforation::before,
+.ticket-perforation::after {
+    content: "";
+
+    position: absolute;
+
+    top: 50%;
+
+    width: 22px;
+    height: 22px;
+
+    background: var(--bg-primary);
+
+    border: 1px solid var(--border-color);
+
+    border-radius: 50%;
+
+    transform: translateY(-50%);
+}
+
+
+.ticket-perforation::before {
+    left: -44px;
+}
+
+
+.ticket-perforation::after {
+    right: -44px;
+}
+
+
+/* ============================================================
+   TICKET BODY
+   ============================================================ */
+
+.cine-ticket-body {
+    padding: 32px;
+}
+
+
+.ticket-section {
+    margin-bottom: 28px;
+}
+
+
+.ticket-seats {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 8px;
+}
+
+
+.ticket-seat {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 48px;
+    min-height: 40px;
+
+    padding: 8px 12px;
+
+    color: var(--primary);
+
+    background: rgba(229, 9, 20, 0.08);
+
+    border: 1px solid rgba(229, 9, 20, 0.25);
+
+    border-radius: 10px;
+
+    font-weight: 800;
+}
+
+
+.ticket-quantity {
+    font-size: 1rem;
+}
+
+
+.ticket-quantity strong {
+    color: var(--primary);
+
+    font-size: 1.5rem;
+}
+
+
+/* ============================================================
+   BOOKING INFORMATION
+   ============================================================ */
+
+.ticket-info-grid {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 24px;
+
+    padding: 22px 0;
+
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+
+.ticket-info-grid strong {
+    display: block;
+
+    font-size: 0.95rem;
+}
+
+
+.ticket-mono {
+    font-family: monospace;
+
+    letter-spacing: 0.5px;
+}
+
+
+/* ============================================================
+   TICKET NUMBER
+   ============================================================ */
+
+.ticket-number-box {
+    margin-top: 24px;
+
+    padding: 18px;
+
+    text-align: center;
+
+    background: var(--bg-secondary);
+
+    border: 1px solid var(--border-color);
+
+    border-radius: 14px;
+}
+
+
+.ticket-number-box strong {
+    display: block;
+
+    margin-top: 6px;
+
+    font-family: monospace;
+
+    font-size: 1rem;
+
+    letter-spacing: 1px;
+}
+
+
+/* ============================================================
+   BARCODE
+   ============================================================ */
+
+.ticket-code-area {
+    margin-top: 24px;
+
+    text-align: center;
+}
+
+
+.ticket-bars {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+
+    gap: 3px;
+
+    height: 58px;
+
+    margin-bottom: 8px;
+}
+
+
+.ticket-bars span {
+    display: block;
+
+    width: 3px;
+
+    background: var(--text-primary);
+}
+
+
+.ticket-bars span:nth-child(2n) {
+    width: 6px;
+}
+
+
+.ticket-bars span:nth-child(3n) {
+    width: 2px;
+}
+
+
+.ticket-bars span:nth-child(5n) {
+    width: 8px;
+}
+
+
+.ticket-code-area small {
+    color: var(--text-secondary);
+
+    font-family: monospace;
+
+    font-size: 0.6rem;
+
+    letter-spacing: 1px;
+
+    word-break: break-all;
+}
+
+
+/* ============================================================
+   TICKET STUB
+   ============================================================ */
+
+.cine-ticket-stub {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 22px 32px;
+
+    background: var(--bg-secondary);
+
+    border-top: 2px dashed var(--border-color);
+}
+
+
+.stub-content strong {
+    display: block;
+
+    margin-bottom: 3px;
+
+    font-size: 0.9rem;
+}
+
+
+.stub-content small {
+    color: var(--text-secondary);
+
+    font-size: 0.75rem;
+}
+
+
+.stub-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 44px;
+    height: 44px;
+
+    flex-shrink: 0;
+
+    color: var(--primary);
+
+    border: 1px solid var(--border-color);
+
+    border-radius: 12px;
+
+    font-size: 1.25rem;
+}
+
+
+/* ============================================================
+   ACTIONS
+   ============================================================ */
+
+.ticket-actions {
+    display: flex;
+    justify-content: center;
+
+    gap: 10px;
+
+    margin-top: 24px;
+}
+
+
+.ticket-help {
+    margin-top: 12px;
+
+    color: var(--text-secondary);
+
+    text-align: center;
+
+    font-size: 0.8rem;
+}
+
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (max-width: 767.98px) {
+
+    .cine-ticket-header {
+        align-items: flex-start;
+
+        padding: 22px;
+    }
+
+
+    .cine-ticket-movie {
+        padding: 24px 22px;
+    }
+
+
+    .cine-ticket-details {
+        grid-template-columns: 1fr 1fr;
+
+        padding: 0 22px 24px;
+
+        gap: 18px;
+    }
+
+
+    .cine-ticket-body {
+        padding: 24px 22px;
+    }
+
+
+    .cine-ticket-stub {
+        padding: 18px 22px;
+    }
+
+
+    .ticket-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    .ticket-perforation {
+        margin: 0 22px;
+    }
+
+
+    .ticket-actions {
+        flex-direction: column;
+    }
+
+
+    .ticket-actions .btn {
+        width: 100%;
+    }
+
+}
+
+
+@media (max-width: 420px) {
+
+    .cine-ticket-header {
+        flex-direction: column;
+    }
+
+
+    .cine-ticket-details {
+        grid-template-columns: 1fr;
+    }
+
+
+    .cine-ticket-movie-icon {
+        width: 48px;
+        height: 48px;
+
+        font-size: 1.2rem;
+    }
+
+
+    .cine-ticket-movie h1 {
+        font-size: 1.35rem;
+    }
+
+}
+
+
+/* ============================================================
+   PRINT
+   ============================================================ */
+
+@media print {
+
+    body {
+        background: #ffffff !important;
+    }
+
+
+    nav,
+    footer,
+    .navbar,
+    .no-print {
+        display: none !important;
+    }
+
+
+    .cine-ticket {
+        max-width: 760px;
+        margin: 0 auto;
+
+        background: #ffffff !important;
+        color: #111111 !important;
+
+        border: 1px solid #111111 !important;
+
+        box-shadow: none !important;
+    }
+
+
+    .cine-ticket-header,
+    .cine-ticket-details,
+    .cine-ticket-body,
+    .cine-ticket-stub {
+        background: #ffffff !important;
+        color: #111111 !important;
+    }
+
+
+    .ticket-label,
+    .stub-content small,
+    .ticket-code-area small {
+        color: #555555 !important;
+    }
+
+
+    .ticket-status.valid {
+        color: #198754 !important;
+        background: #e8f5ee !important;
+    }
+
+
+    .ticket-seat {
+        color: #b0000b !important;
+        background: #fff1f2 !important;
+        border-color: #e5aeb3 !important;
+    }
+
+
+    .ticket-bars span {
+        background: #111111 !important;
+    }
+
+}
+/* ============================================================
+   CINEFLOW DASHBOARD
+   Complete dashboard additions
+   ============================================================ */
+
+
+/* ------------------------------------------------------------
+   DASHBOARD SCROLLING
+   ------------------------------------------------------------ */
+
+.staff-dashboard {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.staff-dashboard-scroll {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
+}
+
+.staff-dashboard-scroll::-webkit-scrollbar {
+    width: 7px;
+}
+
+.staff-dashboard-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.staff-dashboard-scroll::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+}
+
+.staff-dashboard-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.20);
+}
+
+
+/* ------------------------------------------------------------
+   CONTAINER
+   ------------------------------------------------------------ */
+
+.staff-dashboard .staff-container {
+    width: 100%;
+    max-width: 1500px;
+    margin: 0 auto;
+    padding-bottom: 50px;
+}
+
+
+/* ------------------------------------------------------------
+   SECTION
+   ------------------------------------------------------------ */
+
+.staff-dashboard-section {
+    margin-bottom: 38px;
+}
+
+.staff-dashboard-section-heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+
+    margin-bottom: 18px;
+}
+
+.staff-dashboard-section-heading h2 {
+    margin: 7px 0 0;
+
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+.staff-dashboard-section-heading p {
+    margin: 7px 0 0;
+
+    color: var(--staff-text-secondary, #9ca3af);
+
+    font-size: 13px;
+}
+
+
+/* ------------------------------------------------------------
+   STATISTICS
+   ------------------------------------------------------------ */
+
+.staff-dashboard .staff-stat-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 15px;
+}
+
+.staff-dashboard .staff-stat-card {
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+
+    padding: 19px;
+
+    background: var(--staff-surface);
+    border: 1px solid var(--staff-border);
+
+    border-radius: 14px;
+
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.staff-dashboard .staff-stat-card:hover {
+    transform: translateY(-2px);
+
+    border-color: rgba(229, 9, 20, 0.35);
+
+    box-shadow:
+        0 12px 28px rgba(0, 0, 0, 0.15);
+}
+
+.staff-dashboard .staff-stat-icon {
+    width: 46px;
+    height: 46px;
+
+    min-width: 46px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: rgba(229, 9, 20, 0.10);
+
+    color: var(--staff-red);
+
+    font-size: 20px;
+}
+
+.staff-dashboard .staff-stat-content {
+    min-width: 0;
+}
+
+.staff-dashboard .staff-stat-content span {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: var(--staff-text-secondary, #9ca3af);
+
+    font-size: 12px;
+}
+
+.staff-dashboard .staff-stat-content strong {
+    display: block;
+
+    color: var(--staff-text-primary, #ffffff);
+
+    font-size: 23px;
+    font-weight: 700;
+
+    line-height: 1.2;
+
+    overflow-wrap: anywhere;
+}
+
+.staff-dashboard .staff-stat-card-revenue .staff-stat-content strong {
+    font-size: 19px;
+}
+
+
+/* ------------------------------------------------------------
+   QUICK ACTIONS
+   ------------------------------------------------------------ */
+
+.staff-quick-actions {
+    display: grid;
+
+    grid-template-columns:
+        repeat(6, minmax(0, 1fr));
+
+    gap: 12px;
+}
+
+.staff-quick-action {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 9px;
+
+    min-height: 92px;
+
+    padding: 14px;
+
+    color: var(--staff-text-primary, #fff);
+    text-decoration: none;
+
+    background: var(--staff-surface);
+    border: 1px solid var(--staff-border);
+
+    border-radius: 13px;
+
+    text-align: center;
+
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease;
+}
+
+.staff-quick-action:hover {
+    color: var(--staff-text-primary, #fff);
+    text-decoration: none;
+
+    transform: translateY(-2px);
+
+    border-color: rgba(229, 9, 20, 0.35);
+
+    background: var(--staff-surface-2);
+}
+
+.staff-quick-action i {
+    color: var(--staff-red);
+    font-size: 20px;
+}
+
+.staff-quick-action span {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.staff-quick-action-primary {
+    background: var(--staff-red);
+    border-color: var(--staff-red);
+    color: #fff;
+}
+
+.staff-quick-action-primary:hover {
+    background: var(--staff-red-hover);
+    border-color: var(--staff-red-hover);
+    color: #fff;
+}
+
+.staff-quick-action-primary i {
+    color: #fff;
+}
+
+
+/* ------------------------------------------------------------
+   OPERATION CARDS
+   ------------------------------------------------------------ */
+
+.staff-operation-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 15px;
+}
+
+.staff-operation-card {
+    min-width: 0;
+
+    padding: 20px;
+
+    background: var(--staff-surface);
+    border: 1px solid var(--staff-border);
+
+    border-radius: 14px;
+}
+
+.staff-operation-header {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding-bottom: 15px;
+
+    border-bottom: 1px solid var(--staff-border);
+}
+
+.staff-operation-icon {
+    width: 40px;
+    height: 40px;
+
+    min-width: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: rgba(229, 9, 20, 0.10);
+
+    color: var(--staff-red);
+
+    font-size: 17px;
+}
+
+.staff-operation-header h3 {
+    margin: 0 0 3px;
+
+    color: var(--staff-text-primary, #fff);
+
+    font-size: 14px;
+    font-weight: 650;
+}
+
+.staff-operation-header span {
+    color: var(--staff-text-secondary, #9ca3af);
+
+    font-size: 11px;
+}
+
+.staff-operation-list {
+    padding-top: 10px;
+}
+
+.staff-operation-list > div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 10px;
+
+    padding: 7px 0;
+}
+
+.staff-operation-list span {
+    color: var(--staff-text-secondary, #9ca3af);
+
+    font-size: 12px;
+}
+
+.staff-operation-list strong {
+    color: var(--staff-text-primary, #fff);
+
+    font-size: 13px;
+}
+
+
+/* ------------------------------------------------------------
+   TWO-COLUMN DASHBOARD PANELS
+   ------------------------------------------------------------ */
+
+.staff-dashboard-columns {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 18px;
+
+    margin-bottom: 18px;
+}
+
+
+/* ------------------------------------------------------------
+   PANELS
+   ------------------------------------------------------------ */
+
+.staff-dashboard-panel {
+    min-width: 0;
+
+    background: var(--staff-surface);
+    border: 1px solid var(--staff-border);
+
+    border-radius: 14px;
+
+    overflow: hidden;
+}
+
+.staff-panel-header {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding: 19px 20px;
+
+    border-bottom: 1px solid var(--staff-border);
+}
+
+.staff-panel-header h2 {
+    margin: 7px 0 0;
+
+    color: var(--staff-text-primary, #fff);
+
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.staff-panel-link {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 5px;
+
+    color: var(--staff-text-secondary, #9ca3af);
+
+    font-size: 11px;
+    font-weight: 600;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+}
+
+.staff-panel-link:hover {
+    color: var(--staff-red);
+}
+
+.staff-panel-action {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 6px;
+
+    padding: 8px 12px;
+
+    background: var(--staff-red);
+
+    color: #fff;
+
+    border-radius: 8px;
+
+    font-size: 11px;
+    font-weight: 600;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+}
+
+.staff-panel-action:hover {
+    color: #fff;
+    text-decoration: none;
+
+    background: var(--staff-red-hover);
+}
+
+.staff-panel-body {
+    max-height: 420px;
+
+    overflow-y: auto;
+
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.10) transparent;
+}
+
+.staff-panel-body::-webkit-scrollbar {
+    width: 5px;
+}
+
+.staff-panel-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.staff-panel-body::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.10);
+    border-radius: 10px;
+}
+
+
+/* ------------------------------------------------------------
+   SHOWTIME ROW
+   ------------------------------------------------------------ */
+
+.staff-showtime-row {
+    display: grid;
+
+    grid-template-columns: 48px minmax(0, 1fr) auto;
+
+    align-items: center;
+
+    gap: 13px;
+
+    padding: 14px 20px;
+
+    border-bottom: 1px solid var(--staff-border);
+}
+
+.staff-showtime-row:last-child {
+    border-bottom: 0;
+}
+
+.staff-showtime-date {
+    width: 44px;
+    height: 48px;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(229, 9, 20, 0.08);
+
+    border-radius: 9px;
+}
+
+.staff-showtime-date strong {
+    color: var(--staff-text-primary, #fff);
+
+    font-size: 15px;
+    line-height: 1;
+}
+
+.staff-showtime-date span {
+    margin-top: 3px;
+
+    color: var(--staff-red);
+
+    font-size: 9px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+}
+
+.staff-showtime-info {
+    min-width: 0;
+}
+
+.staff-showtime-info strong {
+    display: block;
+
+    overflow: hidden;
+
+    color: var(--staff-text-primary, #fff);
+
+    font-size: 13px;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.staff-showtime-info span {
+    display: block;
+
+    margin-top: 4px;
+
+    overflow: hidden;
+
+    color: var(--staff-text-secondary, #9ca3af);
+
+    font-size: 11px;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.staff-showtime-time {
+    text-align: right;
+}
+
+.staff-showtime-time strong {
+    display: block;
+
+    color: var(--staff-text-primary, #fff);
+
+    font-size: 12px;
+}
+
+.staff-showtime-time span {
+    display: block;
+
+    margin-top: 3px;
+
+    color: var(--staff-text-secondary, #9ca3af);
+
+    font-size: 9px;
+}
+
+
+/* ------------------------------------------------------------
+   GENERIC ROWS
+   ------------------------------------------------------------ */
+
+.staff-booking-row,
+.staff-payment-row,
+.staff-support-row {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 14px 20px;
+
+    border-bottom: 1px solid var(--staff-border);
+}
+
+.staff-booking-row:last-child,
+.staff-payment-row:last-child,
+.staff-support-row:last-child {
+    border-bottom: 0;
+}
+
+.staff-row-icon {
+    width: 36px;
+    height: 36px;
+
+    min-width: 36px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+
+    background: rgba(229, 9, 20, 0.08);
+
+    color: var(--staff-red);
+
+    font-size: 15px;
+}
+
+.staff-row-main {
+    min-width: 0;
+    flex: 1;
+}
+
+.staff-row-main strong {
+    display: block;
+
+    overflow: hidden;
+
+    color: var(--staff-text-primary, #fff);
+
+    font-size: 12px;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.staff-row-main span {
+    display: block;
+
+    margin-top: 3px;
+
+    overflow: hidden;
+
+    color: var(--staff-text-secondary, #9ca3af);
+
+    font-size: 10px;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.staff-row-meta {
+    display: flex;
+    flex-direction: column;
+
+    align-items: flex-end;
+
+    gap: 5px;
+
+    flex-shrink: 0;
+}
+
+.staff-row-meta > strong {
+    color: var(--staff-text-primary, #fff);
+
+    font-size: 11px;
+}
+
+
+/* ------------------------------------------------------------
+   STATUS BADGES
+   ------------------------------------------------------------ */
+
+.staff-status {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 4px 7px;
+
+    border-radius: 6px;
+
+    font-size: 9px;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+.staff-status-confirmed,
+.staff-status-successful,
+.staff-status-valid {
+    background: rgba(34, 197, 94, 0.10);
+    color: #22c55e;
+}
+
+.staff-status-held,
+.staff-status-pending {
+    background: rgba(234, 179, 8, 0.10);
+    color: #eab308;
+}
+
+.staff-status-cancelled,
+.staff-status-failed,
+.staff-status-invalid {
+    background: rgba(239, 68, 68, 0.10);
+    color: #ef4444;
+}
+
+.staff-status-expired,
+.staff-status-refunded {
+    background: rgba(156, 163, 175, 0.10);
+    color: #9ca3af;
+}
+
+.staff-status-used {
+    background: rgba(59, 130, 246, 0.10);
+    color: #3b82f6;
+}
+
+.staff-status-open {
+    background: rgba(239, 68, 68, 0.10);
+    color: #ef4444;
+}
+
+.staff-status-in_progress {
+    background: rgba(234, 179, 8, 0.10);
+    color: #eab308;
+}
+
+.staff-status-waiting_for_customer {
+    background: rgba(59, 130, 246, 0.10);
+    color: #3b82f6;
+}
+
+
+/* ------------------------------------------------------------
+   PRIORITY
+   ------------------------------------------------------------ */
+
+.staff-priority {
+    display: inline-flex;
+
+    padding: 3px 6px;
+
+    border-radius: 5px;
+
+    font-size: 8px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+}
+
+.staff-priority-low {
+    background: rgba(156, 163, 175, 0.10);
+    color: #9ca3af;
+}
+
+.staff-priority-normal {
+    background: rgba(59, 130, 246, 0.10);
+    color: #3b82f6;
+}
+
+.staff-priority-high {
+    background: rgba(234, 179, 8, 0.10);
+    color: #eab308;
+}
+
+.staff-priority-urgent {
+    background: rgba(239, 68, 68, 0.10);
+    color: #ef4444;
+}
+
+
+/* ------------------------------------------------------------
+   SUPPORT META
+   ------------------------------------------------------------ */
+
+.staff-support-row .staff-row-meta {
+    flex-direction: row;
+    align-items: center;
+}
+
+
+/* ------------------------------------------------------------
+   DIGITAL TICKETS
+   ------------------------------------------------------------ */
+
+.staff-ticket-dashboard-panel {
+    margin-bottom: 18px;
+}
+
+.staff-ticket-row {
+    display: grid;
+
+    grid-template-columns:
+        42px
+        minmax(150px, 1.4fr)
+        minmax(130px, 1fr)
+        auto;
+
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 15px 20px;
+
+    border-bottom: 1px solid var(--staff-border);
+}
+
+.staff-ticket-row:last-child {
+    border-bottom: 0;
+}
+
+.staff-ticket-icon {
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+
+    background: rgba(229, 9, 20, 0.08);
+
+    color: var(--staff-red);
+
+    font-size: 16px;
+}
+
+.staff-ticket-main,
+.staff-ticket-customer {
+    min-width: 0;
+}
+
+.staff-ticket-main strong,
+.staff-ticket-customer strong {
+    display: block;
+
+    overflow: hidden;
+
+    color: var(--staff-text-primary, #fff);
+
+    font-size: 12px;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.staff-ticket-main span,
+.staff-ticket-customer span {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: var(--staff-text-secondary, #9ca3af);
+
+    font-size: 9px;
+}
+
+.staff-ticket-customer strong {
+    font-size: 11px;
+}
+
+.staff-ticket-status {
+    display: flex;
+    justify-content: flex-end;
+}
+
+
+/* ------------------------------------------------------------
+   EMPTY STATES
+   ------------------------------------------------------------ */
+
+.staff-empty-state {
+    min-height: 130px;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    padding: 25px;
+
+    color: var(--staff-text-secondary, #9ca3af);
+
+    text-align: center;
+}
+
+.staff-empty-state i {
+    font-size: 25px;
+    opacity: 0.5;
+}
+
+.staff-empty-state span {
+    font-size: 11px;
+}
+
+
+/* ------------------------------------------------------------
+   MANAGEMENT
+   ------------------------------------------------------------ */
+
+.staff-dashboard .staff-management-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 15px;
+}
+
+.staff-dashboard .staff-management-card {
+    min-width: 0;
+
+    min-height: 108px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+
+    padding: 18px;
+
+    color: inherit;
+    text-decoration: none;
+
+    background: var(--staff-surface);
+    border: 1px solid var(--staff-border);
+
+    border-radius: 14px;
+
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.staff-dashboard .staff-management-card:hover {
+    color: inherit;
+    text-decoration: none;
+
+    transform: translateY(-2px);
+
+    background: var(--staff-surface-2);
+
+    border-color: rgba(229, 9, 20, 0.40);
+
+    box-shadow:
+        0 12px 28px rgba(0, 0, 0, 0.15);
+}
+
+.staff-dashboard .staff-management-card-highlight {
+    border-color: rgba(229, 9, 20, 0.30);
+}
+
+.staff-dashboard .staff-management-icon {
+    width: 46px;
+    height: 46px;
+
+    min-width: 46px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    background: rgba(229, 9, 20, 0.10);
+
+    color: var(--staff-red);
+
+    font-size: 19px;
+}
+
+.staff-dashboard .staff-management-content {
+    min-width: 0;
+    flex: 1;
+}
+
+.staff-dashboard .staff-management-content h3 {
+    margin: 0 0 5px;
+
+    color: var(--staff-text-primary, #fff);
+
+    font-size: 14px;
+    font-weight: 650;
+}
+
+.staff-dashboard .staff-management-content p {
+    margin: 0;
+
+    color: var(--staff-text-secondary, #9ca3af);
+
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.staff-dashboard .staff-management-arrow {
+    flex-shrink: 0;
+
+    color: var(--staff-text-secondary, #9ca3af);
+
+    transition:
+        transform 0.2s ease,
+        color 0.2s ease;
+}
+
+.staff-dashboard .staff-management-card:hover
+.staff-management-arrow {
+    color: var(--staff-red);
+
+    transform: translateX(4px);
+}
+
+
+/* ------------------------------------------------------------
+   TABLET
+   ------------------------------------------------------------ */
+
+@media (max-width: 1200px) {
+
+    .staff-dashboard .staff-stat-grid {
+        grid-template-columns:
+            repeat(4, minmax(0, 1fr));
+    }
+
+    .staff-quick-actions {
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+    }
+
+    .staff-operation-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .staff-dashboard .staff-management-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+/* ------------------------------------------------------------
+   SMALL TABLET
+   ------------------------------------------------------------ */
+
+@media (max-width: 900px) {
+
+    .staff-dashboard .staff-stat-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .staff-dashboard-columns {
+        grid-template-columns: 1fr;
+    }
+
+    .staff-ticket-row {
+        grid-template-columns:
+            42px
+            minmax(0, 1fr)
+            auto;
+    }
+
+    .staff-ticket-customer {
+        display: none;
+    }
+
+}
+
+
+/* ------------------------------------------------------------
+   MOBILE
+   ------------------------------------------------------------ */
+
+@media (max-width: 600px) {
+
+    .staff-dashboard .staff-container {
+        padding-bottom: 30px;
+    }
+
+    .staff-dashboard-section {
+        margin-bottom: 30px;
+    }
+
+    .staff-dashboard-section-heading {
+        margin-bottom: 14px;
+    }
+
+    .staff-dashboard-section-heading h2 {
+        font-size: 19px;
+    }
+
+    .staff-dashboard .staff-stat-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .staff-dashboard .staff-stat-card {
+        padding: 15px;
+    }
+
+    .staff-quick-actions {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .staff-operation-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .staff-dashboard .staff-management-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .staff-showtime-row {
+        grid-template-columns:
+            44px minmax(0, 1fr);
+    }
+
+    .staff-showtime-time {
+        grid-column: 2;
+        text-align: left;
+    }
+
+    .staff-panel-header {
+        padding: 16px;
+    }
+
+    .staff-panel-body {
+        max-height: 360px;
+    }
+
+    .staff-booking-row,
+    .staff-payment-row,
+    .staff-support-row {
+        padding: 13px 16px;
+    }
+
+    .staff-support-row .staff-row-meta {
+        flex-direction: column;
+    }
+
+    .staff-ticket-row {
+        grid-template-columns:
+            40px
+            minmax(0, 1fr)
+            auto;
+
+        padding: 13px 16px;
+    }
+
+    .staff-ticket-icon {
+        width: 38px;
+        height: 38px;
+    }
+
+}
+
+
+/* ------------------------------------------------------------
+   VERY SMALL MOBILE
+   ------------------------------------------------------------ */
+
+@media (max-width: 400px) {
+
+    .staff-quick-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .staff-row-meta {
+        display: none;
+    }
+
+    .staff-dashboard .staff-page-header h1 {
+        font-size: 27px;
+    }
+
+}
+
+/* ============================================================
+   TICKET VERIFICATION / QR SCANNER
+   ============================================================ */
+
+.ticket-verification-page {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.ticket-verification-container {
+    width: 100%;
+    max-width: 1100px;
+
+    margin: 0 auto;
+
+    padding-bottom: 50px;
+}
+
+.ticket-verification-grid {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1.2fr)
+        minmax(0, 0.8fr);
+
+    gap: 18px;
+
+    margin-bottom: 18px;
+}
+
+.ticket-scanner-card,
+.ticket-manual-card,
+.ticket-verification-result {
+    background: var(--staff-surface);
+    border: 1px solid var(--staff-border);
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.ticket-verification-card-header {
+    padding: 20px;
+
+    border-bottom: 1px solid var(--staff-border);
+}
+
+.ticket-verification-card-header h2 {
+    margin: 7px 0 0;
+
+    color: var(--staff-text-primary, #fff);
+
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.ticket-scanner-body,
+.ticket-manual-body {
+    padding: 20px;
+}
+
+.ticket-qr-reader {
+    width: 100%;
+
+    min-height: 300px;
+
+    overflow: hidden;
+
+    border-radius: 12px;
+
+    background: #050505;
+}
+
+.ticket-qr-reader video {
+    border-radius: 12px;
+}
+
+.ticket-scanner-message {
+    margin: 12px 0;
+
+    padding: 10px 12px;
+
+    border-radius: 8px;
+
+    background: rgba(255, 255, 255, 0.04);
+
+    color: var(--staff-text-secondary, #9ca3af);
+
+    font-size: 11px;
+
+    text-align: center;
+}
+
+.ticket-manual-body .form-label {
+    color: var(--staff-text-primary, #fff);
+
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.ticket-manual-body .form-control {
+    min-height: 44px;
+}
+
+
+/* ------------------------------------------------------------
+   VERIFICATION RESULT
+   ------------------------------------------------------------ */
+
+.ticket-verification-result {
+    margin-bottom: 20px;
+}
+
+.ticket-result-header {
+    display: flex;
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 22px;
+
+    background: rgba(34, 197, 94, 0.06);
+
+    border-bottom: 1px solid var(--staff-border);
+}
+
+.ticket-result-icon {
+    width: 50px;
+    height: 50px;
+
+    min-width: 50px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: rgba(34, 197, 94, 0.12);
+
+    color: #22c55e;
+
+    font-size: 24px;
+}
+
+.ticket-result-header h2 {
+    margin: 5px 0 4px;
+
+    color: var(--staff-text-primary, #fff);
+
+    font-size: 20px;
+}
+
+.ticket-result-header p {
+    margin: 0;
+
+    color: var(--staff-text-secondary, #9ca3af);
+
+    font-size: 12px;
+}
+
+.ticket-result-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 1px;
+
+    background: var(--staff-border);
+}
+
+.ticket-result-grid > div {
+    min-width: 0;
+
+    padding: 16px;
+
+    background: var(--staff-surface);
+}
+
+.ticket-result-grid span {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: var(--staff-text-secondary, #9ca3af);
+
+    font-size: 10px;
+}
+
+.ticket-result-grid strong {
+    display: block;
+
+    overflow-wrap: anywhere;
+
+    color: var(--staff-text-primary, #fff);
+
+    font-size: 12px;
+}
+
+.ticket-admit-action {
+    padding: 20px;
+
+    border-top: 1px solid var(--staff-border);
+}
+
+
+/* ------------------------------------------------------------
+   MOBILE
+   ------------------------------------------------------------ */
+
+@media (max-width: 800px) {
+
+    .ticket-verification-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ticket-result-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+@media (max-width: 500px) {
+
+    .ticket-result-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ticket-scanner-body,
+    .ticket-manual-body {
+        padding: 15px;
+    }
+
+    .ticket-qr-reader {
+        min-height: 260px;
+    }
+
+}
+/* ============================================================
+   DASHBOARD LIGHT MODE FIX
+   ============================================================ */
+
+[data-theme="light"] .staff-dashboard {
+
+    --dashboard-text-primary: #111827;
+    --dashboard-text-secondary: #6b7280;
+    --dashboard-border: #e5e7eb;
+    --dashboard-surface: #ffffff;
+    --dashboard-surface-2: #f8f9fb;
+
+}
+
+
+/* ------------------------------------------------------------
+   PRIMARY TEXT
+   ------------------------------------------------------------ */
+
+[data-theme="light"] .staff-dashboard
+.staff-page-header h1,
+
+[data-theme="light"] .staff-dashboard
+.staff-dashboard-section-heading h2,
+
+[data-theme="light"] .staff-dashboard
+.staff-panel-header h2,
+
+[data-theme="light"] .staff-dashboard
+.staff-operation-header h3,
+
+[data-theme="light"] .staff-dashboard
+.staff-stat-content strong,
+
+[data-theme="light"] .staff-dashboard
+.staff-management-content h3,
+
+[data-theme="light"] .staff-dashboard
+.staff-showtime-info strong,
+
+[data-theme="light"] .staff-dashboard
+.staff-showtime-time strong,
+
+[data-theme="light"] .staff-dashboard
+.staff-row-main strong,
+
+[data-theme="light"] .staff-dashboard
+.staff-row-meta > strong,
+
+[data-theme="light"] .staff-dashboard
+.staff-ticket-main strong,
+
+[data-theme="light"] .staff-dashboard
+.staff-ticket-customer strong,
+
+[data-theme="light"] .staff-dashboard
+.staff-operation-list strong {
+
+    color: #111827 !important;
+
+}
+
+
+/* ------------------------------------------------------------
+   SECONDARY TEXT
+   ------------------------------------------------------------ */
+
+[data-theme="light"] .staff-dashboard
+.staff-page-header p,
+
+[data-theme="light"] .staff-dashboard
+.staff-dashboard-section-heading p,
+
+[data-theme="light"] .staff-dashboard
+.staff-section-description,
+
+[data-theme="light"] .staff-dashboard
+.staff-operation-header span,
+
+[data-theme="light"] .staff-dashboard
+.staff-operation-list span,
+
+[data-theme="light"] .staff-dashboard
+.staff-showtime-info span,
+
+[data-theme="light"] .staff-dashboard
+.staff-showtime-time span,
+
+[data-theme="light"] .staff-dashboard
+.staff-row-main span,
+
+[data-theme="light"] .staff-dashboard
+.staff-ticket-main span,
+
+[data-theme="light"] .staff-dashboard
+.staff-ticket-customer span,
+
+[data-theme="light"] .staff-dashboard
+.staff-panel-link {
+
+    color: #6b7280 !important;
+
+}
+
+
+/* ------------------------------------------------------------
+   CARDS / PANELS
+   ------------------------------------------------------------ */
+
+[data-theme="light"] .staff-dashboard
+.staff-stat-card,
+
+[data-theme="light"] .staff-dashboard
+.staff-operation-card,
+
+[data-theme="light"] .staff-dashboard
+.staff-dashboard-panel,
+
+[data-theme="light"] .staff-dashboard
+.staff-management-card,
+
+[data-theme="light"] .staff-dashboard
+.staff-quick-action {
+
+    background: #ffffff;
+    border-color: #e5e7eb;
+}
+
+
+/* ------------------------------------------------------------
+   HOVER STATES
+   ------------------------------------------------------------ */
+
+[data-theme="light"] .staff-dashboard
+.staff-stat-card:hover,
+
+[data-theme="light"] .staff-dashboard
+.staff-management-card:hover,
+
+[data-theme="light"] .staff-dashboard
+.staff-quick-action:hover {
+
+    background: #f8f9fb;
+    border-color: rgba(229, 9, 20, 0.35);
+}
+
+
+/* ------------------------------------------------------------
+   ICON BACKGROUNDS
+   ------------------------------------------------------------ */
+
+[data-theme="light"] .staff-dashboard
+.staff-stat-icon,
+
+[data-theme="light"] .staff-dashboard
+.staff-operation-icon,
+
+[data-theme="light"] .staff-dashboard
+.staff-management-icon,
+
+[data-theme="light"] .staff-dashboard
+.staff-row-icon,
+
+[data-theme="light"] .staff-dashboard
+.staff-ticket-icon {
+
+    background: rgba(229, 9, 20, 0.08);
+}
+
+
+/* ------------------------------------------------------------
+   BORDERS
+   ------------------------------------------------------------ */
+
+[data-theme="light"] .staff-dashboard
+.staff-operation-header,
+
+[data-theme="light"] .staff-dashboard
+.staff-panel-header,
+
+[data-theme="light"] .staff-dashboard
+.staff-showtime-row,
+
+[data-theme="light"] .staff-dashboard
+.staff-booking-row,
+
+[data-theme="light"] .staff-dashboard
+.staff-payment-row,
+
+[data-theme="light"] .staff-dashboard
+.staff-support-row,
+
+[data-theme="light"] .staff-dashboard
+.staff-ticket-row {
+
+    border-color: #e5e7eb;
+
+}
+
+
+/* ------------------------------------------------------------
+   DATE BOX
+   ------------------------------------------------------------ */
+
+[data-theme="light"] .staff-dashboard
+.staff-showtime-date {
+
+    background: rgba(229, 9, 20, 0.07);
+
+}
+
+[data-theme="light"] .staff-dashboard
+.staff-showtime-date strong {
+
+    color: #111827 !important;
+
+}
+
+
+/* ------------------------------------------------------------
+   EMPTY STATES
+   ------------------------------------------------------------ */
+
+[data-theme="light"] .staff-dashboard
+.staff-empty-state {
+
+    color: #6b7280;
+
+}
+
+
+/* ------------------------------------------------------------
+   TICKET ACTION
+   ------------------------------------------------------------ */
+
+[data-theme="light"] .staff-dashboard
+.staff-panel-action {
+
+    color: #ffffff !important;
+
+}
+
+
+/* ------------------------------------------------------------
+   SCROLLBAR
+   ------------------------------------------------------------ */
+
+[data-theme="light"] .staff-dashboard-scroll {
+    scrollbar-color: #d1d5db transparent;
+}
+
+[data-theme="light"] .staff-dashboard-scroll::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+}
+
+[data-theme="light"] .staff-dashboard-scroll::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+}
+
+/* ============================================================
+   QUICK ACTIONS — LIGHT MODE FIX
+   ============================================================ */
+
+[data-theme="light"] .staff-dashboard .staff-quick-action {
+    background: #ffffff;
+    border: 1px solid #dfe3e8;
+    color: #111827 !important;
+}
+
+
+/* Text */
+
+[data-theme="light"] .staff-dashboard .staff-quick-action span {
+    color: #111827 !important;
+
+    display: block;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    line-height: 1.4;
+
+    opacity: 1;
+    visibility: visible;
+}
+
+
+/* Icons */
+
+[data-theme="light"] .staff-dashboard .staff-quick-action i {
+    color: #e50914 !important;
+
+    opacity: 1;
+    visibility: visible;
+}
+
+
+/* Hover */
+
+[data-theme="light"] .staff-dashboard .staff-quick-action:hover {
+    background: #f8f9fb;
+
+    border-color: rgba(229, 9, 20, 0.35);
+
+    color: #111827 !important;
+
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .staff-dashboard .staff-quick-action:hover span {
+    color: #111827 !important;
+}
+
+[data-theme="light"] .staff-dashboard .staff-quick-action:hover i {
+    color: #e50914 !important;
+}
+
+
+/* ------------------------------------------------------------
+   VERIFY TICKET — PRIMARY ACTION
+   ------------------------------------------------------------ */
+
+[data-theme="light"] .staff-dashboard
+.staff-quick-action-primary {
+    background: #e50914;
+
+    border-color: #e50914;
+
+    color: #ffffff !important;
+}
+
+[data-theme="light"] .staff-dashboard
+.staff-quick-action-primary span {
+    color: #ffffff !important;
+}
+
+[data-theme="light"] .staff-dashboard
+.staff-quick-action-primary i {
+    color: #ffffff !important;
+}
+
+[data-theme="light"] .staff-dashboard
+.staff-quick-action-primary:hover {
+    background: #c70812;
+
+    border-color: #c70812;
+
+    color: #ffffff !important;
+}
+
+
+/* ------------------------------------------------------------
+   FORCE PROPER CARD HEIGHT / ALIGNMENT
+   ------------------------------------------------------------ */
+
+.staff-dashboard .staff-quick-action {
+    min-height: 100px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 10px;
+
+    text-align: center;
+
+    overflow: hidden;
+}
+
+.staff-dashboard .staff-quick-action i {
+    flex-shrink: 0;
+
+    font-size: 21px;
+
+    line-height: 1;
+}
+
+.staff-dashboard .staff-quick-action span {
+    flex-shrink: 0;
+
+    line-height: 1.4;
+
+    white-space: normal;
+
+    overflow: visible;
+}
+
+
+/* ------------------------------------------------------------
+   MOBILE
+   ------------------------------------------------------------ */
+
+@media (max-width: 600px) {
+
+    .staff-dashboard .staff-quick-action {
+        min-height: 90px;
+    }
+
+    .staff-dashboard .staff-quick-action span {
+        font-size: 11px;
+    }
+
+}
+
+/* ============================================================
+   FOOTER BRAND LINK
+   ============================================================ */
+
+.cine-footer .cine-brand {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    color: var(--text-primary);
+
+    transition:
+        opacity var(--transition),
+        transform var(--transition);
+}
+
+.cine-footer .cine-brand:hover {
+    color: var(--text-primary);
+
+    opacity: 0.85;
+
+    transform: translateY(-1px);
+}
+
+
+/* Footer links */
+
+.cine-footer .footer-links a {
+    display: inline-block;
+}
+
+.cine-footer .footer-links a:hover {
+    transform: translateX(2px);
+}
+
+/* ============================================================
+   CINEFLOW DIGITAL TICKET
+   ONE-PAGE PRINT OPTIMIZATION
+   ============================================================ */
+
+@media print {
+
+    /* --------------------------------------------------------
+       PAGE
+       -------------------------------------------------------- */
+
+    @page {
+        size: A4 portrait;
+        margin: 8mm;
+    }
+
+    html,
+    body {
+        width: 100%;
+        height: auto;
+        margin: 0 !important;
+        padding: 0 !important;
+
+        background: #ffffff !important;
+    }
+
+
+    /* --------------------------------------------------------
+       REMOVE NON-PRINT ELEMENTS
+       -------------------------------------------------------- */
+
+    .no-print,
+    .ticket-actions,
+    .ticket-help {
+        display: none !important;
+    }
+
+
+    /* --------------------------------------------------------
+       REMOVE BOOTSTRAP PAGE SPACING
+       -------------------------------------------------------- */
+
+    .container {
+        width: 100% !important;
+        max-width: 100% !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .row {
+        margin: 0 !important;
+    }
+
+    .col-12,
+    .col-lg-9,
+    .col-xl-8 {
+        width: 100% !important;
+
+        max-width: 100% !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+
+    /* --------------------------------------------------------
+       TICKET
+       -------------------------------------------------------- */
+
+    .cine-ticket {
+        width: 100% !important;
+        max-width: 190mm !important;
+
+        margin: 0 auto !important;
+
+        border: 1px solid #d9d9d9 !important;
+
+        border-radius: 8px !important;
+
+        box-shadow: none !important;
+
+        overflow: hidden !important;
+
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+
+
+    /* --------------------------------------------------------
+       HEADER
+       -------------------------------------------------------- */
+
+    .cine-ticket-header {
+        padding: 10px 16px !important;
+    }
+
+    .cine-ticket-brand {
+        font-size: 15px !important;
+    }
+
+    .cine-ticket-subtitle {
+        font-size: 7px !important;
+        margin-top: 2px !important;
+    }
+
+
+    /* --------------------------------------------------------
+       MOVIE
+       -------------------------------------------------------- */
+
+    .cine-ticket-movie {
+        padding: 10px 16px !important;
+
+        gap: 10px !important;
+    }
+
+    .cine-ticket-movie-icon {
+        width: 32px !important;
+        height: 32px !important;
+
+        min-width: 32px !important;
+
+        font-size: 14px !important;
+    }
+
+    .cine-ticket-movie h1 {
+        margin: 2px 0 0 !important;
+
+        font-size: 18px !important;
+        line-height: 1.2 !important;
+    }
+
+
+    /* --------------------------------------------------------
+       SHOWTIME DETAILS
+       -------------------------------------------------------- */
+
+    .cine-ticket-details {
+        padding: 8px 16px !important;
+
+        gap: 8px !important;
+    }
+
+    .ticket-detail {
+        min-width: 0 !important;
+    }
+
+    .ticket-label {
+        font-size: 7px !important;
+        line-height: 1.2 !important;
+    }
+
+    .ticket-detail strong {
+        margin-top: 2px !important;
+
+        font-size: 10px !important;
+        line-height: 1.25 !important;
+    }
+
+
+    /* --------------------------------------------------------
+       PERFORATION
+       -------------------------------------------------------- */
+
+    .ticket-perforation {
+        margin: 0 !important;
+        height: 10px !important;
+    }
+
+
+    /* --------------------------------------------------------
+       BODY
+       -------------------------------------------------------- */
+
+    .cine-ticket-body {
+        padding: 10px 16px !important;
+    }
+
+
+    /* --------------------------------------------------------
+       SEATS
+       -------------------------------------------------------- */
+
+    .ticket-section {
+        margin-bottom: 8px !important;
+    }
+
+    .ticket-seats {
+        gap: 4px !important;
+
+        margin-top: 4px !important;
+    }
+
+    .ticket-seat {
+        padding: 3px 7px !important;
+
+        font-size: 9px !important;
+
+        border-radius: 4px !important;
+    }
+
+    .ticket-quantity {
+        font-size: 10px !important;
+    }
+
+    .ticket-quantity strong {
+        font-size: 15px !important;
+    }
+
+
+    /* --------------------------------------------------------
+       BOOKING + PAYMENT
+       -------------------------------------------------------- */
+
+    .ticket-info-grid {
+        gap: 12px !important;
+
+        margin-top: 8px !important;
+    }
+
+    .ticket-info-grid > div {
+        min-width: 0 !important;
+    }
+
+    .ticket-info-grid strong {
+        display: block;
+
+        margin-top: 2px !important;
+
+        font-size: 10px !important;
+    }
+
+    .ticket-mono {
+        font-size: 9px !important;
+    }
+
+
+    /* --------------------------------------------------------
+       TICKET NUMBER
+       -------------------------------------------------------- */
+
+    .ticket-number-box {
+        margin-top: 8px !important;
+
+        padding: 7px 10px !important;
+
+        border-radius: 5px !important;
+    }
+
+    .ticket-number-box strong {
+        display: block;
+
+        margin-top: 2px !important;
+
+        font-size: 11px !important;
+    }
+
+
+    /* --------------------------------------------------------
+       QR SECTION
+       -------------------------------------------------------- */
+
+    .ticket-code-area {
+        margin-top: 8px !important;
+
+        padding-top: 6px !important;
+
+        text-align: center !important;
+    }
+
+    .ticket-qr-section {
+        padding: 0 !important;
+
+        gap: 3px !important;
+    }
+
+
+    /*
+       REAL QR CODE
+
+       Keep it large enough to remain reliably scannable,
+       but small enough to fit comfortably on one page.
+    */
+
+    .ticket-qr-wrapper {
+        width: 105px !important;
+        height: 105px !important;
+
+        padding: 5px !important;
+
+        margin: 0 auto !important;
+
+        border: 1px solid #dddddd !important;
+
+        border-radius: 6px !important;
+
+        box-shadow: none !important;
+    }
+
+    .ticket-qr-code {
+        width: 95px !important;
+        height: 95px !important;
+
+        max-width: 95px !important;
+        max-height: 95px !important;
+    }
+
+
+    /* Hide explanatory text */
+
+    .ticket-qr-info {
+        display: none !important;
+    }
+
+
+    /* Hide raw ticket code */
+
+    .ticket-code-area > small {
+        display: none !important;
+    }
+
+
+    /* --------------------------------------------------------
+       STUB
+       -------------------------------------------------------- */
+
+    .cine-ticket-stub {
+        padding: 8px 16px !important;
+
+        min-height: auto !important;
+    }
+
+    .stub-content {
+        min-width: 0 !important;
+    }
+
+    .stub-content strong {
+        display: block;
+
+        margin-top: 2px !important;
+
+        font-size: 11px !important;
+    }
+
+    .stub-content small {
+        display: block;
+
+        margin-top: 2px !important;
+
+        font-size: 8px !important;
+    }
+
+    .stub-icon {
+        font-size: 18px !important;
+    }
+
+
+    /* --------------------------------------------------------
+       PREVENT INTERNAL ELEMENTS FROM BREAKING
+       -------------------------------------------------------- */
+
+    .cine-ticket-header,
+    .cine-ticket-movie,
+    .cine-ticket-details,
+    .cine-ticket-body,
+    .cine-ticket-stub {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+
+}
+/* ============================================================
+   CINEFLOW — PAYMENTS
+   CLEAN / ALIGNED TABLE
+   ============================================================ */
+
+.staff-payments-page {
+    width: 100%;
+}
+
+
+/* ============================================================
+   REVENUE
+   ============================================================ */
+
+.staff-payments-page .staff-payment-revenue-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.staff-payments-page .staff-payment-revenue-card h2 {
+    margin: 6px 0 4px;
+    color: var(--staff-text);
+    font-size: 28px;
+    font-weight: 750;
+}
+
+.staff-payments-page .staff-payment-revenue-card p {
+    margin: 0;
+    color: var(--staff-muted);
+    font-size: 12px;
+}
+
+.staff-payments-page .staff-payment-revenue-card .staff-summary-icon {
+    width: 50px;
+    height: 50px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border: 1px solid rgba(229, 9, 20, .18);
+    border-radius: 12px;
+
+    background: rgba(229, 9, 20, .08);
+    color: var(--staff-red);
+
+    font-size: 21px;
+}
+
+
+/* ============================================================
+   FILTERS
+   ============================================================ */
+
+.staff-payments-page .staff-payment-filter-form {
+    display: grid;
+
+    grid-template-columns:
+        minmax(250px, 1fr)
+        160px
+        160px
+        90px
+        80px;
+
+    align-items: center;
+    gap: 10px;
+}
+
+.staff-payments-page .staff-payment-filter-form .staff-search {
+    width: 100%;
+    max-width: none;
+}
+
+.staff-payments-page .staff-payment-filter-form .staff-filter {
+    width: 100%;
+}
+
+.staff-payments-page .staff-payment-filter-form .form-select {
+    width: 100%;
+    height: 42px;
+
+    border: 1px solid var(--staff-border);
+    border-radius: 8px;
+
+    background: var(--staff-surface);
+    color: var(--staff-text);
+
+    font-size: 12px;
+}
+
+
+/* ============================================================
+   PAYMENT CARD
+   ============================================================ */
+
+.staff-payments-page .staff-list-card {
+    width: 100%;
+
+    overflow: hidden;
+
+    border: 1px solid var(--staff-border);
+    border-radius: 12px;
+
+    background: var(--staff-surface);
+}
+
+.staff-payments-page .staff-list-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 20px 24px;
+
+    border-bottom: 1px solid var(--staff-border);
+}
+
+.staff-payments-page .staff-list-card-header h2 {
+    margin: 5px 0 0;
+
+    color: var(--staff-text);
+
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.staff-payments-page .staff-list-count {
+    color: var(--staff-muted);
+    font-size: 11px;
+}
+
+
+/* ============================================================
+   TABLE WRAPPER
+   ============================================================ */
+
+.staff-payments-page .table-responsive {
+    width: 100%;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    -webkit-overflow-scrolling: touch;
+}
+
+
+/* ============================================================
+   TABLE
+   IMPORTANT:
+   Fixed width + fixed layout keeps THEAD and TBODY aligned.
+   ============================================================ */
+
+.staff-payments-page .staff-table {
+    width: 100% !important;
+    min-width: 100% !important;
+
+    margin: 0 !important;
+
+    table-layout: fixed !important;
+
+    border-collapse: collapse !important;
+
+    background: var(--staff-surface);
+}
+
+
+/* ============================================================
+   EXACT COLUMN WIDTHS
+   TOTAL = 1120px
+   ============================================================ */
+
+/* Payment — 220 */
+.staff-payments-page .staff-table th:nth-child(1),
+.staff-payments-page .staff-table td:nth-child(1) {
+    width: 21% !important;
+}
+
+/* Customer — 190 */
+.staff-payments-page .staff-table th:nth-child(2),
+.staff-payments-page .staff-table td:nth-child(2) {
+    width: 17% !important;
+}
+
+/* Booking — 145 */
+.staff-payments-page .staff-table th:nth-child(3),
+.staff-payments-page .staff-table td:nth-child(3) {
+    width: 14% !important;
+}
+
+/* Amount — 115 */
+.staff-payments-page .staff-table th:nth-child(4),
+.staff-payments-page .staff-table td:nth-child(4) {
+    width: 9% !important;
+}
+
+/* Provider — 115 */
+.staff-payments-page .staff-table th:nth-child(5),
+.staff-payments-page .staff-table td:nth-child(5) {
+    width: 10% !important;
+}
+
+/* Status — 130 */
+.staff-payments-page .staff-table th:nth-child(6),
+.staff-payments-page .staff-table td:nth-child(6) {
+    width: 11% !important;
+}
+
+/* Date — 130 */
+.staff-payments-page .staff-table th:nth-child(7),
+.staff-payments-page .staff-table td:nth-child(7) {
+    width: 12% !important;
+}
+
+/* Details — 75 */
+.staff-payments-page .staff-table th:nth-child(8),
+.staff-payments-page .staff-table td:nth-child(8) {
+    width: 6% !important;
+}
+
+
+/* ============================================================
+   THEAD
+   ============================================================ */
+
+.staff-payments-page .staff-table thead {
+    display: table-header-group !important;
+}
+
+.staff-payments-page .staff-table thead tr {
+    display: table-row !important;
+
+    background: var(--staff-surface-2);
+}
+
+.staff-payments-page .staff-table thead th {
+    display: table-cell !important;
+
+    height: 44px !important;
+
+    padding: 0 12px !important;
+
+    background: var(--staff-surface-2) !important;
+
+    border-bottom: 1px solid var(--staff-border) !important;
+
+    color: var(--staff-muted) !important;
+
+    font-size: 9px !important;
+    font-weight: 750 !important;
+
+    letter-spacing: .07em;
+
+    text-align: left;
+
+    text-transform: uppercase;
+
+    vertical-align: middle !important;
+
+    white-space: nowrap;
+}
+
+.staff-payments-page .staff-table thead th:first-child {
+    padding-left: 24px !important;
+}
+
+.staff-payments-page .staff-table thead th:last-child {
+    padding-right: 24px !important;
+
+    text-align: right;
+}
+
+
+/* ============================================================
+   TBODY
+   ============================================================ */
+
+.staff-payments-page .staff-table tbody {
+    display: table-row-group !important;
+}
+
+.staff-payments-page .staff-table tbody tr {
+    display: table-row !important;
+}
+
+.staff-payments-page .staff-table tbody td {
+    display: table-cell !important;
+
+    height: 68px !important;
+
+    padding: 10px 12px !important;
+
+    background: var(--staff-surface);
+
+    border-bottom: 1px solid var(--staff-border);
+
+    color: var(--staff-text);
+
+    font-size: 11px;
+
+    vertical-align: middle !important;
+
+    white-space: nowrap;
+}
+
+.staff-payments-page .staff-table tbody tr.staff-payment-row:hover td {
+    background: var(--staff-surface-2);
+}
+
+.staff-payments-page .staff-table tbody td:first-child {
+    padding-left: 24px !important;
+}
+
+.staff-payments-page .staff-table tbody td:last-child {
+    padding-right: 24px !important;
+
+    text-align: right;
+}
+
+
+/* ============================================================
+   PAYMENT REFERENCE
+   ============================================================ */
+
+.staff-payments-page .staff-payment-reference {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 3px;
+
+    width: 195px;
+
+    min-width: 0;
+}
+
+.staff-payments-page .staff-payment-reference strong {
+    display: block;
+
+    width: 195px;
+
+    overflow: hidden;
+
+    color: var(--staff-text);
+
+    font-size: 11px;
+    font-weight: 700;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.staff-payments-page .staff-payment-reference small {
+    color: var(--staff-muted);
+
+    font-size: 9px;
+}
+
+
+/* ============================================================
+   CUSTOMER
+   ============================================================ */
+
+.staff-payments-page .staff-payment-customer {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 3px;
+
+    width: 165px;
+
+    min-width: 0;
+}
+
+.staff-payments-page .staff-payment-customer strong,
+.staff-payments-page .staff-payment-customer small {
+    display: block;
+
+    width: 165px;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.staff-payments-page .staff-payment-customer strong {
+    color: var(--staff-text);
+
+    font-size: 11px;
+    font-weight: 650;
+}
+
+.staff-payments-page .staff-payment-customer small {
+    color: var(--staff-muted);
+
+    font-size: 9px;
+}
+
+
+/* ============================================================
+   BOOKING
+   ============================================================ */
+
+.staff-payments-page .staff-reference-text {
+    display: block;
+
+    width: 120px;
+
+    overflow: hidden;
+
+    color: var(--staff-text);
+
+    font-size: 10px;
+    font-weight: 650;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/* ============================================================
+   AMOUNT
+   ============================================================ */
+
+.staff-payments-page .staff-payment-amount {
+    color: var(--staff-text);
+
+    font-size: 11px;
+    font-weight: 750;
+
+    white-space: nowrap;
+}
+
+
+/* ============================================================
+   PROVIDER
+   ============================================================ */
+
+.staff-payments-page .staff-payment-provider {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    color: var(--staff-text);
+
+    font-size: 10px;
+    font-weight: 650;
+
+    white-space: nowrap;
+}
+
+.staff-payments-page .staff-payment-provider i {
+    color: var(--staff-muted);
+
+    font-size: 12px;
+}
+
+
+/* ============================================================
+   STATUS
+   ============================================================ */
+
+.staff-payments-page .staff-status-badge {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    min-height: 25px;
+
+    padding: 4px 8px;
+
+    border: 1px solid transparent;
+
+    border-radius: 999px;
+
+    font-size: 9px;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+.staff-payments-page .staff-status-badge i {
+    font-size: 9px;
+}
+
+.staff-payments-page .staff-status-success {
+    background: rgba(25, 135, 84, .10);
+    border-color: rgba(25, 135, 84, .22);
+    color: #42d392;
+}
+
+.staff-payments-page .staff-status-warning {
+    background: rgba(255, 193, 7, .09);
+    border-color: rgba(255, 193, 7, .22);
+    color: #ffc107;
+}
+
+.staff-payments-page .staff-status-danger {
+    background: rgba(220, 53, 69, .10);
+    border-color: rgba(220, 53, 69, .22);
+    color: #ff6b7a;
+}
+
+.staff-payments-page .staff-status-info {
+    background: rgba(22, 131, 255, .10);
+    border-color: rgba(22, 131, 255, .22);
+    color: #55a8ff;
+}
+
+.staff-payments-page .staff-status-muted {
+    background: var(--staff-surface-3);
+    border-color: var(--staff-border);
+    color: var(--staff-muted);
+}
+
+
+/* ============================================================
+   DATE
+   ============================================================ */
+
+.staff-payments-page .staff-payment-date {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 2px;
+
+    width: 115px;
+}
+
+.staff-payments-page .staff-payment-date strong {
+    color: var(--staff-text);
+
+    font-size: 10px;
+    font-weight: 650;
+
+    white-space: nowrap;
+}
+
+.staff-payments-page .staff-payment-date small {
+    color: var(--staff-muted);
+
+    font-size: 9px;
+
+    white-space: nowrap;
+}
+
+
+/* ============================================================
+   EYE BUTTON
+   ============================================================ */
+
+.staff-payments-page .staff-payment-details-btn {
+    width: 34px;
+    height: 34px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 1px solid var(--staff-border);
+    border-radius: 8px;
+
+    background: var(--staff-surface);
+
+    color: var(--staff-muted);
+
+    cursor: pointer;
+
+    transition:
+        background .15s ease,
+        border-color .15s ease,
+        color .15s ease;
+}
+
+.staff-payments-page .staff-payment-details-btn:hover,
+.staff-payments-page .staff-payment-details-btn.is-open {
+    border-color: rgba(229, 9, 20, .35);
+
+    background: rgba(229, 9, 20, .08);
+
+    color: var(--staff-red);
+}
+
+.staff-payments-page .staff-payment-details-btn i {
+    font-size: 14px;
+}
+
+
+/* ============================================================
+   DETAILS ROW
+   ============================================================ */
+
+.staff-payments-page .staff-payment-details-row {
+    display: table-row !important;
+
+    background: var(--staff-surface-2);
+}
+
+.staff-payments-page .staff-payment-details-row > td {
+    display: table-cell !important;
+
+    height: auto !important;
+
+    padding: 0 !important;
+
+    border: 0 !important;
+
+    background: var(--staff-surface-2) !important;
+}
+
+
+/* ============================================================
+   DETAILS PANEL
+   ============================================================ */
+
+.staff-payments-page .staff-payment-details {
+    width: 100%;
+
+    padding: 24px;
+
+    border-top: 1px solid var(--staff-border);
+
+    background: var(--staff-surface-2);
+
+    box-sizing: border-box;
+}
+
+
+/* ============================================================
+   DETAILS HEADER
+   ============================================================ */
+
+.staff-payments-page .staff-payment-details-header {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding-bottom: 18px;
+
+    border-bottom: 1px solid var(--staff-border);
+}
+
+.staff-payments-page .staff-payment-details-header h3 {
+    margin: 5px 0 0;
+
+    max-width: 700px;
+
+    overflow: hidden;
+
+    color: var(--staff-text);
+
+    font-size: 14px;
+    font-weight: 700;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.staff-payments-page .staff-payment-detail-amount {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: flex-end;
+
+    gap: 3px;
+
+    flex-shrink: 0;
+}
+
+.staff-payments-page .staff-payment-detail-amount span {
+    color: var(--staff-muted);
+
+    font-size: 8px;
+
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.staff-payments-page .staff-payment-detail-amount strong {
+    color: var(--staff-text);
+
+    font-size: 17px;
+    font-weight: 750;
+}
+
+
+/* ============================================================
+   DETAILS GRID
+   ============================================================ */
+
+.staff-payments-page .staff-payment-details-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 1px;
+
+    margin-top: 18px;
+
+    overflow: hidden;
+
+    border: 1px solid var(--staff-border);
+    border-radius: 9px;
+
+    background: var(--staff-border);
+}
+
+.staff-payments-page .staff-payment-details-grid > div {
+    min-width: 0;
+
+    padding: 14px 15px;
+
+    background: var(--staff-surface);
+}
+
+.staff-payments-page .staff-payment-details-grid > div > span {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: var(--staff-muted);
+
+    font-size: 8px;
+    font-weight: 700;
+
+    letter-spacing: .07em;
+    text-transform: uppercase;
+}
+
+.staff-payments-page .staff-payment-details-grid > div > strong {
+    display: block;
+
+    overflow: hidden;
+
+    color: var(--staff-text);
+
+    font-size: 10px;
+    font-weight: 650;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/* ============================================================
+   REFUND
+   ============================================================ */
+
+.staff-payments-page .staff-payment-refund-section {
+    margin-top: 20px;
+
+    padding: 20px;
+
+    border: 1px solid var(--staff-border);
+    border-radius: 10px;
+
+    background: var(--staff-surface);
+}
+
+.staff-payments-page .staff-payment-refund-header {
+    display: flex;
+
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding-bottom: 16px;
+
+    border-bottom: 1px solid var(--staff-border);
+}
+
+.staff-payments-page .staff-payment-refund-header h3 {
+    margin: 5px 0 0;
+
+    color: var(--staff-text);
+
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.staff-payments-page .staff-refund-details-grid {
+    margin-top: 16px;
+}
+
+
+/* ============================================================
+   REFUND NOTE
+   ============================================================ */
+
+.staff-payments-page .staff-payment-refund-note {
+    margin-top: 15px;
+
+    padding: 12px 14px;
+
+    border-left: 3px solid var(--staff-blue);
+    border-radius: 5px;
+
+    background: rgba(22, 131, 255, .06);
+}
+
+.staff-payments-page .staff-payment-refund-note span {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: var(--staff-muted);
+
+    font-size: 8px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+}
+
+.staff-payments-page .staff-payment-refund-note p {
+    margin: 0;
+
+    color: var(--staff-text);
+
+    font-size: 10px;
+
+    line-height: 1.5;
+}
+
+
+/* ============================================================
+   REFUND ERROR
+   ============================================================ */
+
+.staff-payments-page .staff-payment-refund-error {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 10px;
+
+    margin-top: 15px;
+
+    padding: 13px 14px;
+
+    border: 1px solid rgba(220, 53, 69, .18);
+    border-radius: 7px;
+
+    background: rgba(220, 53, 69, .07);
+}
+
+.staff-payments-page .staff-payment-refund-error > i {
+    color: #ff6b7a;
+
+    font-size: 14px;
+}
+
+.staff-payments-page .staff-payment-refund-error strong {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: #ff6b7a;
+
+    font-size: 10px;
+}
+
+.staff-payments-page .staff-payment-refund-error p {
+    margin: 0;
+
+    color: var(--staff-muted);
+
+    font-size: 10px;
+
+    line-height: 1.5;
+}
+
+
+/* ============================================================
+   REFUND ACTION
+   ============================================================ */
+
+.staff-payments-page .staff-payment-refund-actions {
+    display: flex;
+
+    justify-content: flex-end;
+
+    margin-top: 16px;
+}
+
+
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+
+.staff-payments-page .staff-empty-state {
+    display: flex;
+
+    align-items: center;
+    flex-direction: column;
+
+    padding: 65px 25px;
+
+    text-align: center;
+}
+
+.staff-payments-page .staff-empty-icon {
+    width: 54px;
+    height: 54px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 15px;
+
+    border: 1px solid var(--staff-border);
+    border-radius: 13px;
+
+    background: var(--staff-surface-2);
+
+    color: var(--staff-muted);
+
+    font-size: 21px;
+}
+
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 900px) {
+
+    .staff-payments-page .staff-payment-filter-form {
+        grid-template-columns:
+            1fr 1fr;
+    }
+
+    .staff-payments-page .staff-payment-filter-form .staff-search {
+        grid-column: 1 / -1;
+    }
+
+    .staff-payments-page .staff-payment-filter-form .staff-primary-btn,
+    .staff-payments-page .staff-payment-filter-form .staff-outline-btn {
+        width: 100%;
+    }
+
+    .staff-payments-page .staff-payment-details-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+@media (max-width: 575px) {
+
+    .staff-payments-page .staff-payment-filter-form {
+        grid-template-columns: 1fr;
+    }
+
+    .staff-payments-page .staff-payment-filter-form .staff-search {
+        grid-column: auto;
+    }
+
+    .staff-payments-page .staff-payment-details {
+        padding: 16px;
+    }
+
+    .staff-payments-page .staff-payment-details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .staff-payments-page .staff-list-card-header {
+        align-items: flex-start;
+        flex-direction: column;
+
+        padding: 18px;
+    }
+
+}

@@ -1,16 +1,17 @@
 from django.contrib import messages
+from django.core.exceptions import ValidationError
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import ProtectedError, Q, Prefetch, Count, Sum
 from support.forms import SupportReplyForm
 from django.contrib.auth.models import User
-
+from tickets.models import Ticket
 from .decorators import staff_required
 
 from movies.models import Movie
 from movies.forms import StaffMovieForm
 from cinemas.models import Cinema,Screen,Seat
 from cinemas.forms import CinemaForm,ScreenForm,SeatForm,SeatGenerationForm
-from bookings.models import Booking, Payment
+from bookings.models import Booking, Payment, Refund
 from datetime import datetime, timedelta
 from django.utils import timezone
 from bookings.services import expire_booking
@@ -28,21 +29,260 @@ from support.models import SupportTicket, SupportMessage
 
 @staff_required
 def dashboard(request):
+
+    # ============================================================
+    # BASIC STATISTICS
+    # ============================================================
+
     movie_count = Movie.objects.count()
 
     cinema_count = Cinema.objects.count()
 
+    customer_count = User.objects.filter(
+        is_staff=False
+    ).count()
+
     booking_count = Booking.objects.count()
+
+
+    # ============================================================
+    # BOOKING STATISTICS
+    # ============================================================
+
+    confirmed_booking_count = Booking.objects.filter(
+        status=Booking.Status.CONFIRMED
+    ).count()
+
+    held_booking_count = Booking.objects.filter(
+        status=Booking.Status.HELD
+    ).count()
+
+    cancelled_booking_count = Booking.objects.filter(
+        status=Booking.Status.CANCELLED
+    ).count()
+
+    expired_booking_count = Booking.objects.filter(
+        status=Booking.Status.EXPIRED
+    ).count()
+
+
+    # ============================================================
+    # PAYMENT STATISTICS
+    # ============================================================
+
+    pending_payment_count = Payment.objects.filter(
+        status=Payment.Status.PENDING
+    ).count()
+
+    successful_payment_count = Payment.objects.filter(
+        status=Payment.Status.SUCCESSFUL
+    ).count()
+
+    failed_payment_count = Payment.objects.filter(
+        status=Payment.Status.FAILED
+    ).count()
+
+    refunded_payment_count = Payment.objects.filter(
+        status=Payment.Status.REFUNDED
+    ).count()
+
+    revenue = (
+        Payment.objects
+        .filter(
+            status=Payment.Status.SUCCESSFUL
+        )
+        .aggregate(
+            total=Sum("amount")
+        )
+        ["total"]
+        or 0
+    )
+
+
+    # ============================================================
+    # SUPPORT STATISTICS
+    # ============================================================
 
     open_support_count = SupportTicket.objects.filter(
         status=SupportTicket.Status.OPEN
     ).count()
 
+    in_progress_support_count = SupportTicket.objects.filter(
+        status=SupportTicket.Status.IN_PROGRESS
+    ).count()
+
+    waiting_support_count = SupportTicket.objects.filter(
+        status=SupportTicket.Status.WAITING_FOR_CUSTOMER
+    ).count()
+
+
+    # ============================================================
+    # TICKET STATISTICS
+    # ============================================================
+
+    ticket_count = Ticket.objects.count()
+
+    valid_ticket_count = Ticket.objects.filter(
+        is_valid=True,
+        used_at__isnull=True,
+        booking__status=Booking.Status.CONFIRMED,
+    ).count()
+
+    used_ticket_count = Ticket.objects.filter(
+        used_at__isnull=False
+    ).count()
+
+    invalid_ticket_count = Ticket.objects.filter(
+        is_valid=False
+    ).count()
+
+
+    # ============================================================
+    # CURRENT TIME
+    # ============================================================
+
+    now = timezone.localtime()
+
+
+    # ============================================================
+    # UPCOMING SHOWTIMES
+    # ============================================================
+
+    upcoming_showtimes = (
+        Showtime.objects
+        .select_related(
+            "movie",
+            "screen",
+            "screen__cinema",
+        )
+        .filter(
+            status=Showtime.Status.SCHEDULED,
+            show_date__gte=now.date(),
+        )
+        .order_by(
+            "show_date",
+            "start_time",
+        )[:8]
+    )
+
+
+    # ============================================================
+    # RECENT BOOKINGS
+    # ============================================================
+
+    recent_bookings = (
+        Booking.objects
+        .select_related(
+            "user",
+            "showtime",
+            "showtime__movie",
+            "showtime__screen",
+            "showtime__screen__cinema",
+        )
+        .order_by(
+            "-created_at"
+        )[:8]
+    )
+
+
+    # ============================================================
+    # RECENT PAYMENTS
+    # ============================================================
+
+    recent_payments = (
+        Payment.objects
+        .select_related(
+            "booking",
+            "booking__user",
+        )
+        .order_by(
+            "-created_at"
+        )[:8]
+    )
+
+
+    # ============================================================
+    # SUPPORT REQUIRING ATTENTION
+    # ============================================================
+
+    support_tickets = (
+        SupportTicket.objects
+        .select_related(
+            "customer",
+            "booking",
+        )
+        .exclude(
+            status__in=[
+                SupportTicket.Status.RESOLVED,
+                SupportTicket.Status.CLOSED,
+            ]
+        )
+        .order_by(
+            "-created_at"
+        )[:8]
+    )
+
+
+    # ============================================================
+    # RECENT DIGITAL TICKETS
+    # ============================================================
+
+    recent_tickets = (
+        Ticket.objects
+        .select_related(
+            "booking",
+            "booking__user",
+            "booking__showtime",
+            "booking__showtime__movie",
+        )
+        .order_by(
+            "-issued_at"
+        )[:8]
+    )
+
+
+    # ============================================================
+    # DASHBOARD CONTEXT
+    # ============================================================
+
     context = {
+
+        # Basic
         "movie_count": movie_count,
         "cinema_count": cinema_count,
+        "customer_count": customer_count,
         "booking_count": booking_count,
+
+        # Bookings
+        "confirmed_booking_count": confirmed_booking_count,
+        "held_booking_count": held_booking_count,
+        "cancelled_booking_count": cancelled_booking_count,
+        "expired_booking_count": expired_booking_count,
+
+        # Payments
+        "pending_payment_count": pending_payment_count,
+        "successful_payment_count": successful_payment_count,
+        "failed_payment_count": failed_payment_count,
+        "refunded_payment_count": refunded_payment_count,
+        "revenue": revenue,
+
+        # Support
         "open_support_count": open_support_count,
+        "in_progress_support_count": in_progress_support_count,
+        "waiting_support_count": waiting_support_count,
+
+        # Tickets
+        "ticket_count": ticket_count,
+        "valid_ticket_count": valid_ticket_count,
+        "used_ticket_count": used_ticket_count,
+        "invalid_ticket_count": invalid_ticket_count,
+
+        # Lists
+        "upcoming_showtimes": upcoming_showtimes,
+        "recent_bookings": recent_bookings,
+        "recent_payments": recent_payments,
+        "support_tickets": support_tickets,
+        "recent_tickets": recent_tickets,
     }
 
 
@@ -51,7 +291,6 @@ def dashboard(request):
         "staff/dashboard.html",
         context,
     )
-
 # ============================================================
 # MOVIES
 # ============================================================
@@ -2832,6 +3071,7 @@ def payments(request):
             "booking__showtime__movie",
             "booking__showtime__screen",
             "booking__showtime__screen__cinema",
+            "refund",
         )
         .order_by("-created_at")
     )
@@ -2956,4 +3196,112 @@ def payments(request):
             "payment_statuses": Payment.Status.choices,
             "payment_providers": Payment.Provider.choices,
         },
+    )
+
+# ============================================================
+# CHECK REFUND STATUS
+# ============================================================
+
+@staff_required
+def check_refund_status(request, payment_id):
+    """
+    Check the current Paystack refund status and synchronize
+    the CineFlow refund/payment records.
+    """
+
+    if request.method != "POST":
+
+        return redirect(
+            "staff:payments"
+        )
+
+    payment = get_object_or_404(
+        Payment.objects.select_related(
+            "booking",
+            "refund",
+        ),
+        pk=payment_id,
+    )
+
+    # ========================================================
+    # 1. REFUND MUST EXIST
+    # ========================================================
+
+    try:
+
+        refund = payment.refund
+
+    except Refund.DoesNotExist:
+
+        messages.error(
+            request,
+            "No refund record exists for this payment.",
+        )
+
+        return redirect(
+            "staff:payments"
+        )
+
+    # ========================================================
+    # 2. UPDATE REFUND STATUS
+    # ========================================================
+
+    from bookings.services import update_refund_status
+
+    try:
+
+        refund = update_refund_status(
+            refund
+        )
+
+    except ValidationError as exc:
+
+        messages.error(
+            request,
+            exc.messages[0],
+        )
+
+        return redirect(
+            "staff:payments"
+        )
+
+    # ========================================================
+    # 3. RESULT MESSAGE
+    # ========================================================
+
+    if refund.status == Refund.Status.PROCESSED:
+
+        messages.success(
+            request,
+            (
+                "Refund has been processed successfully. "
+                "The payment is now marked as refunded."
+            ),
+        )
+
+    elif refund.status in [
+        Refund.Status.PENDING,
+        Refund.Status.PROCESSING,
+    ]:
+
+        messages.info(
+            request,
+            (
+                f"Refund is currently "
+                f"{refund.get_status_display().lower()}."
+            ),
+        )
+
+    elif refund.status == Refund.Status.FAILED:
+
+        messages.error(
+            request,
+            (
+                "The refund has failed. "
+                f"{refund.failure_reason}"
+            ),
+        )
+
+    return redirect(
+        "staff:payments"
     )

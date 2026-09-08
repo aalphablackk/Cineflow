@@ -1,0 +1,85 @@
+CINEFLOW
+Your booking has been cancelled
+
+Hello {{ customer_name }},
+
+Your CineFlow booking has been successfully cancelled.
+
+BOOKING DETAILS
+
+Booking Reference:
+{{ booking.booking_reference }}
+
+Movie:
+{{ movie.title }}
+
+Cinema:
+{{ cinema.name }}
+
+Screen:
+{{ screen.name }}
+
+Date:
+{{ showtime.show_date|date:"l, d F Y" }}
+
+Time:
+{{ showtime.start_time|time:"g:i A" }}
+
+Ticket Quantity:
+{{ booking.ticket_quantity }}
+
+Amount Paid:
+₦{{ booking.total_amount|floatformat:2 }}
+
+
+REFUND INFORMATION
+
+{% if refund %}
+
+Refund Amount:
+₦{{ refund.amount|floatformat:2 }}
+
+Refund Status:
+{{ refund_status }}
+
+{% if refund.refund_reference %}
+Refund Reference:
+{{ refund.refund_reference }}
+{% endif %}
+
+{% if refund.expected_at %}
+Expected Date:
+{{ refund.expected_at|date:"d F Y" }}
+{% endif %}
+
+{% if refund.status == "processed" %}
+
+Your refund has been processed by Paystack.
+Please allow additional time for the funds to appear in your account.
+
+{% elif refund.status == "pending" or refund.status == "processing" %}
+
+Your refund is currently being processed.
+We will continue to monitor its progress.
+
+{% elif refund.status == "failed" %}
+
+We were unable to complete the refund automatically.
+Our team will review the issue and assist you.
+
+{% endif %}
+
+{% else %}
+
+Your booking has been cancelled successfully.
+Refund information is currently being reviewed.
+
+{% endif %}
+
+
+If you did not request this cancellation,
+please contact CineFlow support.
+
+Thank you for choosing CineFlow.
+
+© 2026 CineFlow. All rights reserved.

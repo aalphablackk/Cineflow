@@ -225,6 +225,11 @@ urlpatterns = [
         views.screens_overview,
         name="screens_overview",
     ),
+    path(
+    "payments/<int:payment_id>/refund/status/",
+    views.check_refund_status,
+    name="check_refund_status",
+    ),
 ]
 
 

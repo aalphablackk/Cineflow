@@ -1,0 +1,365 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Digital Ticket | CineFlow
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-12 col-lg-9 col-xl-8">
+
+            <!-- ==================================================
+                 TICKET
+                 ================================================== -->
+
+            <div class="cine-ticket">
+
+                <!-- Ticket Header -->
+
+                <div class="cine-ticket-header">
+
+                    <div>
+                        <div class="cine-ticket-brand">
+                            <i class="bi bi-film me-2"></i>
+                            CINEFLOW
+                        </div>
+
+                        <div class="cine-ticket-subtitle">
+                            DIGITAL MOVIE TICKET
+                        </div>
+                    </div>
+
+                    <div class="cine-ticket-status">
+
+                        {% if ticket.is_valid %}
+
+                            <span class="ticket-status valid">
+                                <i class="bi bi-check-circle-fill me-1"></i>
+                                VALID
+                            </span>
+
+                        {% else %}
+
+                            <span class="ticket-status invalid">
+                                <i class="bi bi-x-circle-fill me-1"></i>
+                                INVALID
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- ==================================================
+                     MOVIE SECTION
+                     ================================================== -->
+
+                <div class="cine-ticket-movie">
+
+                    <div class="cine-ticket-movie-icon">
+                        <i class="bi bi-camera-reels"></i>
+                    </div>
+
+                    <div>
+
+                        <div class="ticket-label">
+                            MOVIE
+                        </div>
+
+                        <h1>
+                            {{ ticket.booking.showtime.movie.title }}
+                        </h1>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ==================================================
+                     SHOWTIME INFORMATION
+                     ================================================== -->
+
+                <div class="cine-ticket-details">
+
+                    <div class="ticket-detail">
+
+                        <span class="ticket-label">
+                            CINEMA
+                        </span>
+
+                        <strong>
+                            {{ ticket.booking.showtime.screen.cinema.name }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="ticket-detail">
+
+                        <span class="ticket-label">
+                            SCREEN
+                        </span>
+
+                        <strong>
+                            {{ ticket.booking.showtime.screen.name }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="ticket-detail">
+
+                        <span class="ticket-label">
+                            DATE
+                        </span>
+
+                        <strong>
+                            {{ ticket.booking.showtime.show_date|date:"D, d M Y" }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="ticket-detail">
+
+                        <span class="ticket-label">
+                            TIME
+                        </span>
+
+                        <strong>
+                            {{ ticket.booking.showtime.start_time|time:"g:i A" }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ==================================================
+                     PERFORATION
+                     ================================================== -->
+
+                <div class="ticket-perforation">
+
+                    <span></span>
+
+                </div>
+
+
+                <!-- ==================================================
+                     TICKET BODY
+                     ================================================== -->
+
+                <div class="cine-ticket-body">
+
+                    <!-- Seats -->
+
+                    <div class="ticket-section">
+
+                        <div class="ticket-label">
+                            {% if ticket.booking.booking_seats.all %}
+                                SEATS
+                            {% else %}
+                                TICKETS
+                            {% endif %}
+                        </div>
+
+
+                        {% if ticket.booking.booking_seats.all %}
+
+                            <div class="ticket-seats">
+
+                                {% for booking_seat in ticket.booking.booking_seats.all %}
+
+                                    <span class="ticket-seat">
+                                        {{ booking_seat.seat.label }}
+                                    </span>
+
+                                {% endfor %}
+
+                            </div>
+
+                        {% else %}
+
+                            <div class="ticket-quantity">
+
+                                <strong>
+                                    {{ ticket.booking.ticket_quantity }}
+                                </strong>
+
+                                ticket{{ ticket.booking.ticket_quantity|pluralize }}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- Payment / Booking -->
+
+                    <div class="ticket-info-grid">
+
+                        <div>
+
+                            <span class="ticket-label">
+                                BOOKING REFERENCE
+                            </span>
+
+                            <strong class="ticket-mono">
+                                {{ ticket.booking.booking_reference }}
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span class="ticket-label">
+                                AMOUNT PAID
+                            </span>
+
+                            <strong>
+                                ₦{{ ticket.booking.total_amount|floatformat:2 }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Ticket Number -->
+
+                    <div class="ticket-number-box">
+
+                        <span class="ticket-label">
+                            TICKET NUMBER
+                        </span>
+
+                        <strong>
+                            {{ ticket.ticket_number }}
+                        </strong>
+
+                    </div>
+
+
+                    <!-- Barcode-style visual -->
+
+                    <div class="ticket-code-area">
+
+                        <div class="ticket-qr-section">
+
+                            <div class="ticket-qr-wrapper">
+
+                                <img
+                                    src="data:image/png;base64,{{ qr_code }}"
+                                    alt="Ticket QR Code"
+                                    class="ticket-qr-code"
+                                >
+
+                            </div>
+
+                            <div class="ticket-qr-info">
+
+                                <span class="ticket-qr-label">
+                                    Scan to verify
+                                </span>
+                                <br>
+                                <small>
+                                    Present this QR code at the cinema entrance.
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                        <small>
+                            {{ ticket.ticket_code }}
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ==================================================
+                     TICKET STUB
+                     ================================================== -->
+
+                <div class="cine-ticket-stub">
+
+                    <div class="stub-content">
+
+                        <span class="ticket-label">
+                            ADMISSION
+                        </span>
+
+                        <strong>
+                            {{ ticket.booking.showtime.movie.title }}
+                        </strong>
+
+                        <small>
+                            {{ ticket.booking.showtime.start_time|time:"g:i A" }}
+                            ·
+                            {{ ticket.booking.showtime.screen.name }}
+                        </small>
+
+                    </div>
+
+
+                    <div class="stub-icon">
+
+                        <i class="bi bi-ticket-perforated"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==================================================
+                 ACTIONS
+                 ================================================== -->
+
+            <div class="ticket-actions no-print">
+
+                <a
+                    href="{% url 'bookings:booking_detail' ticket.booking.booking_reference %}"
+                    class="btn btn-outline-secondary"
+                >
+                    <i class="bi bi-arrow-left me-1"></i>
+                    Booking Details
+                </a>
+
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    onclick="window.print()"
+                >
+                    <i class="bi bi-printer me-1"></i>
+                    Print Ticket
+                </button>
+
+            </div>
+
+
+            <p class="ticket-help no-print">
+                <i class="bi bi-info-circle me-1"></i>
+                Present this ticket at the cinema entrance.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

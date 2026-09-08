@@ -1,0 +1,522 @@
+{% extends "staff/base.html" %}
+
+{% block staff_title %}
+    Verify Ticket | CineFlow
+{% endblock %}
+
+
+{% block staff_content %}
+
+<section class="ticket-verification-page">
+
+    <div class="ticket-verification-container">
+
+
+        <!-- =====================================================
+             HEADER
+        ====================================================== -->
+
+        <div class="staff-page-header">
+
+            <div>
+
+                <span class="section-label">
+                    ADMISSION
+                </span>
+
+                <h1>
+                    Ticket Verification
+                </h1>
+
+                <p>
+                    Scan a customer's QR code or enter their ticket code manually.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             SCANNER
+        ====================================================== -->
+
+        <div class="ticket-verification-grid">
+
+
+            <div class="ticket-scanner-card">
+
+                <div class="ticket-verification-card-header">
+
+                    <div>
+
+                        <span class="section-label">
+                            QR SCANNER
+                        </span>
+
+                        <h2>
+                            Scan Ticket
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div class="ticket-scanner-body">
+
+                    <div
+                        id="ticket-qr-reader"
+                        class="ticket-qr-reader"
+                    ></div>
+
+
+                    <div
+                        id="ticket-scanner-message"
+                        class="ticket-scanner-message"
+                    >
+                        Camera scanner ready.
+                    </div>
+
+
+                    <button
+                        type="button"
+                        id="start-scanner"
+                        class="btn btn-primary w-100"
+                    >
+                        <i class="bi bi-camera me-1"></i>
+                        Start Camera
+                    </button>
+
+
+                    <button
+                        type="button"
+                        id="stop-scanner"
+                        class="btn btn-outline-secondary w-100 mt-2"
+                        style="display: none;"
+                    >
+                        <i class="bi bi-stop-circle me-1"></i>
+                        Stop Camera
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 MANUAL VERIFICATION
+            ================================================== -->
+
+            <div class="ticket-manual-card">
+
+                <div class="ticket-verification-card-header">
+
+                    <div>
+
+                        <span class="section-label">
+                            MANUAL
+                        </span>
+
+                        <h2>
+                            Enter Ticket Code
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div class="ticket-manual-body">
+
+                    <form
+                        method="post"
+                        id="ticket-verification-form"
+                    >
+
+                        {% csrf_token %}
+
+
+                        <div class="mb-3">
+
+                            <label
+                                for="{{ form.ticket_code.id_for_label }}"
+                                class="form-label"
+                            >
+                                Ticket Code
+                            </label>
+
+                            {{ form.ticket_code }}
+
+                        </div>
+
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary w-100"
+                        >
+                            <i class="bi bi-search me-1"></i>
+                            Verify Ticket
+                        </button>
+
+                    </form>
+
+
+                    {% if verification_error %}
+
+                        <div class="alert alert-danger mt-3">
+
+                            <i class="bi bi-exclamation-circle me-1"></i>
+
+                            {{ verification_error }}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- =====================================================
+             VERIFIED TICKET
+        ====================================================== -->
+
+        {% if ticket %}
+
+            <div class="ticket-verification-result">
+
+                <div class="ticket-result-header">
+
+                    <div class="ticket-result-icon">
+
+                        <i class="bi bi-check-circle"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span class="section-label">
+                            VALID TICKET
+                        </span>
+
+                        <h2>
+                            Ticket Verified
+                        </h2>
+
+                        <p>
+                            This ticket is valid and can be admitted.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="ticket-result-grid">
+
+
+                    <div>
+                        <span>Ticket Number</span>
+                        <strong>
+                            {{ ticket.ticket_number }}
+                        </strong>
+                    </div>
+
+
+                    <div>
+                        <span>Booking Reference</span>
+                        <strong>
+                            {{ ticket.booking.booking_reference }}
+                        </strong>
+                    </div>
+
+
+                    <div>
+                        <span>Customer</span>
+                        <strong>
+                            {{ ticket.booking.user.get_full_name|default:ticket.booking.user.username }}
+                        </strong>
+                    </div>
+
+
+                    <div>
+                        <span>Movie</span>
+                        <strong>
+                            {{ ticket.booking.showtime.movie.title }}
+                        </strong>
+                    </div>
+
+
+                    <div>
+                        <span>Cinema</span>
+                        <strong>
+                            {{ ticket.booking.showtime.screen.cinema.name }}
+                        </strong>
+                    </div>
+
+
+                    <div>
+                        <span>Screen</span>
+                        <strong>
+                            {{ ticket.booking.showtime.screen.name }}
+                        </strong>
+                    </div>
+
+
+                    <div>
+                        <span>Date</span>
+                        <strong>
+                            {{ ticket.booking.showtime.show_date }}
+                        </strong>
+                    </div>
+
+
+                    <div>
+                        <span>Time</span>
+                        <strong>
+                            {{ ticket.booking.showtime.start_time|time:"g:i A" }}
+                        </strong>
+                    </div>
+
+
+                </div>
+
+
+                <div class="ticket-admit-action">
+
+                    <form
+                        method="post"
+                        action="{% url 'tickets:use_ticket' ticket.ticket_code %}"
+                    >
+
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="btn btn-success btn-lg w-100"
+                            onclick="return confirm('Admit this customer? This ticket will be marked as used and cannot be used again.')"
+                        >
+
+                            <i class="bi bi-door-open me-1"></i>
+
+                            Admit Customer
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+
+    </div>
+
+</section>
+
+
+<!-- ============================================================
+     QR SCANNER LIBRARY
+     ============================================================ -->
+
+<script src="https://unpkg.com/html5-qrcode"></script>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    let scanner = null;
+
+    let scannerRunning = false;
+
+
+    const startButton = document.getElementById(
+        "start-scanner"
+    );
+
+    const stopButton = document.getElementById(
+        "stop-scanner"
+    );
+
+    const message = document.getElementById(
+        "ticket-scanner-message"
+    );
+
+    const form = document.getElementById(
+        "ticket-verification-form"
+    );
+
+    const input = document.getElementById(
+        "{{ form.ticket_code.id_for_label }}"
+    );
+
+
+    function setMessage(text) {
+
+        if (message) {
+            message.textContent = text;
+        }
+
+    }
+
+
+    function stopScanner() {
+
+        if (!scanner || !scannerRunning) {
+            return;
+        }
+
+        scanner.stop()
+            .then(function () {
+
+                scannerRunning = false;
+
+                startButton.style.display = "block";
+
+                stopButton.style.display = "none";
+
+                setMessage(
+                    "Camera scanner stopped."
+                );
+
+            })
+            .catch(function () {
+
+                scannerRunning = false;
+
+                startButton.style.display = "block";
+
+                stopButton.style.display = "none";
+
+            });
+
+    }
+
+
+    function onScanSuccess(decodedText) {
+
+        if (!decodedText) {
+            return;
+        }
+
+
+        input.value = decodedText;
+
+
+        setMessage(
+            "QR code detected. Verifying ticket..."
+        );
+
+
+        stopScanner();
+
+
+        form.submit();
+
+    }
+
+
+    function onScanFailure(error) {
+
+        // Ignore normal frame-by-frame scanner failures.
+
+    }
+
+
+    startButton.addEventListener(
+        "click",
+        function () {
+
+            if (scannerRunning) {
+                return;
+            }
+
+
+            scanner = new Html5Qrcode(
+                "ticket-qr-reader"
+            );
+
+
+            scanner.start(
+
+                {
+                    facingMode: "environment"
+                },
+
+                {
+                    fps: 10,
+                    qrbox: {
+                        width: 250,
+                        height: 250
+                    }
+                },
+
+                onScanSuccess,
+
+                onScanFailure
+
+            )
+            .then(function () {
+
+                scannerRunning = true;
+
+                startButton.style.display = "none";
+
+                stopButton.style.display = "block";
+
+                setMessage(
+                    "Point the camera at the customer's QR code."
+                );
+
+            })
+            .catch(function (error) {
+
+                setMessage(
+                    "Unable to access the camera. Please allow camera access or enter the ticket code manually."
+                );
+
+                console.error(error);
+
+            });
+
+        }
+    );
+
+
+    stopButton.addEventListener(
+        "click",
+        function () {
+
+            stopScanner();
+
+        }
+    );
+
+
+    window.addEventListener(
+        "beforeunload",
+        function () {
+
+            if (scanner && scannerRunning) {
+
+                scanner.stop()
+                    .catch(function () {});
+
+            }
+
+        }
+    );
+
+});
+
+</script>
+
+{% endblock %}

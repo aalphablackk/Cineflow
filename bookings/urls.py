@@ -40,7 +40,11 @@ urlpatterns = [
     views.paystack_callback,
     name="paystack_callback",
     ),
-
+    path(
+    "payment/paystack/webhook/",
+    views.paystack_webhook,
+    name="paystack_webhook",
+    ),
     path(
         "payment/<str:payment_reference>/failed/",
         views.simulate_failed_payment,
@@ -56,5 +60,10 @@ urlpatterns = [
         views.booking_detail,
         name="booking_detail",
     ),
+    path(
+    "<str:booking_reference>/cancel/",
+    views.cancel_booking_view,
+    name="cancel_booking",
+),
 
 ]

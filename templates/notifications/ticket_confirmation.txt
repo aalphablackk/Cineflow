@@ -1,0 +1,46 @@
+CINEFLOW
+Your booking is confirmed
+
+Hello {{ customer_name }},
+
+Your CineFlow booking has been successfully confirmed.
+
+BOOKING DETAILS
+
+Booking Reference:
+{{ booking.booking_reference }}
+
+Movie:
+{{ movie.title }}
+
+Cinema:
+{{ cinema.name }}
+
+Screen:
+{{ screen.name }}
+
+Date:
+{{ showtime.show_date|date:"l, d F Y" }}
+
+Time:
+{{ showtime.start_time|time:"g:i A" }}
+
+Ticket Quantity:
+{{ booking.ticket_quantity }}
+
+Amount Paid:
+₦{{ booking.total_amount|floatformat:2 }}
+
+
+DIGITAL TICKET
+
+Ticket Number:
+{{ ticket.ticket_number }}
+
+Please present the QR code included in this email when you arrive at the cinema.
+
+Your ticket can only be used once.
+
+Thank you for choosing CineFlow.
+
+© 2026 CineFlow. All rights reserved.

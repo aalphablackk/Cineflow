@@ -14,7 +14,7 @@
 
 
         <!-- =====================================================
-             HEADER
+             PAGE HEADER
         ====================================================== -->
 
         <div class="staff-page-header">
@@ -44,6 +44,9 @@
 
         <div class="staff-stat-grid">
 
+
+            <!-- TRANSACTIONS -->
+
             <div class="staff-stat-card">
 
                 <div class="staff-stat-icon">
@@ -64,6 +67,8 @@
 
             </div>
 
+
+            <!-- SUCCESSFUL -->
 
             <div class="staff-stat-card">
 
@@ -86,6 +91,8 @@
             </div>
 
 
+            <!-- PENDING -->
+
             <div class="staff-stat-card">
 
                 <div class="staff-stat-icon">
@@ -107,6 +114,8 @@
             </div>
 
 
+            <!-- FAILED -->
+
             <div class="staff-stat-card">
 
                 <div class="staff-stat-icon">
@@ -127,11 +136,12 @@
 
             </div>
 
+
         </div>
 
 
         <!-- =====================================================
-             REVENUE
+             REVENUE SUMMARY
         ====================================================== -->
 
         <div class="staff-summary-card staff-payment-revenue-card">
@@ -151,6 +161,7 @@
                 </p>
 
             </div>
+
 
             <div class="staff-summary-icon">
 
@@ -172,6 +183,9 @@
                 class="staff-payment-filter-form"
             >
 
+
+                <!-- SEARCH -->
+
                 <div class="staff-search">
 
                     <i class="bi bi-search"></i>
@@ -181,10 +195,13 @@
                         name="search"
                         value="{{ search }}"
                         placeholder="Search payment, booking or customer..."
+                        autocomplete="off"
                     >
 
                 </div>
 
+
+                <!-- STATUS -->
 
                 <div class="staff-filter">
 
@@ -201,7 +218,9 @@
 
                             <option
                                 value="{{ value }}"
-                                {% if status == value %}selected{% endif %}
+                                {% if status == value %}
+                                    selected
+                                {% endif %}
                             >
                                 {{ label }}
                             </option>
@@ -212,6 +231,8 @@
 
                 </div>
 
+
+                <!-- PROVIDER -->
 
                 <div class="staff-filter">
 
@@ -228,7 +249,9 @@
 
                             <option
                                 value="{{ value }}"
-                                {% if provider == value %}selected{% endif %}
+                                {% if provider == value %}
+                                    selected
+                                {% endif %}
                             >
                                 {{ label }}
                             </option>
@@ -240,25 +263,31 @@
                 </div>
 
 
+                <!-- APPLY -->
+
                 <button
                     type="submit"
                     class="btn staff-primary-btn"
                 >
+
                     <i class="bi bi-funnel"></i>
+
                     Apply
+
                 </button>
 
 
-                {% if search or status or provider %}
+                <!-- CLEAR -->
 
-                    <a
-                        href="{% url 'staff:payments' %}"
-                        class="btn staff-outline-btn"
-                    >
-                        Clear
-                    </a>
+                <a
+                    href="{% url 'staff:payments' %}"
+                    class="btn staff-outline-btn"
+                >
 
-                {% endif %}
+                    Clear
+
+                </a>
+
 
             </form>
 
@@ -266,479 +295,954 @@
 
 
         <!-- =====================================================
-             PAYMENT TABLE
+             PAYMENTS TABLE
         ====================================================== -->
 
-        <div class="staff-management-card staff-payment-table-card">
+        <div class="staff-list-card">
 
-            <div class="staff-table-wrapper">
+            <div class="staff-list-card-header">
 
-                <table class="table staff-table">
+                <div>
 
-                    <thead>
+                    <span class="section-label">
+                        TRANSACTION HISTORY
+                    </span>
 
-                        <tr>
+                    <h2>
+                        Payment Transactions
+                    </h2>
 
-                            <th>
-                                Payment
-                            </th>
+                </div>
 
-                            <th>
-                                Booking
-                            </th>
-
-                            <th>
-                                Customer
-                            </th>
-
-                            <th>
-                                Amount
-                            </th>
-
-                            <th>
-                                Provider
-                            </th>
-
-                            <th>
-                                Status
-                            </th>
-
-                            <th>
-                                Date
-                            </th>
-
-                            <th>
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-
-                    <tbody>
-
-                        {% for payment in payments %}
-
-                            <tr>
-
-                                <td>
-
-                                    <strong>
-                                        {{ payment.payment_reference }}
-                                    </strong>
-
-                                </td>
-
-
-                                <td>
-
-                                    {{ payment.booking.booking_reference }}
-
-                                </td>
-
-
-                                <td>
-
-                                    <div class="staff-payment-customer">
-
-                                        <strong>
-
-                                            {% if payment.booking.user.get_full_name %}
-
-                                                {{ payment.booking.user.get_full_name }}
-
-                                            {% else %}
-
-                                                {{ payment.booking.user.username }}
-
-                                            {% endif %}
-
-                                        </strong>
-
-                                        <small>
-                                            {{ payment.booking.user.email }}
-                                        </small>
-
-                                    </div>
-
-                                </td>
-
-
-                                <td>
-
-                                    <strong>
-                                        ₦{{ payment.amount }}
-                                    </strong>
-
-                                </td>
-
-
-                                <td>
-
-                                    {{ payment.get_provider_display }}
-
-                                </td>
-
-
-                                <td>
-
-                                    {% if payment.status == "successful" %}
-
-                                        <span class="staff-status-badge success">
-                                            <i class="bi bi-check-circle-fill"></i>
-                                            Successful
-                                        </span>
-
-                                    {% elif payment.status == "pending" %}
-
-                                        <span class="staff-status-badge warning">
-                                            <i class="bi bi-clock-fill"></i>
-                                            Pending
-                                        </span>
-
-                                    {% elif payment.status == "failed" %}
-
-                                        <span class="staff-status-badge danger">
-                                            <i class="bi bi-x-circle-fill"></i>
-                                            Failed
-                                        </span>
-
-                                    {% elif payment.status == "cancelled" %}
-
-                                        <span class="staff-status-badge secondary">
-                                            Cancelled
-                                        </span>
-
-                                    {% elif payment.status == "refunded" %}
-
-                                        <span class="staff-status-badge info">
-                                            Refunded
-                                        </span>
-
-                                    {% endif %}
-
-                                </td>
-
-
-                                <td>
-
-                                    <small>
-                                        {{ payment.created_at|date:"M j, Y" }}
-                                    </small>
-
-                                </td>
-
-
-                                <td>
-
-                                    <button
-                                        type="button"
-                                        class="btn staff-table-action"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#paymentModal{{ payment.id }}"
-                                    >
-
-                                        <i class="bi bi-eye"></i>
-
-                                    </button>
-
-                                </td>
-
-                            </tr>
-
-
-                            <!-- =================================
-                                 PAYMENT DETAILS MODAL
-                            ================================== -->
-
-                            <div
-                                class="modal fade"
-                                id="paymentModal{{ payment.id }}"
-                                tabindex="-1"
-                                aria-hidden="true"
-                            >
-
-                                <div
-                                    class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable"
-                                >
-
-                                    <div class="modal-content staff-modal-content">
-
-
-                                        <div class="modal-header">
-
-                                            <div>
-
-                                                <span class="section-label">
-                                                    PAYMENT DETAILS
-                                                </span>
-
-                                                <h5 class="modal-title">
-                                                    {{ payment.payment_reference }}
-                                                </h5>
-
-                                            </div>
-
-
-                                            <button
-                                                type="button"
-                                                class="btn-close"
-                                                data-bs-dismiss="modal"
-                                                aria-label="Close"
-                                            ></button>
-
-                                        </div>
-
-
-                                        <div class="modal-body">
-
-                                            <div class="staff-payment-detail-grid">
-
-
-                                                <div>
-
-                                                    <span>
-                                                        Payment Reference
-                                                    </span>
-
-                                                    <strong>
-                                                        {{ payment.payment_reference }}
-                                                    </strong>
-
-                                                </div>
-
-
-                                                <div>
-
-                                                    <span>
-                                                        Booking Reference
-                                                    </span>
-
-                                                    <strong>
-                                                        {{ payment.booking.booking_reference }}
-                                                    </strong>
-
-                                                </div>
-
-
-                                                <div>
-
-                                                    <span>
-                                                        Customer
-                                                    </span>
-
-                                                    <strong>
-
-                                                        {% if payment.booking.user.get_full_name %}
-
-                                                            {{ payment.booking.user.get_full_name }}
-
-                                                        {% else %}
-
-                                                            {{ payment.booking.user.username }}
-
-                                                        {% endif %}
-
-                                                    </strong>
-
-                                                </div>
-
-
-                                                <div>
-
-                                                    <span>
-                                                        Email
-                                                    </span>
-
-                                                    <strong>
-                                                        {{ payment.booking.user.email }}
-                                                    </strong>
-
-                                                </div>
-
-
-                                                <div>
-
-                                                    <span>
-                                                        Movie
-                                                    </span>
-
-                                                    <strong>
-                                                        {{ payment.booking.showtime.movie.title }}
-                                                    </strong>
-
-                                                </div>
-
-
-                                                <div>
-
-                                                    <span>
-                                                        Cinema
-                                                    </span>
-
-                                                    <strong>
-                                                        {{ payment.booking.showtime.screen.cinema.name }}
-                                                    </strong>
-
-                                                </div>
-
-
-                                                <div>
-
-                                                    <span>
-                                                        Screen
-                                                    </span>
-
-                                                    <strong>
-                                                        {{ payment.booking.showtime.screen.name }}
-                                                    </strong>
-
-                                                </div>
-
-
-                                                <div>
-
-                                                    <span>
-                                                        Amount
-                                                    </span>
-
-                                                    <strong>
-                                                        ₦{{ payment.amount }}
-                                                    </strong>
-
-                                                </div>
-
-
-                                                <div>
-
-                                                    <span>
-                                                        Provider
-                                                    </span>
-
-                                                    <strong>
-                                                        {{ payment.get_provider_display }}
-                                                    </strong>
-
-                                                </div>
-
-
-                                                <div>
-
-                                                    <span>
-                                                        Status
-                                                    </span>
-
-                                                    <strong>
-                                                        {{ payment.get_status_display }}
-                                                    </strong>
-
-                                                </div>
-
-
-                                                <div>
-
-                                                    <span>
-                                                        Created
-                                                    </span>
-
-                                                    <strong>
-                                                        {{ payment.created_at|date:"M j, Y g:i A" }}
-                                                    </strong>
-
-                                                </div>
-
-
-                                                <div>
-
-                                                    <span>
-                                                        Updated
-                                                    </span>
-
-                                                    <strong>
-                                                        {{ payment.updated_at|date:"M j, Y g:i A" }}
-                                                    </strong>
-
-                                                </div>
-
-                                            </div>
-
-
-                                            <hr>
-
-
-                                            <div class="staff-payment-booking-status">
-
-                                                <span>
-                                                    Booking Status
-                                                </span>
-
-                                                <strong>
-                                                    {{ payment.booking.get_status_display }}
-                                                </strong>
-
-                                            </div>
-
-                                        </div>
-
-
-                                        <div class="modal-footer">
-
-                                            <button
-                                                type="button"
-                                                class="btn staff-outline-btn"
-                                                data-bs-dismiss="modal"
-                                            >
-                                                Close
-                                            </button>
-
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                        {% empty %}
-
-                            <tr>
-
-                                <td
-                                    colspan="8"
-                                    class="text-center py-5"
-                                >
-
-                                    <div class="staff-empty-state">
-
-                                        <i class="bi bi-credit-card"></i>
-
-                                        <h3>
-                                            No payments found
-                                        </h3>
-
-                                        <p>
-                                            Payment transactions will appear here
-                                            once customers begin making payments.
-                                        </p>
-
-                                    </div>
-
-                                </td>
-
-                            </tr>
-
-                        {% endfor %}
-
-                    </tbody>
-
-                </table>
+                <span class="staff-list-count">
+                    {{ payments|length }} transaction{{ payments|length|pluralize }}
+                </span>
 
             </div>
 
+
+            {% if payments %}
+
+                <div class="table-responsive">
+
+                    <table class="table staff-table align-middle mb-0">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Payment
+                                </th>
+
+                                <th>
+                                    Customer
+                                </th>
+
+                                <th>
+                                    Booking
+                                </th>
+
+                                <th>
+                                    Amount
+                                </th>
+
+                                <th>
+                                    Provider
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Date
+                                </th>
+
+                                <th class="text-end">
+                                    Details
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+
+                            {% for payment in payments %}
+
+                                <!-- =================================================
+                                     PAYMENT ROW
+                                ================================================== -->
+
+                                <tr class="staff-payment-row">
+
+
+                                    <!-- PAYMENT REFERENCE -->
+
+                                    <td>
+
+                                        <div class="staff-payment-reference">
+
+                                            <strong>
+                                                {{ payment.payment_reference }}
+                                            </strong>
+
+                                            <small>
+                                                #{{ payment.id }}
+                                            </small>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- CUSTOMER -->
+
+                                    <td>
+
+                                        <div class="staff-payment-customer">
+
+                                            <strong>
+
+                                                {% if payment.booking.user.get_full_name %}
+
+                                                    {{ payment.booking.user.get_full_name }}
+
+                                                {% else %}
+
+                                                    {{ payment.booking.user.username }}
+
+                                                {% endif %}
+
+                                            </strong>
+
+                                            <small>
+                                                {{ payment.booking.user.email }}
+                                            </small>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- BOOKING -->
+
+                                    <td>
+
+                                        <span class="staff-reference-text">
+
+                                            {{ payment.booking.booking_reference }}
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- AMOUNT -->
+
+                                    <td>
+
+                                        <strong class="staff-payment-amount">
+
+                                            ₦{{ payment.amount }}
+
+                                        </strong>
+
+                                    </td>
+
+
+                                    <!-- PROVIDER -->
+
+                                    <td>
+
+                                        {% if payment.provider == "paystack" %}
+
+                                            <span class="staff-payment-provider">
+
+                                                <i class="bi bi-credit-card-2-front"></i>
+
+                                                Paystack
+
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="staff-payment-provider">
+
+                                                <i class="bi bi-terminal"></i>
+
+                                                {{ payment.get_provider_display }}
+
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- STATUS -->
+
+                                    <td>
+
+                                        {% if payment.status == "successful" %}
+
+                                            <span class="staff-status-badge staff-status-success">
+
+                                                <i class="bi bi-check-circle-fill"></i>
+
+                                                Successful
+
+                                            </span>
+
+                                        {% elif payment.status == "pending" %}
+
+                                            <span class="staff-status-badge staff-status-warning">
+
+                                                <i class="bi bi-clock-fill"></i>
+
+                                                Pending
+
+                                            </span>
+
+                                        {% elif payment.status == "failed" %}
+
+                                            <span class="staff-status-badge staff-status-danger">
+
+                                                <i class="bi bi-x-circle-fill"></i>
+
+                                                Failed
+
+                                            </span>
+
+                                        {% elif payment.status == "refunded" %}
+
+                                            <span class="staff-status-badge staff-status-info">
+
+                                                <i class="bi bi-arrow-counterclockwise"></i>
+
+                                                Refunded
+
+                                            </span>
+
+                                        {% elif payment.status == "cancelled" %}
+
+                                            <span class="staff-status-badge staff-status-muted">
+
+                                                <i class="bi bi-slash-circle"></i>
+
+                                                Cancelled
+
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="staff-status-badge staff-status-muted">
+
+                                                {{ payment.get_status_display }}
+
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- DATE -->
+
+                                    <td>
+
+                                        <div class="staff-payment-date">
+
+                                            <strong>
+                                                {{ payment.created_at|date:"d M Y" }}
+                                            </strong>
+
+                                            <small>
+                                                {{ payment.created_at|date:"h:i A" }}
+                                            </small>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- DETAILS BUTTON -->
+
+                                    <td class="text-end">
+
+                                        <button
+                                            type="button"
+                                            class="staff-payment-details-btn"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#paymentDetails{{ payment.id }}"
+                                            aria-expanded="false"
+                                            aria-controls="paymentDetails{{ payment.id }}"
+                                            title="View payment details"
+                                        >
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+
+                                    </td>
+
+
+                                </tr>
+
+
+                                <!-- =================================================
+                                     COLLAPSED PAYMENT DETAILS
+                                ================================================== -->
+
+                                <tr class="staff-payment-details-row">
+
+                                    <td
+                                        colspan="8"
+                                        class="p-0 border-0"
+                                    >
+
+                                        <div
+                                            id="paymentDetails{{ payment.id }}"
+                                            class="collapse"
+                                        >
+
+                                            <div class="staff-payment-details">
+
+
+                                                <!-- =================================
+                                                     DETAILS HEADER
+                                                ================================== -->
+
+                                                <div class="staff-payment-details-header">
+
+                                                    <div>
+
+                                                        <span class="section-label">
+                                                            PAYMENT DETAILS
+                                                        </span>
+
+                                                        <h3>
+                                                            {{ payment.payment_reference }}
+                                                        </h3>
+
+                                                    </div>
+
+                                                    <div class="staff-payment-detail-amount">
+
+                                                        <span>
+                                                            Amount
+                                                        </span>
+
+                                                        <strong>
+                                                            ₦{{ payment.amount }}
+                                                        </strong>
+
+                                                    </div>
+
+                                                </div>
+
+
+                                                <!-- =================================
+                                                     PAYMENT INFORMATION
+                                                ================================== -->
+
+                                                <div class="staff-payment-details-grid">
+
+
+                                                    <div>
+
+                                                        <span>
+                                                            Payment Reference
+                                                        </span>
+
+                                                        <strong>
+                                                            {{ payment.payment_reference }}
+                                                        </strong>
+
+                                                    </div>
+
+
+                                                    <div>
+
+                                                        <span>
+                                                            Booking Reference
+                                                        </span>
+
+                                                        <strong>
+                                                            {{ payment.booking.booking_reference }}
+                                                        </strong>
+
+                                                    </div>
+
+
+                                                    <div>
+
+                                                        <span>
+                                                            Customer
+                                                        </span>
+
+                                                        <strong>
+
+                                                            {% if payment.booking.user.get_full_name %}
+
+                                                                {{ payment.booking.user.get_full_name }}
+
+                                                            {% else %}
+
+                                                                {{ payment.booking.user.username }}
+
+                                                            {% endif %}
+
+                                                        </strong>
+
+                                                    </div>
+
+
+                                                    <div>
+
+                                                        <span>
+                                                            Email
+                                                        </span>
+
+                                                        <strong>
+                                                            {{ payment.booking.user.email }}
+                                                        </strong>
+
+                                                    </div>
+
+
+                                                    <div>
+
+                                                        <span>
+                                                            Movie
+                                                        </span>
+
+                                                        <strong>
+                                                            {{ payment.booking.showtime.movie.title }}
+                                                        </strong>
+
+                                                    </div>
+
+
+                                                    <div>
+
+                                                        <span>
+                                                            Cinema
+                                                        </span>
+
+                                                        <strong>
+                                                            {{ payment.booking.showtime.screen.cinema.name }}
+                                                        </strong>
+
+                                                    </div>
+
+
+                                                    <div>
+
+                                                        <span>
+                                                            Screen
+                                                        </span>
+
+                                                        <strong>
+                                                            {{ payment.booking.showtime.screen.name }}
+                                                        </strong>
+
+                                                    </div>
+
+
+                                                    <div>
+
+                                                        <span>
+                                                            Showtime
+                                                        </span>
+
+                                                        <strong>
+                                                            {{ payment.booking.showtime.show_date|date:"d M Y" }}
+                                                            ·
+                                                            {{ payment.booking.showtime.start_time|time:"h:i A" }}
+                                                        </strong>
+
+                                                    </div>
+
+
+                                                    <div>
+
+                                                        <span>
+                                                            Provider
+                                                        </span>
+
+                                                        <strong>
+                                                            {{ payment.get_provider_display }}
+                                                        </strong>
+
+                                                    </div>
+
+
+                                                    <div>
+
+                                                        <span>
+                                                            Payment Status
+                                                        </span>
+
+                                                        <strong>
+                                                            {{ payment.get_status_display }}
+                                                        </strong>
+
+                                                    </div>
+
+
+                                                    <div>
+
+                                                        <span>
+                                                            Created
+                                                        </span>
+
+                                                        <strong>
+                                                            {{ payment.created_at|date:"d M Y, h:i A" }}
+                                                        </strong>
+
+                                                    </div>
+
+
+                                                    <div>
+
+                                                        <span>
+                                                            Last Updated
+                                                        </span>
+
+                                                        <strong>
+                                                            {{ payment.updated_at|date:"d M Y, h:i A" }}
+                                                        </strong>
+
+                                                    </div>
+
+
+                                                </div>
+
+
+                                                <!-- =================================
+                                                     REFUND INFORMATION
+                                                ================================== -->
+
+                                                {% if payment.refund %}
+
+                                                    <div class="staff-payment-refund-section">
+
+                                                        <div class="staff-payment-refund-header">
+
+                                                            <div>
+
+                                                                <span class="section-label">
+                                                                    REFUND
+                                                                </span>
+
+                                                                <h3>
+                                                                    Refund Information
+                                                                </h3>
+
+                                                            </div>
+
+
+                                                            {% if payment.refund.status == "processed" %}
+
+                                                                <span class="staff-status-badge staff-status-success">
+
+                                                                    <i class="bi bi-check-circle-fill"></i>
+
+                                                                    Processed
+
+                                                                </span>
+
+                                                            {% elif payment.refund.status == "processing" %}
+
+                                                                <span class="staff-status-badge staff-status-warning">
+
+                                                                    <i class="bi bi-arrow-repeat"></i>
+
+                                                                    Processing
+
+                                                                </span>
+
+                                                            {% elif payment.refund.status == "pending" %}
+
+                                                                <span class="staff-status-badge staff-status-warning">
+
+                                                                    <i class="bi bi-clock-fill"></i>
+
+                                                                    Pending
+
+                                                                </span>
+
+                                                            {% elif payment.refund.status == "failed" %}
+
+                                                                <span class="staff-status-badge staff-status-danger">
+
+                                                                    <i class="bi bi-x-circle-fill"></i>
+
+                                                                    Failed
+
+                                                                </span>
+
+                                                            {% endif %}
+
+                                                        </div>
+
+
+                                                        <div class="staff-payment-details-grid staff-refund-details-grid">
+
+
+                                                            <div>
+
+                                                                <span>
+                                                                    Refund Amount
+                                                                </span>
+
+                                                                <strong>
+                                                                    ₦{{ payment.refund.amount }}
+                                                                </strong>
+
+                                                            </div>
+
+
+                                                            <div>
+
+                                                                <span>
+                                                                    Refund Reference
+                                                                </span>
+
+                                                                <strong>
+
+                                                                    {% if payment.refund.refund_reference %}
+
+                                                                        {{ payment.refund.refund_reference }}
+
+                                                                    {% else %}
+
+                                                                        —
+
+                                                                    {% endif %}
+
+                                                                </strong>
+
+                                                            </div>
+
+
+                                                            <div>
+
+                                                                <span>
+                                                                    Paystack Transaction
+                                                                </span>
+
+                                                                <strong>
+
+                                                                    {% if payment.refund.paystack_transaction %}
+
+                                                                        {{ payment.refund.paystack_transaction }}
+
+                                                                    {% else %}
+
+                                                                        —
+
+                                                                    {% endif %}
+
+                                                                </strong>
+
+                                                            </div>
+
+
+                                                            <div>
+
+                                                                <span>
+                                                                    Created
+                                                                </span>
+
+                                                                <strong>
+                                                                    {{ payment.refund.created_at|date:"d M Y, h:i A" }}
+                                                                </strong>
+
+                                                            </div>
+
+
+                                                            {% if payment.refund.expected_at %}
+
+                                                                <div>
+
+                                                                    <span>
+                                                                        Expected
+                                                                    </span>
+
+                                                                    <strong>
+                                                                        {{ payment.refund.expected_at|date:"d M Y, h:i A" }}
+                                                                    </strong>
+
+                                                                </div>
+
+                                                            {% endif %}
+
+
+                                                            {% if payment.refund.processed_at %}
+
+                                                                <div>
+
+                                                                    <span>
+                                                                        Processed
+                                                                    </span>
+
+                                                                    <strong>
+                                                                        {{ payment.refund.processed_at|date:"d M Y, h:i A" }}
+                                                                    </strong>
+
+                                                                </div>
+
+                                                            {% endif %}
+
+
+                                                        </div>
+
+
+                                                        {% if payment.refund.reason %}
+
+                                                            <div class="staff-payment-refund-note">
+
+                                                                <span>
+                                                                    Reason
+                                                                </span>
+
+                                                                <p>
+                                                                    {{ payment.refund.reason }}
+                                                                </p>
+
+                                                            </div>
+
+                                                        {% endif %}
+
+
+                                                        {% if payment.refund.failure_reason %}
+
+                                                            <div class="staff-payment-refund-error">
+
+                                                                <i class="bi bi-exclamation-triangle"></i>
+
+                                                                <div>
+
+                                                                    <strong>
+                                                                        Refund failure
+                                                                    </strong>
+
+                                                                    <p>
+                                                                        {{ payment.refund.failure_reason }}
+                                                                    </p>
+
+                                                                </div>
+
+                                                            </div>
+
+                                                        {% endif %}
+
+
+                                                        <!-- REFUND ACTION -->
+
+                                                        {% if payment.refund.status == "pending" or payment.refund.status == "processing" %}
+
+                                                            <div class="staff-payment-refund-actions">
+
+                                                                <form
+                                                                    method="POST"
+                                                                    action="{% url 'staff:check_refund_status' payment.id %}"
+                                                                >
+
+                                                                    {% csrf_token %}
+
+                                                                    <button
+                                                                        type="submit"
+                                                                        class="btn staff-outline-btn"
+                                                                    >
+
+                                                                        <i class="bi bi-arrow-clockwise"></i>
+
+                                                                        Check Refund Status
+
+                                                                    </button>
+
+                                                                </form>
+
+                                                            </div>
+
+                                                        {% endif %}
+
+
+                                                    </div>
+
+                                                {% endif %}
+
+
+                                                <!-- =================================
+                                                     NO REFUND
+                                                ================================== -->
+
+                                                {% if not payment.refund and payment.status == "refunded" %}
+
+                                                    <div class="staff-payment-refund-section">
+
+                                                        <div class="staff-payment-refund-header">
+
+                                                            <div>
+
+                                                                <span class="section-label">
+                                                                    REFUND
+                                                                </span>
+
+                                                                <h3>
+                                                                    Refund Information
+                                                                </h3>
+
+                                                            </div>
+
+                                                            <span class="staff-status-badge staff-status-success">
+
+                                                                <i class="bi bi-check-circle-fill"></i>
+
+                                                                Refunded
+
+                                                            </span>
+
+                                                        </div>
+
+                                                        <p class="mb-0">
+                                                            This payment is marked as refunded, but no refund record
+                                                            is currently associated with it.
+                                                        </p>
+
+                                                    </div>
+
+                                                {% endif %}
+
+
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+
+                            {% endfor %}
+
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+            {% else %}
+
+                <!-- =================================================
+                     EMPTY STATE
+                ================================================== -->
+
+                <div class="staff-empty-state">
+
+                    <div class="staff-empty-icon">
+
+                        <i class="bi bi-credit-card"></i>
+
+                    </div>
+
+                    <h3>
+                        No payments found
+                    </h3>
+
+                    <p>
+                        No payment transactions match your current search or filters.
+                    </p>
+
+                    {% if search or status or provider %}
+
+                        <a
+                            href="{% url 'staff:payments' %}"
+                            class="btn staff-outline-btn"
+                        >
+                            Clear Filters
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+            {% endif %}
+
+
         </div>
+
 
     </div>
 
 </section>
+
+
+<!-- =============================================================
+     COLLAPSE INDICATOR
+============================================================== -->
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    document
+        .querySelectorAll(".staff-payment-details-btn")
+        .forEach(function (button) {
+
+            const targetSelector =
+                button.getAttribute("data-bs-target");
+
+            const target =
+                document.querySelector(targetSelector);
+
+            const icon =
+                button.querySelector("i");
+
+            if (!target || !icon) {
+                return;
+            }
+
+            target.addEventListener(
+                "show.bs.collapse",
+                function () {
+
+                    button.classList.add("is-open");
+
+                    icon.classList.remove("bi-eye");
+                    icon.classList.add("bi-eye-slash");
+
+                    button.setAttribute(
+                        "title",
+                        "Hide payment details"
+                    );
+                }
+            );
+
+            target.addEventListener(
+                "hide.bs.collapse",
+                function () {
+
+                    button.classList.remove("is-open");
+
+                    icon.classList.remove("bi-eye-slash");
+                    icon.classList.add("bi-eye");
+
+                    button.setAttribute(
+                        "title",
+                        "View payment details"
+                    );
+                }
+            );
+
+        });
+
+});
+</script>
 
 {% endblock %}

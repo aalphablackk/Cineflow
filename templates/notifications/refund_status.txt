@@ -1,0 +1,82 @@
+CINEFLOW
+Refund Status Update
+
+Hello {{ customer_name }},
+
+Your CineFlow refund status has been updated.
+
+
+REFUND INFORMATION
+
+Refund Status:
+{{ refund.get_status_display }}
+
+Refund Amount:
+₦{{ refund.amount|floatformat:2 }}
+
+{% if refund.refund_reference %}
+Refund Reference:
+{{ refund.refund_reference }}
+{% endif %}
+
+{% if refund.expected_at %}
+Expected Date:
+{{ refund.expected_at|date:"d F Y" }}
+{% endif %}
+
+{% if refund.processed_at %}
+Processed:
+{{ refund.processed_at|date:"d F Y, g:i A" }}
+{% endif %}
+
+
+BOOKING DETAILS
+
+Booking Reference:
+{{ booking.booking_reference }}
+
+Movie:
+{{ movie.title }}
+
+Cinema:
+{{ cinema.name }}
+
+Screen:
+{{ screen.name }}
+
+Date:
+{{ showtime.show_date|date:"l, d F Y" }}
+
+Time:
+{{ showtime.start_time|time:"g:i A" }}
+
+
+{% if refund.status == "pending" %}
+
+Your refund request has been received and is currently waiting to be processed by Paystack.
+
+{% elif refund.status == "processing" %}
+
+Your refund is currently being processed by Paystack. We will continue to monitor its progress.
+
+{% elif refund.status == "needs-attention" %}
+
+Your refund requires additional attention before Paystack can continue processing it. Our team will review the issue and assist you.
+
+{% elif refund.status == "processed" %}
+
+Your refund has been processed successfully by Paystack. Please allow additional time for the funds to appear in your account.
+
+{% elif refund.status == "failed" %}
+
+Unfortunately, your refund could not be completed. Our team will review the issue and assist you with the next steps.
+
+{% endif %}
+
+
+If you have questions about your refund,
+please contact CineFlow support.
+
+Thank you for choosing CineFlow.
+
+© 2026 CineFlow. All rights reserved.

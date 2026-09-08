@@ -99,12 +99,12 @@ class BookingSeat(models.Model):
     class Meta:
         ordering = ["seat"]
 
-        constraints = [
-        models.UniqueConstraint(
-            fields=["showtime", "seat"],
-            name="unique_seat_per_showtime",
-        ),
-        ]
+        # constraints = [
+        # models.UniqueConstraint(
+        #     fields=["showtime", "seat"],
+        #     name="unique_seat_per_showtime",
+        # ),
+        # ]
 
     def __str__(self):
         return (
@@ -163,3 +163,133 @@ class Payment(models.Model):
 
     def __str__(self):
         return self.payment_reference
+
+
+class Refund(models.Model):
+    class Status(models.TextChoices):
+        PENDING = "pending", "Pending"
+        PROCESSING = "processing", "Processing"
+        NEEDS_ATTENTION = "needs-attention", "Needs Attention"
+        PROCESSED = "processed", "Processed"
+        FAILED = "failed", "Failed"
+
+    payment = models.OneToOneField(
+        Payment,
+        on_delete=models.PROTECT,
+        related_name="refund",
+    )
+
+    refund_reference = models.CharField(
+        max_length=100,
+        unique=True,
+        null=True,
+        blank=True,
+    )
+
+    amount = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=Status.choices,
+        default=Status.PENDING,
+    )
+
+    reason = models.TextField(
+        blank=True,
+    )
+
+    customer_note = models.TextField(
+        blank=True,
+    )
+
+    merchant_note = models.TextField(
+        blank=True,
+    )
+
+    paystack_transaction = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    expected_at = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    processed_at = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    failure_reason = models.TextField(
+        blank=True,
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+    )
+
+    def __str__(self):
+        return (
+            f"Refund for "
+            f"{self.payment.payment_reference}"
+        )
+
+
+class SeatReservation(models.Model):
+    """
+    Represents the current active reservation of a seat
+    for a specific showtime.
+
+    This is separate from BookingSeat so that historical
+    booking-seat records are preserved after cancellation
+    or expiration.
+    """
+
+    booking = models.ForeignKey(
+        Booking,
+        on_delete=models.CASCADE,
+        related_name="seat_reservations",
+    )
+
+    showtime = models.ForeignKey(
+        Showtime,
+        on_delete=models.PROTECT,
+        related_name="seat_reservations",
+    )
+
+    seat = models.ForeignKey(
+        Seat,
+        on_delete=models.PROTECT,
+        related_name="seat_reservations",
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["showtime", "seat"],
+                name="unique_active_seat_per_showtime",
+            ),
+        ]
+
+    def __str__(self):
+        return (
+            f"{self.showtime} - "
+            f"{self.seat} - "
+            f"{self.booking.booking_reference}"
+        )

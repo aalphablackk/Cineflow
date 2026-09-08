@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        CineFlow Ticket Confirmation
+    </title>
+
+</head>
+
+
+<body
+    style="
+        margin:0;
+        padding:0;
+        background:#f4f5f7;
+        font-family:Arial,Helvetica,sans-serif;
+        color:#111827;
+    "
+>
+
+
+<table
+    width="100%"
+    cellpadding="0"
+    cellspacing="0"
+    border="0"
+    style="background:#f4f5f7;padding:30px 15px;"
+>
+
+<tr>
+
+<td align="center">
+
+
+<table
+    width="100%"
+    cellpadding="0"
+    cellspacing="0"
+    border="0"
+    style="
+        max-width:620px;
+        background:#ffffff;
+        border-radius:14px;
+        overflow:hidden;
+    "
+>
+
+
+<!-- =====================================================
+     HEADER
+====================================================== -->
+
+<tr>
+
+<td
+    style="
+        padding:28px 30px;
+        background:#111216;
+        color:#ffffff;
+    "
+>
+
+    <div
+        style="
+            font-size:22px;
+            font-weight:700;
+        "
+    >
+        <span
+            style="
+                display:inline-block;
+                width:32px;
+                height:32px;
+                line-height:32px;
+                text-align:center;
+                background:#e50914;
+                border-radius:8px;
+                margin-right:8px;
+            "
+        >
+            C
+        </span>
+
+        CineFlow
+    </div>
+
+</td>
+
+</tr>
+
+
+<!-- =====================================================
+     INTRO
+====================================================== -->
+
+<tr>
+
+<td
+    style="
+        padding:35px 30px 20px;
+    "
+>
+
+    <div
+        style="
+            color:#e50914;
+            font-size:11px;
+            font-weight:700;
+            letter-spacing:1.5px;
+            text-transform:uppercase;
+        "
+    >
+        BOOKING CONFIRMED
+    </div>
+
+
+    <h1
+        style="
+            margin:8px 0 10px;
+            font-size:27px;
+            line-height:1.2;
+        "
+    >
+        Your ticket is ready.
+    </h1>
+
+
+    <p
+        style="
+            margin:0;
+            color:#6b7280;
+            font-size:14px;
+            line-height:1.6;
+        "
+    >
+        Hello {{ customer_name }}, your CineFlow booking has
+        been successfully confirmed.
+    </p>
+
+</td>
+
+</tr>
+
+
+<!-- =====================================================
+     MOVIE
+====================================================== -->
+
+<tr>
+
+<td
+    style="
+        padding:10px 30px 25px;
+    "
+>
+
+<table
+    width="100%"
+    cellpadding="0"
+    cellspacing="0"
+    border="0"
+    style="
+        background:#f8f9fb;
+        border:1px solid #e5e7eb;
+        border-radius:12px;
+    "
+>
+
+<tr>
+
+<td style="padding:20px;">
+
+
+<div
+    style="
+        color:#6b7280;
+        font-size:10px;
+        font-weight:700;
+        text-transform:uppercase;
+        letter-spacing:.8px;
+    "
+>
+    MOVIE
+</div>
+
+
+<div
+    style="
+        margin-top:6px;
+        font-size:20px;
+        font-weight:700;
+        color:#111827;
+    "
+>
+    {{ movie.title }}
+</div>
+
+
+<div
+    style="
+        margin-top:10px;
+        color:#6b7280;
+        font-size:13px;
+    "
+>
+    {{ cinema.name }}
+    ·
+    {{ screen.name }}
+</div>
+
+
+</td>
+
+</tr>
+
+</table>
+
+</td>
+
+</tr>
+
+
+<!-- =====================================================
+     SHOWTIME DETAILS
+====================================================== -->
+
+<tr>
+
+<td
+    style="
+        padding:0 30px 25px;
+    "
+>
+
+<table
+    width="100%"
+    cellpadding="0"
+    cellspacing="0"
+    border="0"
+>
+
+
+<tr>
+
+
+<td
+    width="50%"
+    style="
+        padding:12px 0;
+        border-bottom:1px solid #eeeeee;
+    "
+>
+
+    <div
+        style="
+            color:#9ca3af;
+            font-size:10px;
+            text-transform:uppercase;
+        "
+    >
+        DATE
+    </div>
+
+    <div
+        style="
+            margin-top:5px;
+            font-size:14px;
+            font-weight:600;
+        "
+    >
+        {{ showtime.show_date|date:"l, d F Y" }}
+    </div>
+
+</td>
+
+
+<td
+    width="50%"
+    style="
+        padding:12px 0;
+        border-bottom:1px solid #eeeeee;
+    "
+>
+
+    <div
+        style="
+            color:#9ca3af;
+            font-size:10px;
+            text-transform:uppercase;
+        "
+    >
+        TIME
+    </div>
+
+    <div
+        style="
+            margin-top:5px;
+            font-size:14px;
+            font-weight:600;
+        "
+    >
+        {{ showtime.start_time|time:"g:i A" }}
+    </div>
+
+</td>
+
+
+</tr>
+
+
+<tr>
+
+
+<td
+    width="50%"
+    style="
+        padding:12px 0;
+    "
+>
+
+    <div
+        style="
+            color:#9ca3af;
+            font-size:10px;
+            text-transform:uppercase;
+        "
+    >
+        TICKETS
+    </div>
+
+    <div
+        style="
+            margin-top:5px;
+            font-size:14px;
+            font-weight:600;
+        "
+    >
+        {{ booking.ticket_quantity }}
+    </div>
+
+</td>
+
+
+<td
+    width="50%"
+    style="
+        padding:12px 0;
+    "
+>
+
+    <div
+        style="
+            color:#9ca3af;
+            font-size:10px;
+            text-transform:uppercase;
+        "
+    >
+        AMOUNT PAID
+    </div>
+
+    <div
+        style="
+            margin-top:5px;
+            font-size:14px;
+            font-weight:600;
+        "
+    >
+        ₦{{ booking.total_amount|floatformat:2 }}
+    </div>
+
+</td>
+
+
+</tr>
+
+</table>
+
+</td>
+
+</tr>
+
+
+<!-- =====================================================
+     BOOKING REFERENCE
+====================================================== -->
+
+<tr>
+
+<td
+    style="
+        padding:0 30px 25px;
+    "
+>
+
+<div
+    style="
+        padding:15px;
+        background:#111216;
+        color:#ffffff;
+        border-radius:10px;
+        text-align:center;
+    "
+>
+
+<div
+    style="
+        color:#9ca3af;
+        font-size:9px;
+        letter-spacing:1px;
+    "
+>
+    BOOKING REFERENCE
+</div>
+
+
+<div
+    style="
+        margin-top:5px;
+        font-size:18px;
+        font-weight:700;
+        letter-spacing:1px;
+    "
+>
+    {{ booking.booking_reference }}
+</div>
+
+</div>
+
+</td>
+
+</tr>
+
+
+<!-- =====================================================
+     QR CODE
+====================================================== -->
+
+<tr>
+
+<td
+    style="
+        padding:5px 30px 30px;
+        text-align:center;
+    "
+>
+
+<div
+    style="
+        color:#111827;
+        font-size:16px;
+        font-weight:700;
+    "
+>
+    Your Digital Ticket
+</div>
+
+
+<div
+    style="
+        margin-top:6px;
+        color:#6b7280;
+        font-size:12px;
+    "
+>
+    Present this QR code at the cinema entrance.
+</div>
+
+
+<div
+    style="
+        margin-top:20px;
+    "
+>
+
+<img
+    src="cid:ticket_qr"
+    width="190"
+    height="190"
+    alt="CineFlow Ticket QR Code"
+    style="
+        display:block;
+        margin:0 auto;
+        padding:10px;
+        background:#ffffff;
+        border:1px solid #e5e7eb;
+        border-radius:12px;
+    "
+>
+
+
+</div>
+
+
+<div
+    style="
+        margin-top:15px;
+        color:#6b7280;
+        font-size:10px;
+    "
+>
+    Ticket Number
+</div>
+
+
+<div
+    style="
+        margin-top:4px;
+        font-size:13px;
+        font-weight:700;
+    "
+>
+    {{ ticket.ticket_number }}
+</div>
+
+</td>
+
+</tr>
+
+
+<!-- =====================================================
+     FOOTER
+====================================================== -->
+
+<tr>
+
+<td
+    style="
+        padding:22px 30px;
+        background:#f8f9fb;
+        border-top:1px solid #e5e7eb;
+        text-align:center;
+    "
+>
+
+<div
+    style="
+        color:#6b7280;
+        font-size:11px;
+        line-height:1.6;
+    "
+>
+    Keep this ticket safe and present the QR code when
+    entering the cinema.
+</div>
+
+
+<div
+    style="
+        margin-top:8px;
+        color:#9ca3af;
+        font-size:10px;
+    "
+>
+    © 2026 CineFlow. All rights reserved.
+</div>
+
+</td>
+
+</tr>
+
+
+</table>
+
+</td>
+
+</tr>
+
+</table>
+
+
+</body>
+
+</html>
