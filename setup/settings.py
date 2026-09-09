@@ -13,11 +13,34 @@ import os
 from pathlib import Path
 from decouple import config
 import dj_database_url
+import cloudinary
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# ============================================================
+# CLOUDINARY
+# ============================================================
+
+CLOUDINARY_CLOUD_NAME = config(
+    "CLOUDINARY_CLOUD_NAME",
+)
+
+CLOUDINARY_API_KEY = config(
+    "CLOUDINARY_API_KEY",
+)
+
+CLOUDINARY_API_SECRET = config(
+    "CLOUDINARY_API_SECRET",
+)
+
+cloudinary.config(
+    cloud_name=CLOUDINARY_CLOUD_NAME,
+    api_key=CLOUDINARY_API_KEY,
+    api_secret=CLOUDINARY_API_SECRET,
+    secure=True,
+)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -178,7 +201,16 @@ STATICFILES_DIRS = [
 ]
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
+# MEDIA_ROOT = BASE_DIR / "media"
+STORAGES = {
+    "default": {
+        "BACKEND": "setup.storage.CloudinaryMediaStorage",
+    },
+
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

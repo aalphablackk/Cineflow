@@ -3,3 +3,4 @@ __pycache__/
 *.pyc
 cineflow_data.json
 staticfiles/
+Cineflow.zip
