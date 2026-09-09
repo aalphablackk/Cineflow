@@ -248,6 +248,46 @@
 
 
                                     <!-- =================================
+                                         SHOWTIME STATUS
+                                    ================================== -->
+
+                                    <div class="mb-3">
+
+                                        {% if showtime.display_status == "cancelled" %}
+
+                                            <span class="badge bg-danger">
+                                                <i class="bi bi-x-circle me-1"></i>
+                                                Cancelled
+                                            </span>
+
+                                        {% elif showtime.display_status == "completed" %}
+
+                                            <span class="badge bg-secondary">
+                                                <i class="bi bi-check-circle me-1"></i>
+                                                Completed
+                                            </span>
+
+                                        {% elif showtime.display_status == "showing" %}
+
+                                            <span class="badge bg-warning text-dark">
+                                                <i class="bi bi-play-circle me-1"></i>
+                                                Showing
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-success">
+                                                <i class="bi bi-calendar-check me-1"></i>
+                                                Scheduled
+                                            </span>
+
+                                        {% endif %}
+
+                                    </div>
+
+
+
+                                    <!-- =================================
                                          PRICE + BOOKING MODE
                                     ================================== -->
 
@@ -269,25 +309,59 @@
                                          AVAILABILITY
                                     ================================== -->
 
-                                    <div class="showtime-availability">
+                                    {% if showtime.is_bookable %}
 
-                                        {% if showtime.available_count > 0 %}
+                                        <div class="showtime-availability">
+
+                                            {% if showtime.available_count > 0 %}
+
+                                                <i class="bi bi-check-circle"></i>
+
+                                                {{ showtime.available_count }}
+                                                {{ showtime.availability_label }}
+                                                available
+
+                                            {% else %}
+
+                                                <i class="bi bi-x-circle"></i>
+
+                                                Sold out
+
+                                            {% endif %}
+
+                                        </div>
+
+                                    {% elif showtime.display_status == "showing" %}
+
+                                        <div class="showtime-availability">
+
+                                            <i class="bi bi-play-circle"></i>
+
+                                            This movie is currently showing
+
+                                        </div>
+
+                                    {% elif showtime.display_status == "completed" %}
+
+                                        <div class="showtime-availability">
 
                                             <i class="bi bi-check-circle"></i>
 
-                                            {{ showtime.available_count }}
-                                            {{ showtime.availability_label }}
-                                            available
+                                            This showtime has ended
 
-                                        {% else %}
+                                        </div>
+
+                                    {% elif showtime.display_status == "cancelled" %}
+
+                                        <div class="showtime-availability">
 
                                             <i class="bi bi-x-circle"></i>
 
-                                            Sold out
+                                            This showtime has been cancelled
 
-                                        {% endif %}
+                                        </div>
 
-                                    </div>
+                                    {% endif %}
 
 
 
@@ -295,20 +369,50 @@
                                          BOOKING BUTTON
                                     ================================== -->
 
-                                    {% if showtime.available_count > 0 %}
+                                    {% if showtime.is_bookable %}
 
-                                        <a
-                                            href="{% url 'bookings:create_booking' showtime.id %}"
-                                            class="btn cine-btn-primary w-100"
+                                        {% if showtime.available_count > 0 %}
+
+                                            <a
+                                                href="{% url 'bookings:create_booking' showtime.id %}"
+                                                class="btn cine-btn-primary w-100"
+                                            >
+
+                                                Select Showtime
+
+                                                <i class="bi bi-arrow-right"></i>
+
+                                            </a>
+
+                                        {% else %}
+
+                                            <button
+                                                type="button"
+                                                class="btn btn-secondary w-100"
+                                                disabled
+                                            >
+
+                                                Sold Out
+
+                                            </button>
+
+                                        {% endif %}
+
+                                    {% elif showtime.display_status == "showing" %}
+
+                                        <button
+                                            type="button"
+                                            class="btn btn-warning w-100"
+                                            disabled
                                         >
 
-                                            Select Showtime
+                                            <i class="bi bi-play-circle me-1"></i>
 
-                                            <i class="bi bi-arrow-right"></i>
+                                            Showing
 
-                                        </a>
+                                        </button>
 
-                                    {% else %}
+                                    {% elif showtime.display_status == "completed" %}
 
                                         <button
                                             type="button"
@@ -316,7 +420,23 @@
                                             disabled
                                         >
 
-                                            Sold Out
+                                            <i class="bi bi-check-circle me-1"></i>
+
+                                            Completed
+
+                                        </button>
+
+                                    {% elif showtime.display_status == "cancelled" %}
+
+                                        <button
+                                            type="button"
+                                            class="btn btn-danger w-100"
+                                            disabled
+                                        >
+
+                                            <i class="bi bi-x-circle me-1"></i>
+
+                                            Cancelled
 
                                         </button>
 
@@ -354,8 +474,8 @@
                 </h3>
 
                 <p>
-                    There are currently no scheduled
-                    showtimes for this movie.
+                    There are currently no showtimes
+                    for this movie.
                 </p>
 
             </div>

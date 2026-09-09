@@ -35,14 +35,13 @@ class RegisterForm(UserCreationForm):
             "password2",
         ]
 
-
 class LoginForm(AuthenticationForm):
 
     username = forms.CharField(
-        label="Username",
+        label="Username or Email",
         widget=forms.TextInput(
             attrs={
-                "placeholder": "Enter your username",
+                "placeholder": "Enter your username or email",
                 "autocomplete": "username",
             }
         ),
@@ -57,6 +56,25 @@ class LoginForm(AuthenticationForm):
             }
         ),
     )
+
+    def clean(self):
+
+        username_or_email = self.cleaned_data.get("username")
+        password = self.cleaned_data.get("password")
+
+        if username_or_email and password:
+
+            try:
+                user = User.objects.get(
+                    email__iexact=username_or_email
+                )
+
+                self.cleaned_data["username"] = user.username
+
+            except User.DoesNotExist:
+                pass
+
+        return super().clean()
 
 
 # ============================================================

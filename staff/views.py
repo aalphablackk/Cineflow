@@ -1415,6 +1415,20 @@ def generate_seats(request, screen_id):
 
 @staff_required
 def showtimes(request):
+    # ========================================================
+    # SYNCHRONIZE FINISHED SHOWTIMES
+    # ========================================================
+
+    finished_showtimes = (
+        Showtime.objects
+        .select_related("movie")
+        .filter(
+            status=Showtime.Status.SCHEDULED,
+        )
+    )
+
+    for showtime in finished_showtimes:
+        showtime.update_status_if_finished()
 
     showtimes = (
         Showtime.objects
@@ -1804,7 +1818,9 @@ def showtime_cancel(request, pk):
     # COMPLETED SHOWTIME
     # --------------------------------------------------------
 
-    if showtime.status == Showtime.Status.COMPLETED:
+    if showtime.has_finished:
+
+        showtime.update_status_if_finished()
 
         messages.error(
             request,

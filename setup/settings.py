@@ -29,10 +29,17 @@ SECRET_KEY = config ("SECRET_KEY")
 # DEBUG = True
 DEBUG = config("DEBUG", default=False, cast=bool)
 ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
     ".vercel.app",
 ]
+# ALLOWED_HOSTS = [
+#     "*",
+# ]
 CSRF_TRUSTED_ORIGINS = [
-    "https://cineflow-chi.vercel.app/",
+    "http://127.0.0.1:8000",
+    "http://localhost:8000",
+    "https://cineflow-chi.vercel.app",
 ]
 
 
@@ -143,7 +150,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Africa/Lagos"
 
 USE_I18N = True
 

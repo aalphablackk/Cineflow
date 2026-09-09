@@ -258,7 +258,7 @@ def create_assigned_hold(
     # 2. Validate showtime
     # --------------------------------------------------------
 
-    if showtime.status != Showtime.Status.SCHEDULED:
+    if not showtime.is_bookable:
         raise ValidationError(
             "This showtime is no longer available for booking."
         )
@@ -456,7 +456,7 @@ def create_general_hold(
     # 2. Validate showtime
     # --------------------------------------------------------
 
-    if showtime.status != Showtime.Status.SCHEDULED:
+    if not showtime.is_bookable:
         raise ValidationError(
             "This showtime is no longer available for booking."
         )

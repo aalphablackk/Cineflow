@@ -47,7 +47,6 @@ def movie_list(request):
 
 
 def movie_detail(request, slug):
-
     movie = get_object_or_404(
         Movie.objects.prefetch_related(
             "showtimes",
@@ -58,9 +57,7 @@ def movie_detail(request, slug):
     )
 
     showtimes = (
-        movie.showtimes.filter(
-            status=Showtime.Status.SCHEDULED,
-        )
+        movie.showtimes
         .select_related(
             "screen",
             "screen__cinema",
@@ -72,28 +69,11 @@ def movie_detail(request, slug):
     )
 
     for showtime in showtimes:
-
-        if (
-            showtime.booking_mode
-            == Showtime.BookingMode.ASSIGNED
-        ):
-
-            showtime.available_count = (
-                get_available_seats(
-                    showtime
-                ).count()
-            )
-
+        if showtime.booking_mode == Showtime.BookingMode.ASSIGNED:
+            showtime.available_count = get_available_seats(showtime).count()
             showtime.availability_label = "seats"
-
         else:
-
-            showtime.available_count = (
-                get_available_capacity(
-                    showtime
-                )
-            )
-
+            showtime.available_count = get_available_capacity(showtime)
             showtime.availability_label = "tickets"
 
     return render(
