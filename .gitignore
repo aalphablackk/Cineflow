@@ -3,3 +3,7 @@ __pycache__/
 *.pyc
 cineflow_data.json
 staticfiles/
+
+# Node.js
+node_modules/
+package-lock.json
