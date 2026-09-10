@@ -31,7 +31,7 @@ from notifications.services import send_ticket_confirmation_email
 # CONFIGURATION
 # ============================================================
 
-HOLD_DURATION_MINUTES = 2
+HOLD_DURATION_MINUTES = 10
 
 
 # ============================================================
