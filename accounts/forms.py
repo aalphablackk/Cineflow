@@ -35,6 +35,21 @@ class RegisterForm(UserCreationForm):
             "password2",
         ]
 
+    def clean_email(self):
+
+        email = self.cleaned_data["email"].strip().lower()
+
+        if User.objects.filter(
+            email__iexact=email
+        ).exists():
+
+            raise forms.ValidationError(
+                "An account with this email already exists. "
+                "Please log in instead."
+            )
+
+        return email
+
 class LoginForm(AuthenticationForm):
 
     username = forms.CharField(
@@ -144,3 +159,23 @@ class ProfileForm(forms.ModelForm):
             return self.instance.username
 
         return username
+
+    
+    def clean_email(self):
+
+        email = self.cleaned_data["email"].strip().lower()
+
+        existing_user = User.objects.filter(
+            email__iexact=email
+        ).exclude(
+            pk=self.instance.pk
+        ).first()
+
+        if existing_user:
+
+            raise forms.ValidationError(
+                "This email address is already associated "
+                "with another account."
+            )
+
+        return email

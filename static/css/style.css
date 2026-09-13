@@ -4549,3 +4549,164 @@ html[data-theme="light"] .cine-hero-indicator.is-active {
 .cine-hero-slide {
     width: 100%;
 }
+/* =========================================================
+   MOVIE SEARCH
+========================================================= */
+
+.movies-search-section {
+    padding: 2rem 0 1.5rem;
+}
+
+.movie-search-form {
+    width: 100%;
+}
+
+.movie-search-form .input-group {
+    width: 100%;
+    min-height: 58px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--surface);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.movie-search-form .input-group:focus-within {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.08);
+}
+
+
+/* Search icon */
+
+.movie-search-form .input-group-text {
+    border: 0;
+    background: transparent;
+    color: var(--text-muted);
+    padding: 0 1.25rem;
+    font-size: 1.05rem;
+}
+
+
+/* Input */
+
+.movie-search-form .form-control {
+    height: 58px;
+    border: 0;
+    background: transparent;
+    color: var(--text);
+    font-size: 0.95rem;
+    padding: 0 0.5rem 0 0;
+    box-shadow: none !important;
+}
+
+.movie-search-form .form-control::placeholder {
+    color: var(--text-muted);
+    opacity: 0.8;
+}
+
+
+/* Search button */
+
+.movie-search-form .btn {
+    border: 0;
+    border-radius: 0;
+    padding: 0 2rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   SEARCH RESULT INFO
+========================================================= */
+
+.search-result-info {
+    margin-top: 1rem;
+    padding: 0 0.25rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.search-result-info strong {
+    color: var(--text);
+    font-weight: 600;
+}
+
+.search-result-info a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: opacity 0.2s ease;
+}
+
+.search-result-info a:hover {
+    opacity: 0.75;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 575px) {
+
+    .movies-search-section {
+        padding: 1.5rem 0 1rem;
+    }
+
+    .movie-search-form .input-group {
+        min-height: 52px;
+    }
+
+    .movie-search-form .form-control {
+        height: 52px;
+        font-size: 0.9rem;
+    }
+
+    .movie-search-form .input-group-text {
+        padding: 0 0.9rem;
+    }
+
+    .movie-search-form .btn {
+        padding: 0 1.1rem;
+    }
+
+    .search-result-info {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+/* =========================================================
+   MOVIE SEARCH BUTTON
+========================================================= */
+
+.movie-search-form .btn {
+    background: var(--primary);
+    color: #fff;
+    border: 0;
+    padding: 0 2rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.movie-search-form .btn:hover {
+    background: var(--primary);
+    color: #fff;
+    opacity: 0.9;
+}
+
+.movie-search-form .btn:active {
+    background: var(--primary);
+    color: #fff;
+    transform: scale(0.98);
+}

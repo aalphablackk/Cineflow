@@ -33,7 +33,62 @@
     </div>
 
 </section>
+<!-- =========================================================
+     MOVIE SEARCH
+========================================================= -->
 
+<section class="movies-search-section">
+
+    <div class="container">
+
+        <form method="get" class="movie-search-form">
+
+            <div class="input-group">
+
+                <span class="input-group-text">
+                    <i class="bi bi-search"></i>
+                </span>
+
+                <input
+                    type="search"
+                    name="q"
+                    value="{{ query }}"
+                    class="form-control"
+                    placeholder="Search movies..."
+                    aria-label="Search movies"
+                >
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Search
+                </button>
+
+            </div>
+
+        </form>
+
+        {% if query %}
+
+            <div class="search-result-info">
+
+                <span>
+                    Search results for
+                    <strong>"{{ query }}"</strong>
+                </span>
+
+                <a href="{% url 'movies:movie_list' %}">
+                    Clear search
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
 
 
 <!-- =========================================================
@@ -135,16 +190,38 @@
 
                     <div class="empty-state">
 
-                        <i class="bi bi-film"></i>
+                        <i class="bi bi-search"></i>
 
-                        <h3>
-                            No movies available.
-                        </h3>
+                        {% if query %}
 
-                        <p>
-                            There are currently no movies
-                            showing at CineFlow.
-                        </p>
+                            <h3>
+                                No movies found.
+                            </h3>
+
+                            <p>
+                                We couldn't find any movies matching
+                                "{{ query }}".
+                            </p>
+
+                            <a
+                                href="{% url 'movies:movie_list' %}"
+                                class="btn btn-primary"
+                            >
+                                View All Movies
+                            </a>
+
+                        {% else %}
+
+                            <h3>
+                                No movies available.
+                            </h3>
+
+                            <p>
+                                There are currently no movies
+                                showing at CineFlow.
+                            </p>
+
+                        {% endif %}
 
                     </div>
 
