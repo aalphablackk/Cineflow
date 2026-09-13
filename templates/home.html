@@ -1,185 +1,210 @@
 {% extends "base.html" %}
 
-
 {% block title %}
     CineFlow — Your Movie Experience
 {% endblock %}
 
-
 {% block content %}
 
-
-<!-- =========================================================
-     HERO
-========================================================= -->
-
-<section class="cine-hero">
-
-    <div class="container">
-
-        <div class="hero-content">
-
-            <span class="hero-label">
-                YOUR MOVIE EXPERIENCE
-            </span>
-
-
-            <h1 class="hero-title">
-
-                Discover your
-                <span>next movie.</span>
-
-            </h1>
-
-
-            <p class="hero-description">
-
-                Find movies, explore showtimes,
-                choose your preferred seats and
-                book your cinema experience effortlessly.
-
-            </p>
-
-
-            <div class="hero-actions">
-
-                <a
-                    href="#now-showing"
-                    class="btn cine-btn-primary btn-lg"
+<!-- HERO CAROUSEL -->
+<section
+    class="cine-hero cine-hero-carousel"
+    aria-roledescription="carousel"
+    aria-label="Now showing movies"
+>
+    {% if movies %}
+        <div class="cine-hero-slides">
+            {% for movie in movies %}
+                <article
+                    class="cine-hero-slide{% if forloop.first %} is-active{% endif %}"
+                    data-hero-slide
+                    aria-hidden="{% if forloop.first %}false{% else %}true{% endif %}"
+                    {% if not forloop.first %}inert{% endif %}
                 >
-                    Browse Movies
-                    <i class="bi bi-arrow-right"></i>
-                </a>
+                    <div class="cine-hero-backdrop" aria-hidden="true">
+                        {% if movie.poster_source %}
+                            <img src="{{ movie.poster_source }}" alt="">
+                        {% endif %}
+                    </div>
 
+                    <div class="cine-hero-poster" aria-hidden="true">
+                        {% if movie.poster_source %}
+                            <img
+                                src="{{ movie.poster_source }}"
+                                alt=""
+                                {% if forloop.first %}fetchpriority="high"{% else %}loading="lazy"{% endif %}
+                            >
+                        {% else %}
+                            <i class="bi bi-film"></i>
+                        {% endif %}
+                    </div>
 
-                <a
-                    href="#now-showing"
-                    class="hero-secondary-link"
-                >
-                    See what's showing
-                    <i class="bi bi-chevron-down"></i>
-                </a>
+                    <div class="container cine-hero-container">
+                        <div class="hero-content">
+                            <span class="hero-label">NOW SHOWING</span>
 
-            </div>
+                            <h1 class="hero-title">
+                                {{ movie.title }}
+                            </h1>
 
+                            <div class="hero-metadata" aria-label="Movie information">
+                                <span>{{ movie.age_rating }}</span>
+
+                                <span>
+                                    <i class="bi bi-clock"></i>
+                                    {{ movie.duration }} min
+                                </span>
+                            </div>
+
+                            <p class="hero-description">
+                                {{ movie.description|truncatechars:220 }}
+                            </p>
+
+                            <div class="hero-actions">
+                                <a
+                                    href="{% url "movies:movie_detail" movie.slug %}"
+                                    class="btn cine-btn-primary btn-lg"
+                                >
+                                    Book Now
+                                    <i class="bi bi-ticket-perforated"></i>
+                                </a>
+
+                                <a
+                                    href="{% url "movies:movie_detail" movie.slug %}"
+                                    class="hero-secondary-link"
+                                >
+                                    View Details
+                                    <i class="bi bi-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            {% endfor %}
         </div>
 
-    </div>
+        {% if movies|length > 1 %}
+            <div class="container cine-hero-controls">
+                <button
+                    type="button"
+                    class="cine-hero-control"
+                    data-hero-previous
+                    aria-label="Previous movie"
+                >
+                    <i class="bi bi-arrow-left"></i>
+                </button>
 
-</section>
+                <div
+                    class="cine-hero-indicators"
+                    role="tablist"
+                    aria-label="Choose a movie"
+                >
+                    {% for movie in movies %}
+                        <button
+                            type="button"
+                            class="cine-hero-indicator{% if forloop.first %} is-active{% endif %}"
+                            data-hero-indicator="{{ forloop.counter0 }}"
+                            aria-label="Show {{ movie.title }}"
+                            aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+                        ></button>
+                    {% endfor %}
+                </div>
 
+                <button
+                    type="button"
+                    class="cine-hero-control"
+                    data-hero-next
+                    aria-label="Next movie"
+                >
+                    <i class="bi bi-arrow-right"></i>
+                </button>
+            </div>
+        {% endif %}
 
+    {% else %}
+        <div class="container">
+            <div class="hero-content">
+                <span class="hero-label">YOUR MOVIE EXPERIENCE</span>
 
-<!-- =========================================================
-     NOW SHOWING
-========================================================= -->
+                <h1 class="hero-title">
+                    Discover your
+                    <span>next movie.</span>
+                </h1>
 
-<section
-    class="movies-section"
-    id="now-showing"
->
-
-    <div class="container">
-
-        <div class="section-header">
-
-            <div>
-
-                <span class="section-label">
-                    NOW SHOWING
-                </span>
-
-                <h2>
-                    Movies worth watching.
-                </h2>
-
-                <p>
-                    Catch the latest movies currently
-                    showing at CineFlow cinemas.
+                <p class="hero-description">
+                    Find movies, explore showtimes, choose your preferred seats
+                    and book your cinema experience effortlessly.
                 </p>
 
+                <div class="hero-actions">
+                    <a href="#now-showing" class="btn cine-btn-primary btn-lg">
+                        Browse Movies
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</section>
+
+<!-- NOW SHOWING -->
+<section class="movies-section" id="now-showing">
+    <div class="container">
+        <div class="section-header">
+            <div>
+                <span class="section-label">NOW SHOWING</span>
+
+                <h2>Movies worth watching.</h2>
+
+                <p>
+                    Catch the latest movies currently showing at CineFlow cinemas.
+                </p>
             </div>
 
-
-            <a
-                href="{% url "movies:movie_list" %}"
-                class="section-link"
-            >
+            <a href="{% url "movies:movie_list" %}" class="section-link">
                 View all
                 <i class="bi bi-arrow-right"></i>
             </a>
-
         </div>
 
-
         <div class="row g-4">
-
             {% for movie in movies %}
-
                 <div class="col-6 col-md-4 col-lg-3">
-
                     <article class="movie-card">
-
-
-                        <!-- Poster -->
-
                         <div class="movie-poster">
-
                             {% if movie.poster_source %}
-
                                 <img
                                     src="{{ movie.poster_source }}"
                                     alt="{{ movie.title }}"
                                     loading="lazy"
                                 >
-
                             {% else %}
-
                                 <div class="poster-placeholder">
-
                                     <i class="bi bi-film"></i>
-
-                                    <span>
-                                        No poster
-                                    </span>
-
+                                    <span>No poster</span>
                                 </div>
-
                             {% endif %}
-
-
-                            <!-- Rating / Age -->
 
                             <span class="movie-rating">
                                 {{ movie.age_rating }}
                             </span>
-
                         </div>
 
-
-                        <!-- Movie information -->
-
                         <div class="movie-card-body">
-
                             <h3 class="movie-title">
                                 {{ movie.title }}
                             </h3>
 
-
                             <div class="movie-meta">
-
                                 <span>
                                     <i class="bi bi-clock"></i>
-
                                     {{ movie.duration }} min
                                 </span>
 
                                 <span>
                                     {{ movie.status|title }}
                                 </span>
-
                             </div>
-
 
                             <a
                                 href="{% url "movies:movie_detail" movie.slug %}"
@@ -188,149 +213,158 @@
                                 View Movie
                                 <i class="bi bi-arrow-right"></i>
                             </a>
-
                         </div>
-
                     </article>
-
                 </div>
-
             {% empty %}
-
                 <div class="col-12">
-
                     <div class="empty-state">
-
                         <i class="bi bi-film"></i>
 
-                        <h3>
-                            No movies showing right now.
-                        </h3>
+                        <h3>No movies showing right now.</h3>
 
-                        <p>
-                            Check back soon for new releases.
-                        </p>
-
+                        <p>Check back soon for new releases.</p>
                     </div>
-
                 </div>
-
             {% endfor %}
-
         </div>
-
     </div>
-
 </section>
 
-
-
-<!-- =========================================================
-     WHY CINEFLOW
-========================================================= -->
-
+<!-- WHY CINEFLOW -->
 <section class="features-section">
-
     <div class="container">
-
         <div class="section-header centered">
+            <span class="section-label">THE CINEFLOW EXPERIENCE</span>
 
-            <span class="section-label">
-                THE CINEFLOW EXPERIENCE
-            </span>
-
-            <h2>
-                Cinema made simpler.
-            </h2>
+            <h2>Cinema made simpler.</h2>
 
             <p>
-                Everything you need for a better
-                movie-going experience.
+                Everything you need for a better movie-going experience.
             </p>
-
         </div>
-
 
         <div class="row g-4">
-
             <div class="col-md-4">
-
                 <div class="feature-card">
-
                     <div class="feature-icon">
-
                         <i class="bi bi-ticket-perforated"></i>
-
                     </div>
 
-                    <h3>
-                        Easy Booking
-                    </h3>
+                    <h3>Easy Booking</h3>
 
                     <p>
-                        Find a movie, choose your
-                        showtime and book your tickets
+                        Find a movie, choose your showtime and book your tickets
                         in just a few steps.
                     </p>
-
                 </div>
-
             </div>
 
-
             <div class="col-md-4">
-
                 <div class="feature-card">
-
                     <div class="feature-icon">
-
                         <i class="bi bi-grid"></i>
-
                     </div>
 
-                    <h3>
-                        Choose Your Seat
-                    </h3>
+                    <h3>Choose Your Seat</h3>
 
                     <p>
-                        Pick your preferred seat or
-                        choose general admission when
+                        Pick your preferred seat or choose general admission when
                         available.
                     </p>
-
                 </div>
-
             </div>
-
 
             <div class="col-md-4">
-
                 <div class="feature-card">
-
                     <div class="feature-icon">
-
                         <i class="bi bi-shield-check"></i>
-
                     </div>
 
-                    <h3>
-                        Secure Booking
-                    </h3>
+                    <h3>Secure Booking</h3>
 
                     <p>
-                        Your booking is protected by
-                        CineFlow's secure booking system.
+                        Your booking is protected by CineFlow's secure booking
+                        system.
                     </p>
-
                 </div>
-
             </div>
-
         </div>
-
     </div>
-
 </section>
 
+{% endblock %}
 
+{% block extra_js %}
+<script>
+    (function () {
+        function startCarousel() {
+            const carousel = document.querySelector(".cine-hero-carousel");
+
+            if (!carousel) {
+                return;
+            }
+
+            const slides = Array.from(
+                carousel.querySelectorAll("[data-hero-slide]")
+            );
+
+            const indicators = Array.from(
+                carousel.querySelectorAll("[data-hero-indicator]")
+            );
+
+            const previousButton = carousel.querySelector("[data-hero-previous]");
+            const nextButton = carousel.querySelector("[data-hero-next]");
+
+            if (slides.length < 2) {
+                return;
+            }
+
+            let activeIndex = 0;
+
+            function showSlide(index) {
+                activeIndex = (index + slides.length) % slides.length;
+
+                slides.forEach(function (slide, slideIndex) {
+                    const active = slideIndex === activeIndex;
+
+                    slide.classList.toggle("is-active", active);
+                    slide.setAttribute("aria-hidden", String(!active));
+                    slide.inert = !active;
+                });
+
+                indicators.forEach(function (indicator, indicatorIndex) {
+                    const active = indicatorIndex === activeIndex;
+
+                    indicator.classList.toggle("is-active", active);
+                    indicator.setAttribute("aria-selected", String(active));
+                });
+            }
+
+            previousButton.addEventListener("click", function () {
+                showSlide(activeIndex - 1);
+            });
+
+            nextButton.addEventListener("click", function () {
+                showSlide(activeIndex + 1);
+            });
+
+            indicators.forEach(function (indicator, index) {
+                indicator.addEventListener("click", function () {
+                    showSlide(index);
+                });
+            });
+
+            window.setInterval(function () {
+                showSlide(activeIndex + 1);
+            }, 5500);
+        }
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", startCarousel);
+        } else {
+            startCarousel();
+        }
+    })();
+</script>
 {% endblock %}

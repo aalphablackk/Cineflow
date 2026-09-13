@@ -4126,3 +4126,426 @@
     }
 
 }
+
+/* ============================================================
+   HOME HERO CAROUSEL
+   ============================================================ */
+
+.cine-hero-carousel {
+    position: relative;
+    min-height: 620px;
+    isolation: isolate;
+    overflow: hidden;
+    background: #08090c;
+}
+
+.cine-hero-slides,
+.cine-hero-slide {
+    min-height: inherit;
+}
+
+.cine-hero-slide {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    align-items: center;
+    isolation: isolate;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 700ms ease;
+}
+
+.cine-hero-slide.is-active {
+    position: relative;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.cine-hero-slide::before,
+.cine-hero-slide::after {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    content: "";
+}
+
+.cine-hero-slide::before {
+    background: linear-gradient(
+        90deg,
+        rgba(7, 8, 11, .98) 0%,
+        rgba(7, 8, 11, .91) 39%,
+        rgba(7, 8, 11, .48) 72%,
+        rgba(7, 8, 11, .58) 100%
+    );
+}
+
+.cine-hero-slide::after {
+    background: linear-gradient(
+        0deg,
+        rgba(7, 8, 11, .88),
+        transparent 48%
+    );
+}
+
+.cine-hero-backdrop {
+    position: absolute;
+    inset: -3rem;
+    z-index: -3;
+    overflow: hidden;
+    background: radial-gradient(
+        circle at 75% 45%,
+        #343942,
+        #08090c 60%
+    );
+}
+
+.cine-hero-backdrop img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 28%;
+    filter: blur(18px) brightness(.54) saturate(.78);
+    transform: scale(1.08);
+}
+
+.cine-hero-poster {
+    position: absolute;
+    top: 50%;
+    right: clamp(2rem, 8vw, 9rem);
+    z-index: -2;
+    width: clamp(220px, 21vw, 340px);
+    height: min(74%, 460px);
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, .22);
+    border-radius: 18px;
+    background: radial-gradient(circle at center, #343942, #090a0d 72%);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, .52);
+    transform: translateY(-50%);
+}
+
+.cine-hero-poster::after {
+    position: absolute;
+    inset: 0;
+    content: "";
+    background: linear-gradient(0deg, rgba(0, 0, 0, .25), transparent 40%);
+}
+
+.cine-hero-poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    filter: saturate(.95) contrast(1.04);
+}
+
+.cine-hero-poster i {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    color: rgba(255, 255, 255, .16);
+    font-size: 7rem;
+    transform: translate(-50%, -50%);
+}
+
+.cine-hero-container {
+    width: 100%;
+}
+
+.cine-hero-carousel .hero-content {
+    max-width: min(680px, calc(100% - 410px));
+}
+
+.cine-hero-carousel .hero-title {
+    max-width: 15ch;
+    color: #fff;
+    text-wrap: balance;
+}
+
+.cine-hero-carousel .hero-description {
+    color: rgba(255, 255, 255, .78);
+}
+
+.cine-hero-carousel .hero-secondary-link {
+    color: #fff;
+}
+
+.hero-metadata {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .65rem 1rem;
+    margin-top: 1.25rem;
+    color: rgba(255, 255, 255, .82);
+    font-size: .88rem;
+    font-weight: 600;
+}
+
+.hero-metadata span + span::before {
+    margin-right: 1rem;
+    color: var(--primary);
+    content: "•";
+}
+
+.hero-metadata i {
+    color: var(--primary);
+}
+
+.cine-hero-controls {
+    position: absolute;
+    right: 0;
+    bottom: 2.5rem;
+    left: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+}
+
+.cine-hero-control,
+.cine-hero-indicator {
+    border: 0;
+    cursor: pointer;
+}
+
+.cine-hero-control {
+    display: inline-grid;
+    width: 42px;
+    height: 42px;
+    place-items: center;
+    border: 1px solid rgba(255, 255, 255, .35);
+    border-radius: 50%;
+    background: rgba(9, 10, 13, .55);
+    color: #fff;
+    transition: background .2s ease, border-color .2s ease, transform .2s ease;
+}
+
+.cine-hero-control:hover {
+    border-color: var(--primary);
+    background: var(--primary);
+    transform: translateY(-2px);
+}
+
+.cine-hero-control:focus-visible,
+.cine-hero-indicator:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 3px;
+}
+
+.cine-hero-indicators {
+    display: flex;
+    gap: .5rem;
+}
+
+.cine-hero-indicator {
+    width: 8px;
+    height: 8px;
+    padding: 0;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .45);
+    transition: width .25s ease, background .25s ease;
+}
+
+.cine-hero-indicator.is-active {
+    width: 28px;
+    background: var(--primary);
+}
+
+@media (max-width: 767px) {
+    .cine-hero-carousel {
+        min-height: 590px;
+    }
+
+    .cine-hero-slide::before {
+        background: linear-gradient(
+            90deg,
+            rgba(7, 8, 11, .96),
+            rgba(7, 8, 11, .72)
+        );
+    }
+
+    .cine-hero-poster {
+        top: auto;
+        right: 1.25rem;
+        bottom: 1.25rem;
+        width: 128px;
+        height: 190px;
+        opacity: .68;
+        transform: none;
+    }
+
+    .cine-hero-carousel .hero-content {
+        max-width: 100%;
+        padding-bottom: 8rem;
+    }
+
+    .cine-hero-controls {
+        bottom: 1.5rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cine-hero-slide,
+    .cine-hero-control,
+    .cine-hero-indicator {
+        transition: none;
+    }
+}
+/* ============================================================
+   HERO CAROUSEL — FULL BACKDROP + LIGHT MODE
+   ============================================================ */
+
+/* Keep every visual layer inside the hero, above its background. */
+.cine-hero-slide {
+    z-index: 0;
+}
+
+.cine-hero-backdrop {
+    z-index: 0;
+}
+
+.cine-hero-poster {
+    z-index: 1;
+}
+
+.cine-hero-slide::before,
+.cine-hero-slide::after {
+    z-index: 2;
+}
+
+.cine-hero-container {
+    position: relative;
+    z-index: 3;
+}
+
+.cine-hero-controls {
+    z-index: 4;
+}
+
+/* Make the movie artwork fill the complete hero section. */
+.cine-hero-backdrop {
+    inset: 0;
+}
+
+.cine-hero-backdrop img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 28%;
+    filter: blur(16px) brightness(.56) saturate(.8);
+    transform: scale(1.08);
+}
+
+/* Dark mode */
+html[data-theme="dark"] .cine-hero-carousel {
+    background: #08090c;
+}
+
+html[data-theme="dark"] .cine-hero-slide::before {
+    background: linear-gradient(
+        90deg,
+        rgba(7, 8, 11, .98) 0%,
+        rgba(7, 8, 11, .91) 40%,
+        rgba(7, 8, 11, .48) 72%,
+        rgba(7, 8, 11, .58) 100%
+    );
+}
+
+html[data-theme="dark"] .cine-hero-slide::after {
+    background: linear-gradient(
+        0deg,
+        rgba(7, 8, 11, .85),
+        transparent 48%
+    );
+}
+
+html[data-theme="dark"] .cine-hero-carousel .hero-title,
+html[data-theme="dark"] .cine-hero-carousel .hero-secondary-link {
+    color: #fff;
+}
+
+html[data-theme="dark"] .cine-hero-carousel .hero-description,
+html[data-theme="dark"] .hero-metadata {
+    color: rgba(255, 255, 255, .8);
+}
+
+/* Light mode */
+html[data-theme="light"] .cine-hero-carousel {
+    background: #e9eaed;
+}
+
+html[data-theme="light"] .cine-hero-backdrop img {
+    filter: blur(16px) brightness(1.18) saturate(.65);
+}
+
+html[data-theme="light"] .cine-hero-slide::before {
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, .97) 0%,
+        rgba(255, 255, 255, .9) 42%,
+        rgba(255, 255, 255, .46) 74%,
+        rgba(255, 255, 255, .58) 100%
+    );
+}
+
+html[data-theme="light"] .cine-hero-slide::after {
+    background: linear-gradient(
+        0deg,
+        rgba(255, 255, 255, .78),
+        transparent 48%
+    );
+}
+
+html[data-theme="light"] .cine-hero-carousel .hero-title,
+html[data-theme="light"] .cine-hero-carousel .hero-secondary-link {
+    color: #111827;
+}
+
+html[data-theme="light"] .cine-hero-carousel .hero-description,
+html[data-theme="light"] .hero-metadata {
+    color: #4b5563;
+}
+
+html[data-theme="light"] .cine-hero-control {
+    border-color: rgba(17, 24, 39, .2);
+    background: rgba(255, 255, 255, .68);
+    color: #111827;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, .1);
+}
+
+html[data-theme="light"] .cine-hero-control:hover {
+    border-color: var(--primary);
+    background: var(--primary);
+    color: #fff;
+}
+
+html[data-theme="light"] .cine-hero-indicator {
+    background: rgba(17, 24, 39, .3);
+}
+
+html[data-theme="light"] .cine-hero-indicator.is-active {
+    background: var(--primary);
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+    .cine-hero-backdrop img {
+        object-position: center;
+    }
+
+    .cine-hero-poster {
+        z-index: 1;
+    }
+}
+/* Force the carousel to occupy the full hero width */
+.cine-hero-carousel {
+    display: block;
+    width: 100%;
+}
+
+.cine-hero-slides {
+    width: 100%;
+}
+
+.cine-hero-slide {
+    width: 100%;
+}
