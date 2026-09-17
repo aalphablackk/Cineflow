@@ -231,9 +231,87 @@
 
         </div>
 
+        {% if movies.has_other_pages %}
+        
     </div>
-
+    
 </section>
+
+            <nav
+                class="cine-pagination"
+                aria-label="Movie pages"
+            >
+
+                <ul class="pagination justify-content-center">
+
+                    {% if movies.has_previous %}
+
+                        <li class="page-item">
+
+                            <a
+                                class="page-link"
+                                href="?{% if query %}q={{ query|urlencode }}&{% endif %}page={{ movies.previous_page_number }}"
+                                aria-label="Previous page"
+                            >
+                                <i class="bi bi-chevron-left"></i>
+                                Previous
+                            </a>
+
+                        </li>
+
+                    {% endif %}
+
+
+                    {% for num in movies.paginator.page_range %}
+
+                        {% if movies.number == num %}
+
+                            <li class="page-item active">
+                                <span class="page-link">
+                                    {{ num }}
+                                </span>
+                            </li>
+
+                        {% elif num > movies.number|add:"-2" and num < movies.number|add:"2" %}
+
+                            <li class="page-item">
+
+                                <a
+                                    class="page-link"
+                                    href="?{% if query %}q={{ query|urlencode }}&{% endif %}page={{ num }}"
+                                >
+                                    {{ num }}
+                                </a>
+
+                            </li>
+
+                        {% endif %}
+
+                    {% endfor %}
+
+
+                    {% if movies.has_next %}
+
+                        <li class="page-item">
+
+                            <a
+                                class="page-link"
+                                href="?{% if query %}q={{ query|urlencode }}&{% endif %}page={{ movies.next_page_number }}"
+                                aria-label="Next page"
+                            >
+                                Next
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+
+                        </li>
+
+                    {% endif %}
+
+                </ul>
+
+            </nav>
+
+        {% endif %}
 
 
 {% endblock %}

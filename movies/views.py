@@ -18,6 +18,8 @@ from showtimes.models import Showtime
 
 from .models import Movie
 
+from django.core.paginator import Paginator
+
 
 def home(request):
 
@@ -145,6 +147,11 @@ def movie_list(request):
         "-release_date",
         "title",
     )
+    paginator = Paginator(movies, 12)
+
+    page_number = request.GET.get("page")
+
+    movies = paginator.get_page(page_number)
 
     return render(
         request,
