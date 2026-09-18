@@ -5,8 +5,9 @@ import cloudinary.api
 import cloudinary.uploader
 
 from django.core.files.storage import Storage
+from django.utils.deconstruct import deconstructible
 
-
+@deconstructible
 class CloudinaryMediaStorage(Storage):
     """
     Custom Django storage backend for Cloudinary media files.

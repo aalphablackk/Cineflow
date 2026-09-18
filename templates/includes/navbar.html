@@ -176,7 +176,14 @@
 
                             <span class="user-avatar">
 
-                                {% if user.first_name %}
+                                {% if user.profile.profile_image %}
+
+                                    <img
+                                        src="{{ user.profile.profile_image.url }}"
+                                        alt="Profile picture"
+                                    >
+
+                                {% elif user.first_name %}
 
                                     {{ user.first_name|first|upper }}
 

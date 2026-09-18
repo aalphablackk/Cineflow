@@ -45,7 +45,16 @@
 
                 <div class="profile-avatar">
 
-                    {{ user.first_name|first|upper }}
+                    {% if profile.profile_image %}
+                        <img
+                            src="{{ profile.profile_image.url }}"
+                            alt="Profile picture"
+                        >
+                    {% elif user.first_name %}
+                        {{ user.first_name|first|upper }}
+                    {% else %}
+                        {{ user.username|first|upper }}
+                    {% endif %}
 
                 </div>
 
@@ -229,6 +238,7 @@
             <form
                 method="post"
                 action="{% url 'accounts:profile' %}"
+                enctype="multipart/form-data"
             >
 
                 {% csrf_token %}
@@ -243,6 +253,49 @@
                         </div>
 
                     {% endif %}
+                    <!-- PROFILE IMAGE -->
+
+                    <div class="mb-4">
+
+                        <label
+                            for="{{ image_form.profile_image.id_for_label }}"
+                            class="form-label"
+                        >
+                            Profile Image
+                        </label>
+
+                        <div class="profile-image-upload">
+
+                            {% if profile.profile_image %}
+
+                                <div class="profile-image-preview">
+
+                                    <img
+                                        src="{{ profile.profile_image.url }}"
+                                        alt="Current profile picture"
+                                    >
+
+                                </div>
+
+                            {% endif %}
+
+                            {{ image_form.profile_image }}
+
+                        </div>
+
+                        {% if image_form.profile_image.errors %}
+
+                            <div class="errorlist">
+                                {{ image_form.profile_image.errors }}
+                            </div>
+
+                        {% endif %}
+
+                        <small class="form-text">
+                            Upload a JPG, PNG, or WebP image.
+                        </small>
+
+                    </div>
 
 
                     <!-- FIRST NAME -->

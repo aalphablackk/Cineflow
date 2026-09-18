@@ -5,6 +5,8 @@ from django.contrib.auth.forms import (
 )
 from django.contrib.auth.models import User
 
+from .models import Profile
+
 
 class RegisterForm(UserCreationForm):
 
@@ -179,3 +181,22 @@ class ProfileForm(forms.ModelForm):
             )
 
         return email
+
+class ProfileImageForm(forms.ModelForm):
+
+    class Meta:
+        model = Profile
+        fields = ["profile_image"]
+
+        widgets = {
+            "profile_image": forms.ClearableFileInput(
+                attrs={
+                    "class": "form-control",
+                    "accept": "image/*",
+                }
+            ),
+        }
+
+        labels = {
+            "profile_image": "Profile Image",
+        }

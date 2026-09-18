@@ -10,11 +10,12 @@ from django.contrib.auth.views import (
 )
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
-
+from .models import Profile
 from .forms import (
     LoginForm,
     ProfileForm,
     RegisterForm,
+    ProfileImageForm,
 )
 
 
@@ -268,12 +269,12 @@ def password_change_done(request):
 # PROFILE
 # ============================================================
 
-# ============================================================
-# PROFILE
-# ============================================================
-
 @login_required
 def profile(request):
+
+    profile, created = Profile.objects.get_or_create(
+        user=request.user
+    )
 
     if request.method == "POST":
 
@@ -282,9 +283,16 @@ def profile(request):
             instance=request.user,
         )
 
-        if form.is_valid():
+        image_form = ProfileImageForm(
+            request.POST,
+            request.FILES,
+            instance=profile,
+        )
+
+        if form.is_valid() and image_form.is_valid():
 
             form.save()
+            image_form.save()
 
             messages.success(
                 request,
@@ -301,15 +309,24 @@ def profile(request):
             instance=request.user,
         )
 
+        image_form = ProfileImageForm(
+            instance=profile,
+        )
+
     return render(
         request,
         "accounts/profile.html",
         {
             "user": request.user,
+            "profile": profile,
             "form": form,
+            "image_form": image_form,
             "edit_profile_open": (
                 request.method == "POST"
-                and form.errors
+                and (
+                    form.errors
+                    or image_form.errors
+                )
             ),
         },
     )
