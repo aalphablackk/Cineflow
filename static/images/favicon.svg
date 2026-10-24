@@ -1,0 +1,21 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="cineRed" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FF303A"></stop>
+      <stop offset="100%" stop-color="#E50914"></stop>
+    </linearGradient>
+  </defs>
+
+  <rect width="64" height="64" rx="14" fill="#0B0B0D"></rect>
+
+  <!-- Minimal film frame -->
+  <rect x="14" y="15" width="36" height="34" rx="6" fill="none" stroke="url(#cineRed)" stroke-width="3"></rect>
+
+  <!-- Subtle film perforations -->
+  <path d="M21 16 V22 M21 42 V48
+           M43 16 V22 M43 42 V48" fill="none" stroke="#E50914" stroke-width="2.5" stroke-linecap="round"></path>
+
+  <!-- Play symbol -->
+  <path d="M28 24 L28 40 L41 32 Z" fill="#FFFFFF"></path>
+</svg>
